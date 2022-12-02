@@ -1,9 +1,6 @@
+**1657. Determine if Two Strings Are Close**
 
-
-
-
-# APPROACH :
-
+# Approach 1 :
 class Solution:
     def closeStrings(self, word1: str, word2: str) -> bool:
         c1 = Counter(word1)
@@ -12,3 +9,19 @@ class Solution:
         n2 = Counter([v for v in c2.values()])
 
         return c1==c2 or (n1 == n2 and set(word1) == set(word2))
+        
+# Approach 2 :
+class Solution:
+    def closeStrings(self, word1: str, word2: str) -> bool:
+
+        if set(word1) - set(word2):
+            return False
+        
+        count1 = collections.Counter(word1)
+        count2 = collections.Counter(word2)
+        
+        val1 = list(count1.values())
+        val2 = list(count2.values())
+        val2.sort()
+        val1.sort()
+        return val2 == val1
