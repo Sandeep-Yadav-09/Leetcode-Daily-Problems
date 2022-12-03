@@ -1,0 +1,26 @@
+**451. Sort Characters By Frequency**
+
+# Approach 1 :
+# Using Python in-built function most_common()
+# most_common() : Returns a list consists of tuples and each tuple contains the element and the element count.
+
+class Solution:
+    def frequencySort(self, s: str) -> str:
+        res = ""
+        count = Counter(s).most_common()
+        
+        for c,v in count: 
+            res += c*v 
+        return res
+
+
+# Approach 2 :
+class Solution:
+    def frequencySort(self, s: str) -> str:
+        c = Counter(list(s))
+        c_list = sorted(c,key = lambda x:c[x],reverse = True)
+
+        res = []
+        for char in c_list:
+            res.append(char * c[char])
+        return "".join(res)
