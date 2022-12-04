@@ -1,0 +1,46 @@
+2256. Minimum Average Difference
+
+# Approach 1 :
+class Solution:
+    def minimumAverageDifference(self, a: List[int]) -> int:
+        l=0
+        r=sum(a)
+        z=100001
+        y=0
+        n=len(a)
+        
+        for i in range(n-1):
+            l+=a[i]
+            r-=a[i]
+        
+            d=abs((l//(i+1))-(r//(n-i-1)))
+            if d<z:
+                z=d
+                y=i
+
+        if sum(a)//n<z:
+            y=n-1
+        
+        return y
+        
+# Approach 2 :
+class Solution:
+    def minimumAverageDifference(self, nums: List[int]) -> int:
+        tsum = sum(nums)
+        n = len(nums)
+        csum = 0
+        ans = 0
+        min = 10**5
+        for i in range(n):
+            csum+=nums[i]
+            avg1 = csum//(i+1)
+            if i == n-1:
+                if avg1<min:
+                    return n-1
+                else:
+                    break
+            avg2 = (tsum-csum)//(n-i-1)
+            if abs(avg1-avg2)<min:
+                min = abs(avg1-avg2)
+                ans = i
+        return ans
