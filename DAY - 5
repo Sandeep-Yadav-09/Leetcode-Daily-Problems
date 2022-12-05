@@ -1,0 +1,21 @@
+876. Middle of the Linked List
+
+# Approach 1 :
+class Solution:
+    def middleNode(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        nodes = [] #array to keep track of the nodes
+        while head:
+            nodes.append(head) #add the nodes to our array
+            head = head.next
+        middle = len(nodes)//2 # get the middle index of the array
+        return nodes[middle] #return the node in the middle
+        
+# Approach 2 :
+class Solution:
+    def middleNode(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        slow = head
+        fast = head
+        while fast != None and fast.next != None:
+            slow = slow.next
+            fast = fast.next.next
+        return slow
