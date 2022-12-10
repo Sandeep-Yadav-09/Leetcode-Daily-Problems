@@ -24,3 +24,19 @@ class Solution:
                 if x.left is not None:
                     stack.append(x.left)
         return s
+        
+# Approach 2:
+class Solution:
+    def leafSimilar(self, root1: Optional[TreeNode], root2: Optional[TreeNode]) -> bool:
+        l,r = [],[]
+        def get(root,l):
+            if not root:
+                return
+            if not root.left and not root.right:
+                l.append(root.val)
+                return
+            get(root.left,l)
+            get(root.right,l)
+        print(get(root1,l))
+        print(get(root2,r))
+        return l==r
