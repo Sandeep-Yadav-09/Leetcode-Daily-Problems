@@ -1,0 +1,44 @@
+** 1339. Maximum Product of Splitted Binary Tree **
+
+# Approach 1:
+class Solution:
+    def maxProduct(self, root: Optional[TreeNode]) -> int:
+        def totalsum(root):
+            if not root:
+                return 0
+            return totalsum(root.left) + totalsum(root.right) + root.val
+                
+        s = totalsum(root)
+        self.output = 0
+        def productmax(root):
+            if not root:
+                return 0
+            l = productmax(root.left)
+            r = productmax(root.right)
+            self.output = max(self.output, (s-l)*l, (s-r)*r)
+            return root.val + l + r
+        productmax(root)
+        return self.output%(10**9+7)
+        
+# Approach 2:
+
+# Using Stack D
+class Solution:
+    def maxProduct(self, root: Optional[TreeNode]) -> int:
+        stack, vals = [], []
+        node, prev = root, None
+        mp = defaultdict(int)
+        while node or stack:
+            if node: 
+                stack.append(node)
+                node = node.left 
+            else: 
+                node = stack[-1] 
+                if node.right and node.right != prev: node = node.right 
+                else: 
+                    mp[node] = node.val + mp[node.left] + mp[node.right]
+                    vals.append(mp[node]) 
+                    stack.pop() 
+                    prev = node 
+                    node = None
+        return max(x*(vals[-1] - x) for x in vals) % 1_000_000_007
