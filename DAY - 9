@@ -1,6 +1,6 @@
 ** 1026. Maximum Difference Between Node and Ancestor **
 
-# Approach :
+# Approach 1:
 class Solution:
     def maxAncestorDiff(self, root: Optional[TreeNode]) -> int:
         def dfs(root, mn, mx):
@@ -18,3 +18,20 @@ class Solution:
         
         # Initialize minimum `mn` and maximum `mx` equals value of given root
         return dfs(root, root.val, root.val)
+	
+# Approach 2:
+class Solution:
+    def maxAncestorDiff(self, root: Optional[TreeNode]) -> int:
+        if not root:
+            return 0
+        self.res = 0
+        def ch(curr, cur_min, cur_max):
+            if not curr:
+                return
+            self.res = max(self.res, abs(cur_min - curr.val), abs(cur_max - curr.val))
+            cur_min = min(cur_min,curr.val)
+            cur_max = max(cur_max,curr.val)
+            ch(curr.left, cur_min, cur_max)
+            ch(curr.right, cur_min, cur_max)
+        ch(root, root.val, root.val)
+        return self.res
