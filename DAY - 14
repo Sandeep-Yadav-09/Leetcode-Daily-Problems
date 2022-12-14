@@ -1,0 +1,43 @@
+** 198. House Robber **
+
+# Approach 1:
+class Solution:
+    def rob(self, nums: List[int]) -> int:     
+        house_1 = 0
+        house_2 = 0
+        house_3 = 0
+        for num in reversed(nums):
+            temp = house_1
+            house_1 = max(num + house_2, num + house_3)
+            house_3 = house_2
+            house_2 = temp
+            
+        return max(house_1, house_2)
+        
+        
+# Approach 2:
+class Solution:
+    def rob(self, nums: List[int]) -> int:     
+        prev1, prev2 = 0, 0
+        for num in nums:
+            prev1, prev2 = max(prev2 + num, prev1), prev1
+            
+        return prev1
+
+# Approach 3:
+from itertools import islice
+
+class Solution:
+    def rob(self, nums: List[int]) -> int:
+        if not nums:
+            return 0
+        
+        if len(nums) == 1:
+            return nums[0]
+        
+        nums.append(0)
+        nums.reverse()
+        for idx, num in enumerate(islice(nums, 3, None), 3):
+            nums[idx] = max(num + nums[idx - 2], num + nums[idx - 3])
+            
+        return max(nums[-1], nums[-2])
