@@ -1,0 +1,40 @@
+** 150. Evaluate Reverse Polish Notation **
+
+# Approach 1 :
+class Solution:
+    def evalRPN(self, tokens: List[str]) -> int:
+        stack = []
+        for t in tokens:
+            if t not in "+-*/":
+                stack.append(int(t))
+            else:
+                r, l = stack.pop(), stack.pop()
+                if t == "+":
+                    stack.append(l+r)
+                elif t == "-":
+                    stack.append(l-r)
+                elif t == "*":
+                    stack.append(l*r)
+                else:
+                    stack.append(int(float(l)/r))
+        return stack.pop()
+        
+# Approach 2 :
+class Solution:
+    def evalRPN(self, tokens: List[str]) -> int:
+        
+        def update(sign):
+            n2,n1=stack.pop(),stack.pop()
+            if sign=="+": return n1+n2
+            if sign=="-": return n1-n2
+            if sign=="*": return n1*n2
+            if sign=="/": return int(n1/n2)
+			
+        stack=[]
+        
+        for n in tokens:
+            if n.isdigit() or len(n)>1:
+                stack.append(int(n))
+            else:
+                stack.append(update(n))
+        return stack.pop()   
