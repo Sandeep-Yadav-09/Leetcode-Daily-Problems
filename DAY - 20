@@ -1,0 +1,54 @@
+** 841. Keys and Rooms **
+
+# Approach 1:
+# Using Stack
+class Solution:
+    def canVisitAllRooms(self, rooms: List[List[int]]) -> bool:
+        visited_rooms = set()
+        stack = [0] # for rooms that we need to visit and we start from room [0]
+        
+        while stack: 
+            room = stack.pop() 
+            visited_rooms.add(room)
+            for key in rooms[room]:
+                if key not in visited_rooms:
+                    stack.append(key)
+        return len(visited_rooms) == len(rooms) 
+        
+# Approach 2:
+# Using BFS
+class Solution:
+    def canVisitAllRooms(self, rooms: List[List[int]]) -> bool:
+        queue = deque([0])
+        unvisited = set(range(len(rooms)))
+
+        while queue:
+            v = queue.popleft()
+            if v in unvisited:
+                unvisited.remove(v)
+                queue.extend(rooms[v])
+
+        return not unvisited 
+        
+# Approach 3:
+# Using BFS
+class Solution:
+    def canVisitAllRooms(self, rooms: List[List[int]]) -> bool:
+        
+        visited = [False]*len(rooms)
+
+        graph = {}
+        
+        for i in range(len(rooms)):
+            graph[i] = rooms[i]
+        queue = [0]
+        while queue:
+            a = queue.pop()
+            if not visited[a]:
+                queue.extend(graph[a])
+                visited[a] = True
+        print(visited)
+        for i in visited:
+            if not i:
+                return False
+        return True
