@@ -1,0 +1,54 @@
+** 834. Sum of Distances in Tree **
+
+# Approach 1 :
+# Using DFS :
+class Solution:
+    def sumOfDistancesInTree(self, n: int, edges: List[List[int]]) -> List[int]:
+        g = collections.defaultdict(list)
+        for u, v in edges:
+            g[u].append(v)
+            g[v].append(u)
+        
+        d = {i:[1, 0] for i in range(n)}
+        
+        def dfs(root, prev):
+            for nei in g[root]:
+                if nei != prev:
+                    dfs(nei, root)
+                    d[root][0] += d[nei][0]
+                    d[root][1] += (d[nei][0] + d[nei][1])
+        
+        def dfs2(root, prev):
+            for nei in g[root]:
+                if nei != prev:
+                    d[nei][1] = d[root][1] - d[nei][0] + (n-d[nei][0])
+                    dfs2(nei, root)
+        
+        dfs(0, -1)
+        dfs2(0, -1)
+        res = []
+        for key in d:
+            res.append(d[key][1])
+        return res
+        
+# Approach 2 :
+# Using DP :
+from functools import cache
+class Solution:
+    def sumOfDistancesInTree(self, N: int, edges: List[List[int]]) -> List[int]:
+        graph = [[] for i in range(N)]
+        for i, j in edges:
+            graph[i].append(j)
+            graph[j].append(i)
+        
+        @cache
+        def dp(i, j) -> tuple[int, int]:
+            size, tot = map(
+                sum, zip(*(dp(k, i) for k in graph[i] if k != j))
+            ) if len(graph[i]) > 1 else (0, 0)
+            return size + 1, tot + size
+ 
+        return [
+            N - 1 + sum(dp(edge, i)[1] for edge in graph[i])
+            for i in range(N)
+        ] 
