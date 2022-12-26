@@ -1,0 +1,23 @@
+** 55. Jump Game **
+
+# Approach 1 :
+class Solution:
+    def canJump(self, nums: List[int]) -> bool:
+        j = 0
+        for i in range(len(nums)):
+            if i > j:
+                return False
+            j = max(j,i+nums[i])
+        return True
+        
+# Approach 2 :
+class Solution:
+    def canJump(self, nums: List[int]) -> bool:
+        reachableIndex = 0
+        for curr in range(len(nums)):
+            if curr + nums[curr] >= reachableIndex:
+                reachableIndex = curr + nums[curr]
+            if curr == reachableIndex:
+                break
+                
+        return reachableIndex >= len(nums) - 1
