@@ -1,0 +1,42 @@
+** 2279. Maximum Bags With Full Capacity of Rocks **
+
+# Approach 1 :
+class Solution:
+    def maximumBags(self, capacity: List[int], rocks: List[int], additionalRocks: int) -> int:
+        arr=[]
+        for i in range(len(rocks)):
+            arr.append(capacity[i]-rocks[i])
+        arr.sort()
+        c=0
+        for i in arr:
+            if(i<=additionalRocks):
+                c+=1
+                additionalRocks-=i 
+        return c
+        
+# Approach 2 :
+class Solution:
+    def maximumBags(self, capacity: List[int], rocks: List[int], additionalRocks: int) -> int:
+        dif=[capacity[i]-rocks[i] for i in range(len(rocks))]
+        dif.sort()
+        ct=0
+        for i in range(len(dif)):
+            if additionalRocks==0:
+                break
+            if additionalRocks>=dif[i]:
+                ct+=1
+                additionalRocks-=dif[i]
+            else:
+                break
+        return ct
+        
+# Approach 3 :
+import itertools
+import bisect
+
+class Solution:
+    def maximumBags(self, capacity: List[int], rocks: List[int], additionalRocks: int) -> int:
+        diffs = sorted([capacity[i] - rocks[i] for i in range(len(rocks))])
+        diffs = list(itertools.accumulate(diffs))
+        return bisect.bisect_right(diffs, additionalRocks)
+        
