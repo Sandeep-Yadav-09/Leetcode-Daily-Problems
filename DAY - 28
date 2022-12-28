@@ -1,0 +1,34 @@
+** 1962. Remove Stones to Minimize the Total **
+
+# Approach 1:
+class Solution:
+    def minStoneSum(self, piles: List[int], k: int) -> int:
+        min_heap = []
+        for pile in piles:
+            heapq.heappush(min_heap, -pile)
+
+        while k:
+            k -= 1
+
+            # pop the largest element and change its sign
+            largest = -heapq.heappop(min_heap)
+            # reduce it by half and push it back
+            heapq.heappush(min_heap, -largest // 2)
+
+        return sum(-x for x in min_heap)
+
+# Approach 2:
+
+import heapq
+
+class Solution:
+    def minStoneSum(self, piles: List[int], k: int) -> int:
+        heap = [-num for num in piles]
+        heapq.heapify(heap)
+        
+        for _ in range(k):
+            curr = -heapq.heappop(heap)
+            remove = curr // 2
+            heapq.heappush(heap, -(curr - remove))
+        
+        return -sum(heap)
