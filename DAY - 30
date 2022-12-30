@@ -1,0 +1,49 @@
+** 797. All Paths From Source to Target **
+
+# Approach 1:
+from collections import defaultdict
+
+class Solution:
+    def allPathsSourceTarget(self, graph: List[List[int]]) -> List[List[int]]:
+        q =[[0]]
+        target= len(graph) -1 
+        res = []        
+        while q:
+            temp = q.pop(0)
+            if temp[-1] == target:
+                res.append(temp)            
+            for nei in graph[temp[-1]]:
+                q.append( temp +[nei])       
+        return res
+        
+# Approach 2:
+class Solution(object):
+    def __init__(self):
+        self.memo = {}
+    def allPathsSourceTarget(self, graph):
+        self.memo = {len(graph)-1:[[len(graph)-1]]}
+        def calc(N):
+            if N in self.memo:
+                return self.memo[N]
+            a = []
+            for n in graph[N]:
+                for path in calc(n):
+                    a.append([N]+path)
+            self.memo[N] = a
+            return a
+        return calc(0)
+        
+# Approach 3:
+class Solution:
+	def allPathsSourceTarget(self, graph: List[List[int]]) -> List[List[int]]:
+		n = len(graph)
+		stack = [[0]]
+		paths = []
+		while stack: 
+			path = stack.pop()
+			vertex = path[-1]
+			if vertex == n-1:
+				paths.append(path.copy())
+			for nodes in graph[vertex]:
+				stack.append( path.copy()+[nodes])
+		return paths
