@@ -1,0 +1,33 @@
+** 520. Detect Capital **
+
+# Approach 1:
+class Solution:
+    def detectCapitalUse(self, word: str) -> bool:
+        caps = word.upper()
+        small = word.lower()
+        sent = word.capitalize()
+        if word == caps or word == small or word == sent: 
+            return True
+        return False
+        
+# Approach 2:
+class Solution:
+  def detectCapitalUse(self, word):
+      return word.isupper() or word.islower() or word.istitle()
+    
+# Approach 3:
+class Solution:
+  def detectCapitalUse(self, word: str) -> bool:
+    cnt = sum(c.isupper() for c in word)
+    return cnt == len(word) \
+      or cnt == 0 \
+      or cnt == 1 and word[0].isupper()
+    
+# Approach 4:    
+class Solution:
+    def detectCapitalUse(self, word):
+        c = 0
+        for i in word:
+            if i == i.upper():
+                c += 1
+        return c == len(word) or (c == 1 and word[0] == word[0].upper()) or c == 0 
