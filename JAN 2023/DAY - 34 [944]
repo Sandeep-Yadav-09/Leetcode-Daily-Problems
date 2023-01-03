@@ -1,0 +1,31 @@
+** 944. Delete Columns to Make Sorted **
+
+# Approach 1:
+class Solution:
+    def minDeletionSize(self, strs: List[str]) -> int:
+        del_col = 0
+        for c in range(len(strs[0])):
+            for r in range(len(strs)-1):
+                if strs[r][c] > strs[r+1][c]:
+                    del_col += 1
+                    break
+        return del_col
+        
+# Approach 2:
+class Solution:
+    def minDeletionSize(self, strs: List[str]) -> int:
+        return sum(col != sorted(col) for col in map(list, zip(*strs)))
+        
+# Approach 3:
+class Solution:
+    def minDeletionSize(self, strs: List[str]) -> int:
+        m, n = len(strs), len(strs[0])
+        count = 0
+        
+        for i in range(n):
+            for j in range(1,m):
+                if strs[j][i] < strs[j-1][i]:
+                    count += 1
+                    break
+        
+        return count
