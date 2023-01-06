@@ -1,0 +1,27 @@
+** 1833. Maximum Ice Cream Bars **
+
+# Approach 1:
+class Solution:
+    def maxIceCream(self, costs: List[int], coins: int) -> int:
+        count = 0
+        for i in sorted(costs):
+            if i <= coins:
+                count += 1
+                coins -= i
+        return count
+
+# Approach 2:
+class Solution:
+    def maxIceCream(self, costs: List[int], coins: int) -> int:
+        return sum(1 for icecream in sorted(costs) if (coins:= coins-icecream) >= 0)
+        
+# Approach 3:
+def maxIceCream(self, costs: List[int], coins: int) -> int:
+        result=0
+        costs.sort()
+        for x,y in enumerate(costs):
+            if coins<y:
+                break
+            result = result + 1
+            coins = coins - y
+        return result
