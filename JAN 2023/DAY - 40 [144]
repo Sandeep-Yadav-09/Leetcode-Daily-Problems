@@ -1,0 +1,35 @@
+** 144. Binary Tree Preorder Traversal **
+
+# Approach 1:
+class Solution:
+    def preorderTraversal(self, root: Optional[TreeNode]) -> List[int]:
+        res = []
+        def preorder(root):
+            if not root:
+                return 
+            res.append(root.val)
+            preorder(root.left)
+            preorder(root.right)
+        preorder(root)
+        return res
+        
+# Appraoch 2:
+class Solution:
+    def preorderTraversal(self, root: Optional[TreeNode]) -> List[int]:
+        if not root:
+            return []
+        
+        return [root.val] + self.preorderTraversal(root.left) + self.preorderTraversal(root.right)
+        
+# Approach 3:
+class Solution:
+    def preorderTraversal(self, root: Optional[TreeNode]) -> List[int]:
+        ret = []
+        stack = [root]
+        while stack:
+            node = stack.pop()
+            if node:
+                ret.append(node.val)
+                stack.append(node.right)
+                stack.append(node.left)
+        return ret
