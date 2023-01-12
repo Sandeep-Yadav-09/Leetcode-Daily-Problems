@@ -1,0 +1,80 @@
+** 1519. Number of Nodes in the Sub-Tree With the Same Label **
+
+# Approach 1:
+class Solution:
+	def countSubTrees(self, n: int, edges: List[List[int]], label: str) -> List[int]:
+		answer ,seen = {}, {}
+		
+		#post-order traversal-core-logic
+		def dfs(node):
+			seen[node] = True
+			count = collections.Counter()
+			for nei in graph[node]:
+				if nei not in seen:
+					count += dfs(nei)
+			lb = label[node]
+			count[lb] += 1
+			answer[node] = count[lb]
+			return count    
+			
+		#graph formation - adjacency list of the undirected graph.
+		graph = collections.defaultdict(list)
+		for u,v in edges:
+			graph[u].append(v)
+			graph[v].append(u)
+		
+		#Return the result
+		dfs(0)
+		res = [answer.get(i,1) for i in range(n)]
+		return res
+    
+# Approach 2:
+class Solution:
+    def dfs(self,node,grid,visited,fst,labels):
+        visited[node]=1
+        lst=[0]*26
+        lst[ord(labels[node])-97]=1
+        for i in grid[node]:
+            if visited[i]==1:
+                continue
+            x=self.dfs(i,grid,visited,fst,labels)
+            for j in range(26):
+                lst[j]+=x[j]
+        fst[node]=lst[ord(labels[node])-97]
+        return lst
+
+    def countSubTrees(self, n: int, edges: List[List[int]], labels: str) -> List[int]:
+        grid=[[] for _ in range(n)]
+        for i,j in edges:
+            grid[i].append(j)
+            grid[j].append(i)
+
+        visited=[0]*n
+        fst=[0]*n
+        self.dfs(0,grid,visited,fst,labels)
+        return fst
+        
+# Approach 3:
+import collections
+
+class Solution:
+    def countSubTrees(self, n: int, edges: list[list[int]], labels: str) -> list[int]:
+        graph = [[] for _ in range(n)]
+        for a, b in edges:
+            graph[a].append(b)
+            graph[b].append(a)
+
+        ans = [0] * n
+
+        def dfs(vertex: int, parent: int, cnt: collections.Counter) -> None:
+            before = cnt[labels[vertex]]
+
+            for adjacent in graph[vertex]:
+                if adjacent != parent:
+                    dfs(adjacent, vertex, cnt)
+
+            cnt[labels[vertex]] += 1
+            ans[vertex] = cnt[labels[vertex]] - before
+
+        dfs(0, 0, collections.Counter())
+        return ans
