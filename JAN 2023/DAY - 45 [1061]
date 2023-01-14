@@ -1,0 +1,63 @@
+** 1061. Lexicographically Smallest Equivalent String **
+
+# Approach 1:
+class Solution:
+    def smallestEquivalentString(self, s1: str, s2: str, baseStr: str) -> str:
+        l = list(string.ascii_lowercase)   # Create a dict = {'a':'a','b':'b','c':'c',.....,'z':'z'}
+        d = dict(zip(l,l))
+        
+        def find(char):
+            if char != d[char]:
+                d[char] = find(d[char])
+            return d[char]
+        
+        def update(char, value):
+            if char != d[char]:
+                update(d[char], value)
+            d[char] = value
+            
+        for a,b in zip(s1, s2):
+            p,q = find(a), find(b)
+            
+            if p > q:
+                update(p, q)
+            else:
+                update(q, p)
+
+        return "".join([find(d[i]) for i in baseStr])
+        
+# Approach 2:
+class Solution:
+    def smallestEquivalentString(self, s1: str, s2: str, baseStr: str) -> str:
+        D = {i: i for i in ascii_lowercase}
+        def parent(x):
+            if D[x] == x: return x
+            x = parent(D[x])
+            return x
+        def union(x, y):
+            u, v = parent(x), parent(y)
+            D[u] = D[v] = min(u, v)
+        for a, b in zip(s1, s2):
+            union(a, b)
+        return ''.join([parent(i) for i in baseStr])
+        
+# Approach 3:
+class Solution:
+    def smallestEquivalentString(self, s1: str, s2: str, baseStr: str) -> str:
+        def find(c):
+            i = ord(c) - ord('a')
+            while root[i] != i:
+                i = root[i]
+                
+            return i
+        
+        root = list(range(26))
+        for c1, c2 in zip(s1, s2):
+            r1 = find(c1)
+            r2 = find(c2)
+            if r1 > r2:
+                r1, r2 = r2, r1
+
+            root[r2] = r1
+        
+        return "".join(chr(ord('a') + find(c)) for c in baseStr)
