@@ -1,0 +1,53 @@
+** 2421. Number of Good Paths **
+
+# Approach 1:
+class Solution:
+    def numberOfGoodPaths(self, vals: List[int], edges: List[List[int]]) -> int:
+        def get_root(i):
+            if i == par[i]: return i
+            par[i] = get_root(par[i])
+            return par[i]
+
+        def connect(i, j):
+            i,j = get_root(i), get_root(j)
+           
+            if i != j:
+                if sz[i] < sz[j]: i, j = j, i
+                par[j] = i
+                sz[i] += sz[j]
+                
+                if cur[i] == cur[j]:
+                    r = cnt[i] * cnt[j]
+                    cnt[i] += cnt[j]
+                    return r
+                
+                elif cur[i] < cur[j]:
+                    cur[i],cnt[i] = cur[j],cnt[j]
+            return 0
+                    
+        n = ans =len(vals)
+        sz, cur,cnt, par  = [1]*n, vals,[1] *n, list(range(n))
+        
+        for a, b in sorted(edges, key=lambda p: max(vals[p[0]], vals[p[1]])):
+            ans += connect(a, b)
+            
+        return ans
+        
+# Approach 2:
+class Solution:
+    def numberOfGoodPaths(self, vals: List[int], edges: List[List[int]]) -> int:
+        n = len(vals)
+        p = list(range(n))
+        count = [Counter({vals[i]:1}) for i in range(n)]
+        edges = sorted((max(vals[i],vals[j]),i,j) for i,j in edges)
+        res = n
+        def find(i):
+            if p[i] != i:
+                p[i] = find(p[i])
+            return p[i]
+        for val, i, j in edges:
+            pi, pj = find(i), find(j)
+            res += count[pi][val]*count[pj][val]
+            p[pi] = pj
+            count[pj][val] += count[pi][val]
+        return res
