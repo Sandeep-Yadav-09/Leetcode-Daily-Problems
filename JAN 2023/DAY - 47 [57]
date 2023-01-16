@@ -1,0 +1,73 @@
+** 57. Insert Interval **
+
+# Approach 1:
+class Solution:
+    def insert(self, intervals: List[List[int]], newInterval: List[int]) -> List[List[int]]:
+        res = []
+
+        for i in range(len(intervals)):
+            if newInterval[1] < intervals[i][0]:
+                res.append(newInterval)
+                return res + intervals[i:]
+            elif newInterval[0] > intervals[i][1]:
+                res.append(intervals[i])
+            else:
+                newInterval = [min(newInterval[0], intervals[i][0]), max(newInterval[1], intervals[i][1])]
+
+        res.append(newInterval)
+        return res
+        
+# Approach 2:
+class Solution:
+    def insert(self, intervals: List[List[int]], newInterval: List[int]) -> List[List[int]]:
+        i = 0
+        while( i<len(intervals) and intervals[i][0] < newInterval[0]):
+            i+= 1
+        
+        intervals.insert(i,newInterval)
+        
+        ans = []
+        for interval in intervals:
+            if len(ans) == 0 or ans[-1][1] < interval[0]:
+                ans.append(interval)
+            else:
+                ans[-1][1] = max(ans[-1][1], interval[1])
+        return ans
+        
+# Approach 3:
+class Solution:
+    def insert(self, intervals: List[List[int]], newInterval: List[int]) -> List[List[int]]:
+	
+        # edge case #1: no intervals in original list
+        if len(intervals) == 0:
+            return [newInterval]
+			
+        # edge case #2: new interval goes in the end of the list with no overlap
+        if intervals[-1][1] < newInterval[0]:
+            return intervals + [newInterval]
+			
+        # edge case #3: new interval goes in the beginning of the list with no overlap
+        if newInterval[1] < intervals[0][0]:
+            return [newInterval] + intervals
+			
+        res = []
+        i = 0
+        for curr_interval in intervals:
+            # new interval doesn't overlap
+            if curr_interval[1] < newInterval[0]:
+                res.append(curr_interval)
+            else:
+                first = min(curr_interval[0], newInterval[0])
+                last = newInterval[1]
+                i = intervals.index(curr_interval)
+				
+                # while new interval overlaps:
+                while i < len(intervals) and last >= intervals[i][0]:
+                    last = max(intervals[i][1], newInterval[1])
+                    i+=1
+                res.append([first, last])
+                break
+				
+        # add the rest
+        res += intervals[i:]
+        return res
