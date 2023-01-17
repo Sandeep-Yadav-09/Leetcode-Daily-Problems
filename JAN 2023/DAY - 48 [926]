@@ -1,0 +1,79 @@
+** 926. Flip String to Monotone Increasing **
+
+# Approach 1:
+class Solution:
+    def minFlipsMonoIncr(self, s: str) -> int:
+
+        ones, ans = 0, 0                    # Example: s = "010110"
+                                            #
+        for num in s:                       #  num    ones   ans  
+                                            #  ––––   ––––   ––––  
+            if num =='1': ones += 1         #    0      0     0
+                                            #    1      1     0
+            elif ones:                      #    0      0     1
+                ones -= 1                   #    1      1     1
+                ans += 1                    #    1      2     1
+                                            #    0      1     2
+        return ans
+        
+# Approach 2:
+class Solution:
+    def minFlipsMonoIncr(self, S):
+        #     Explanation: Our array "S" must be generally sorted as [0]*a + [1]*b
+        #         - Examples: 000, 001, 011, 111
+        #         - We can sweep through each configuration computing their cost
+        # To get started, we assume that we have an array of 1's (111), and every zero must be changed
+        # Compute this cost:
+        cost = 0
+        for x in S:
+            if x=='0':
+                cost += 1
+        # This is our baseline guess for the best answer
+        best = cost
+        #     Now we will start allowing zeros up to x=S[i] (last allowed zero)
+        #         Check how many zeros can stay for free, and..
+        #         How many 1's must be force to change as we advance
+        #
+        for x in S: # last 0 allowed
+            if x=='0':
+                cost -= 1 # this "zero" no longer is a problem (subtract from original cost)
+            else:
+                cost += 1 # this "one" must be forced to change (higher cost)
+            best = min(best,cost)
+        return best
+        
+# Approach 3:
+class Solution:
+    def minFlipsMonoIncr(self, s: str) -> int:
+        
+        # occurrence of 1 in strings s
+        occ_of_1 = 0
+        
+        # counter of flips of 1->0 and 0->1
+        flip = 0
+        
+        
+        # scan each digit on substring s[:i], i = 1 ~ len(s)
+        for char in s:
+            
+            if char == '1':
+                
+				# update occurrence of '1'
+                occ_of_1 += 1
+                
+				# current digit is '1'
+                # no need to flip when 1 is on the tail of current substring
+            
+            else:
+                
+				# current digit is '0'
+                # need to flip when 0 is on the tail of current substring
+                
+                # option_1: flip current 0 to 1, keep leading digits, then substring is monotone increasing
+                
+                # option_2: flip leading 1s to 0s, keep current 0, then substring is monotone increasing
+                
+                # select optimal solution
+                flip = min(flip+1, occ_of_1)
+                
+        return flip
