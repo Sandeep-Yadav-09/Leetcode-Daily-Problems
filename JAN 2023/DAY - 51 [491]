@@ -1,0 +1,58 @@
+** 491. Non-decreasing Subsequence **
+
+# Approach 1:
+class Solution:
+    def findSubsequences(self, nums: List[int]) -> List[List[int]]:
+		## APPROACH : BACKTRACKING ##
+        
+		## TIME COMPLEXITY : O(N^2) ##
+		## SPACE COMPLEXITY : O(N^2) ##
+        
+        def backtrack(curr, nums):
+            if( len(curr) >= 2 and curr[-1] < curr[-2] ): return
+            if( len(curr) >= 2 and curr[:] not in result):
+                result.add(curr[:])
+            for i in range(len(nums)):
+                backtrack( curr + (nums[i],), nums[i+1:] )  # using tuples for curr instead of list
+        result = set()
+        backtrack( (), nums)
+        return result
+
+# Approach 2:
+class Solution:
+    def findSubsequences(self, nums: List[int]) -> List[List[int]]:
+        
+        res = set()
+        perm = []
+        
+        def dfs(i, prev):
+            if i==len(nums):
+                if len(perm)>=2:
+                    res.add(tuple(perm))
+                return
+                
+            dfs(i+1, prev)
+            
+            if nums[i]>=prev:
+                perm.append(nums[i])
+                dfs(i+1, nums[i])
+                perm.pop()
+        
+        dfs(0, -inf)
+        return list(res)
+
+# Appraoch 3:
+class Solution(object):
+    def findSubsequences(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: List[List[int]]
+        """
+        if not nums: return nums
+        curr = [[nums[0]]]
+        for x in nums[1:]:
+            curr += [y+[x] for y in curr if x>=y[-1]]
+            curr += [[x]]
+        curr = [tuple(x) for x in curr if len(x)>=2]
+        return list(set(curr))
+	
