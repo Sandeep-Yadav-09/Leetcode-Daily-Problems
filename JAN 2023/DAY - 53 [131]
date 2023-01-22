@@ -1,0 +1,57 @@
+** 131. Palindrome Partitioning **
+
+# Approach 1:
+class Solution:
+    def partition(self, s: str) -> List[List[str]]:
+        lst = []
+        def palindrome(a):
+            return a == a[::-1]
+        def dfs(i,curr):
+            if i == len(s):
+                lst.append(curr)
+                return 
+            for j in range(i,len(s)):
+                sol = s[i:j+1]
+                if palindrome(sol):
+                    dfs(j+1, curr + [s[i:j+1]])
+            return 
+        dfs(0,[])
+        return lst
+            
+# Approach 2:
+class Solution(object):
+    @cache  # the memory trick can save some time
+    def partition(self, s):
+        if not s: return [[]]
+        ans = []
+        for i in range(1, len(s) + 1):
+            if s[:i] == s[:i][::-1]:  # prefix is a palindrome
+                for suf in self.partition(s[i:]):  # process suffix recursively
+                    ans.append([s[:i]] + suf)
+        return ans
+        
+# Approach 3:
+class Solution:
+    def partition(self, s: str) -> List[List[str]]:
+        palindro = []
+        path = []
+        self.helper(0, s, path, palindro)
+        return palindro
+
+    def helper(self, index, s, path, palindro):
+        if index == len(s):
+            palindro.append(path[:])
+            return
+        for i in range(index, len(s)):
+            if self.is_palindro(s, index, i):
+                path.append(s[index:i+1])
+                self.helper(i+1, s, path, palindro)
+                path.pop()
+
+    def is_palindro(self, s, start, end):
+        while start <= end:
+            if s[start] != s[end]:
+                return False
+            start += 1
+            end -= 1
+        return True
