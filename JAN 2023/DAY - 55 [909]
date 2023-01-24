@@ -1,0 +1,110 @@
+** 909. Snakes and Ladder **
+
+# Approach 1:
+class Solution:
+    def snakesAndLadders(self, board: List[List[int]]) -> int:
+        
+        board.reverse()                                     #  <–– convert the board to 1D list
+        for i in range(1,len(board),2): board[i].reverse()
+        arr = [None]+list(chain(*board))                    #  <–– add an initial element (None) 
+                                                            #      to make indexing simpler
+                                                            
+        n, queue, seen, ct = len(arr)-1, deque([1]), {1}, 0               
+
+        while queue:                                        #  <–– BFS search for arr[n]
+            lenQ = len(queue)
+
+            for _ in range(lenQ):                           #  <–– one level of BFS
+
+                cur = queue.popleft()
+                if cur == n: return ct
+
+                for i in range(cur+1, min(cur+7,n+1)):      #  <–– oiterate through the possible next moves
+                    nxt = arr[i] if arr[i]+1 else i         #  <–– determine whether snake or ladder
+
+                    if nxt in seen: continue                #  <–– avoid revisiting positions        
+                    seen.add(nxt)
+                    queue.append(nxt)                       #  <–– build queue for next level
+                    
+            ct += 1                    
+        
+        return -1
+        
+# Approach 2:
+class Solution:
+    def snakesAndLadders(self, board: List[List[int]]) -> int:
+        # BFS
+        self.nrow = len(board)
+        # start == 1, and goal == self.nrow * self.nrow
+        goal = self.nrow * self.nrow
+        
+        queue = [(1, 0)]
+        # using a set to remember the visited cell
+        visited = set()
+        
+        while queue:
+            cur, step = queue.pop(0)
+            if cur == goal:
+                return step
+            
+            for move in range(1, 7):
+                ncell = cur + move
+                if ncell > goal:
+                    break
+                r, c = self.n2rc(ncell)
+                if (r, c) not in visited:
+                    visited.add((r, c))
+                    if board[r][c] != -1:
+                        ncell = board[r][c]
+                    queue.append((ncell, step + 1))
+        
+        return -1
+                        
+                        
+    def n2rc(self, n):        
+        row = (n - 1) // self.nrow
+        row = self.nrow - row - 1
+        
+        col = (n - 1) % self.nrow
+        if (self.nrow - row) % 2 == 0:
+            col = self.nrow - col - 1
+        return row, col
+        
+# Approach 3:
+
+class Solution:
+    def snakesAndLadders(self, board: List[List[int]]) -> int:
+        # makes the everything easier - store all snakes/ladders in a dict
+        # screw you and your lowsy input schema!
+        portals = {}
+        
+        current_position = 0
+        direction = 1
+        for row in board[::-1]:
+            for val in row[::direction]:
+                current_position += 1
+                if val > -1:
+                    portals[current_position] = val
+            direction = -direction
+            
+        # the last square is a snek!!!
+        if current_position in portals:
+            return -1
+        
+        queue = deque()
+        # posistion, turn number
+        queue.append((1, 0))
+        visited = set()
+        while queue:
+            pos, turn = queue.popleft()
+            for roll in range(1,7):
+                new_pos = pos + roll
+                
+                if new_pos not in visited:
+                    visited.add(new_pos)
+                    new_pos = portals.get(new_pos, new_pos)
+                    queue.append((new_pos, turn + 1))
+                
+                if new_pos == current_position:
+                    return turn + 1                    
+        return -1
