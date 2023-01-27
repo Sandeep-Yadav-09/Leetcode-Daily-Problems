@@ -1,0 +1,118 @@
+** 472. Concatenated Words **
+
+# Approach 1:
+class Solution(object):
+    def findAllConcatenatedWordsInADict(self, words):
+        """
+        :type words: List[str]
+        :rtype: List[str]
+        """
+        d = set(words)
+        
+        def dfs(word):
+            for i in range(1, len(word)):
+                prefix = word[:i]
+                suffix = word[i:]
+                
+                if prefix in d and suffix in d:
+                    return True
+					
+                if prefix in d and dfs(suffix):
+                    return True
+                
+            
+            return False
+        
+        res = []
+        for word in words:
+            if dfs(word):
+                res.append(word)
+        
+        return res
+		
+# Approach 2:
+class TrieNode:
+    def __init__(self):
+        self.children = [None] * 26
+        self.is_end = False
+
+class Solution:
+    def __init__(self):
+        self.root = TrieNode()
+        
+    def insert(self, root, key):
+        curr = root
+        for i in range(len(key)):
+            idx = ord(key[i]) - ord('a')
+            if not curr.children[idx]:
+                curr.children[idx] = TrieNode()
+            curr = curr.children[idx]
+        curr.is_end = True
+
+    def dfs(self, root, key, index, count):
+        if index >= len(key):
+            return count > 1
+        curr = root
+        for i in range(index, len(key)):
+            p = ord(key[i]) - ord('a')
+            if not curr.children[p]:
+                return False
+            curr = curr.children[p]
+            if curr.is_end:
+                if self.dfs(root, key, i+1, count+1):
+                    return True
+        return False
+
+    def findAllConcatenatedWordsInADict(self, words):
+        for i in range(len(words)):
+            self.insert(self.root, words[i])
+        ans = []
+        for i in range(len(words)):
+            if self.dfs(self.root, words[i], 0, 0):
+                ans.append(words[i])
+        return ans
+        
+# Approach 3:
+import collections
+
+class TrieNode:
+    def __init__(self):
+        self.children = collections.defaultdict(TrieNode)
+        self.isEnd = False
+
+class Trie:
+    def __init__(self):
+        self.root = TrieNode()
+    
+    def insert(self, word):
+        marker = self.root
+        for ch in word:
+            marker = marker.children[ch]
+        marker.isEnd = True
+
+
+class Solution:
+    def findAllConcatenatedWordsInADict(self, words):
+        
+        def dfs(word, start, root, count):
+            n = len(word)
+            marker = root
+            for i in range(start, n):
+                marker = marker.children[word[i]]
+                if marker.isEnd:           # smaller word encountered
+                    if i == n-1:               # leaf node
+                        return count>=1
+                    elif dfs(word, i+1, root, count+1):     # increment the count and start a new DFS
+                        return True
+            return False
+        
+        res = []
+        trie = Trie()
+        for word in words:
+            trie.insert(word)
+
+        for word in words:
+            if dfs(word, 0, trie.root, 0):
+                res += word,
+        
+        return res
