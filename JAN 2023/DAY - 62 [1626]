@@ -1,0 +1,51 @@
+** 1626. Best Team With No Conflicts **
+
+# Approach 1:
+class Solution:
+    def bestTeamScore(self, scores: List[int], ages: List[int]) -> int:
+                                                #   Example: scores = [4,4,6,5]
+                                                #              ages = [2,1,5,1]
+
+        dp = [0]*(1+max(ages))                  #         dp = [0, 0, 0, 0, 0]       
+                                                #  score_age = [(4,1), (4,2), (5,1), (6,5)]
+        score_age = sorted(zip(scores, ages))
+                                                #   score   age     dp
+        for score, age in score_age:            #   –––––  –––––    ––––––––––––––––––
+                                                #     4      1      [0, 4, 0, 0, 0, 0]
+            dp[age] = score + max(dp[:age+1])   #     4      2      [0, 4, 8, 0, 0, 0]
+                                                #     5      1      [0, 9, 8, 0, 0, 0]
+        return max(dp)                          #     6      5      [0, 9, 8, 0, 0,15] 
+                                                #                                   |
+                                                #         
+
+# Approach 2:
+class Solution:
+    def bestTeamScore(self, scores: List[int], ages: List[int]) -> int:
+            new_list = sorted(zip(ages, scores)) 
+            visited = [new_list[0][1]] 
+            dp = [new_list[0][1]] 
+            ans = new_list[0][1] 
+
+            for i in range(1,len(new_list)):
+                s = new_list[i][1]
+                index =bisect_right(visited, s) 
+                curr = max(dp[:index]) + s if index else s 
+                ans = max(ans, curr)
+                visited.insert(index, s) 
+                dp.insert(index,curr)
+            return ans
+            
+# Approach 3:
+class Solution:
+    def bestTeamScore(self, scores: List[int], ages: List[int]) -> int:
+        pairs = sorted(zip(ages, scores))
+        dp = [pair[1] for pair in pairs]
+        answer = dp[0]
+        for i in range(1,len(pairs)):
+            score_i = pairs[i][1]
+            for j in range(i):
+                score_j = pairs[j][1]
+                if score_j <= score_i:
+                    dp[i] = max(dp[i],score_i+dp[j])
+                    answer = max(answer,dp[i])
+        return answer
