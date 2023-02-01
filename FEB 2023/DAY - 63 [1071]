@@ -1,0 +1,28 @@
+** 1071. Greatest Common Divisor of Strings **
+
+# Approach 1:
+class Solution:
+    def gcdOfStrings(self, str1: str, str2: str) -> str:
+        # Check if concatenated strings are equal or not, if not return ""
+        if str1 + str2 != str2 + str1:
+            return ""
+        # If strings are equal than return the substring from 0 to gcd of size(str1), size(str2)
+        from math import gcd
+        return str1[:gcd(len(str1), len(str2))]
+        
+# Approach 2:
+class Solution:
+    def gcdOfStrings(self, str1: str, str2: str) -> str:
+        return str1[:gcd(len(str1),len(str2))] if str1+str2==str2+str1 else ""
+        
+# Approach 3:
+class Solution:
+    def gcdOfStrings(self, str1: str, str2: str) -> str:
+        s = ""
+        ans = ""
+        for i in range(len(str1)):
+            s += str1[i]
+            if len(str1)%(i+1) == 0 and len(str2)%(i+1) == 0:
+                if s*(len(str1)//(i+1)) == str1 and s*(len(str2)//(i+1)) == str2:
+                    ans = s
+        return ans
