@@ -1,0 +1,58 @@
+** 904. Fruit Into Baskets **
+
+# Approach 1:
+class Solution:
+    def totalFruit(self, fruits: List[int]) -> int:
+        n = len(fruits)
+        map = {}
+
+        left = 0
+        ans = 0
+
+        for right in range(n):
+            if fruits[right] not in map:
+                map[fruits[right]] = 0
+            map[fruits[right]] += 1
+
+            if len(map) >= 3:
+                map[fruits[left]] -= 1
+                if map[fruits[left]] == 0:
+                    del map[fruits[left]]
+                left += 1
+
+            ans = max(ans, right - left + 1)
+        return ans
+
+# Approach 2:
+class Solution:
+    def totalFruit(self, tree: List[int]) -> int:
+        count, i = {}, 0
+
+        for j, v in enumerate(tree):
+            count[v] = count.get(v, 0) + 1
+
+            if len(count) > 2:
+                count[tree[i]] -= 1
+
+                if count[tree[i]] == 0: 
+                    del count[tree[i]]
+
+                i += 1
+
+        return j - i + 1
+
+# Approach 3:
+from collections import defaultdict
+
+class Solution:
+    def totalFruit(self, fruits: List[int]) -> int:
+        count = defaultdict(int) # defaultdict to store the frequency of the elements in the subarray
+        i, j = 0, 0 # variables i and j are used to keep track of the subarray boundaries
+        for j in range(len(fruits)):
+            count[fruits[j]] += 1 # increase the count of the current fruit
+            if len(count) > 2: 
+                count[fruits[i]] -= 1 # reduce the count of the first fruit
+                if count[fruits[i]] == 0:
+                    del count[fruits[i]] # remove the first fruit from the defaultdict if its count becomes 0
+                i += 1 # move the start of the subarray to the right
+        return j - i + 1 # return the length of the longest subarray with at most two unique elements
