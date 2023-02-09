@@ -1,0 +1,62 @@
+** 2306. Naming a Company **
+
+# Appraoch 1:
+class Solution:
+    def distinctNames(self, ideas: List[str]) -> int:
+        dic = defaultdict(set)
+        ans = 0
+        for i in ideas:
+            dic[i[0]].add(i[1:])
+        for i in dic.keys():
+            for j in dic.keys():
+                if i>=j:
+                    continue
+                same = len(dic[i] & dic[j])
+                ans+= (2 * (len(dic[i])-same) * (len(dic[j])-same))
+        return ans
+        
+# Approach 2:
+class Solution:
+    def distinctNames(self, ideas: List[str]) -> int:
+        hashMap = collections.defaultdict(set)
+        for w in ideas:
+            hashMap[w[0]].add(w[1:])
+        
+        res = 0
+        for char1 in hashMap:
+            for char2 in hashMap:
+                if char1 == char2:
+                    continue
+                intersect = 0
+
+                for w in hashMap[char1]:
+                    if w in hashMap[char2]:
+                        intersect += 1
+                
+                distinct1 = len(hashMap[char1]) - intersect
+                distinct2 = len(hashMap[char2]) - intersect
+
+                res += distinct1*distinct2
+        return res
+        
+# Approach 3:
+class Solution:         
+    def distinctNames(self, ideas: List[str]) -> int:
+
+        dct, ans = defaultdict(set), 0
+
+        for idea in ideas:                  # <-- construct the dict w/ 
+            dct[idea[0]].add(idea[1:])      #     w/ initial:{suffixes} and sort
+                                            #     the items to get a list of 
+        d = sorted(dct.items())             #     tuples to help do the counting
+
+        for init1, suff1 in d:              # <-- evaluate the number for each pair 
+            for init2, suff2 in d:          #     of initials
+                if init2 >= init1: break
+
+                c = len(suff1&suff2)        # <-- determine the count of suffixes in 
+                ans += ((len(suff1)-c)*     #     common, and subtract that count
+                        (len(suff2)-c))     #     from the count of each suffix  
+                                            #     count before multiplying.
+
+        return ans * 2                      # <-- finally, return the sum times 2.
