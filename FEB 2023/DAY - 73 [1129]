@@ -1,0 +1,57 @@
+** 1129. Shortest Path with Alternating Colors **
+
+# Approach 1:
+class Solution:
+    def shortestAlternatingPaths(self, n: int, redEdges: List[List[int]], blueEdges: List[List[int]]) -> List[int]:
+        graph = defaultdict(list)
+        for a, b in redEdges: graph[a].append((b, "r"))
+        for u, v in blueEdges: graph[u].append((v, "b"))
+        ans = [-1]*n
+        queue = deque([(0, 0, None)])
+        visited = set()
+        while queue:
+            node, dist, prevEdge = queue.popleft()
+            visited.add((node, prevEdge))
+            if ans[node] == -1:
+                ans[node] = dist
+            else:
+                ans[node] = min(ans[node], dist)
+            for neighbour, edge in graph[node]:
+                if (neighbour, edge) not in visited and prevEdge != edge:
+                    queue.append((neighbour, dist+1, edge))
+        return ans
+        
+# Approach 2:
+class Solution:
+    def shortestAlternatingPaths(self, numOfNodes: int, redEdges: List[List[int]], blueEdges: List[List[int]]) -> List[int]:        
+        graph = [[[], []] for i in range(numOfNodes)]
+        for start, end in redEdges: 
+            graph[start][0].append(end)
+        for start, end in blueEdges: 
+            graph[start][1].append(end)
+        distances = [[0, 0]] + [[float("inf"), float("inf")] for i in range(numOfNodes - 1)]
+        queue = [[0, 0], [0, 1]]
+        for node, color in queue:
+            for neighbor in graph[node][color]:
+                if distances[neighbor][color] == float("inf"):
+                    distances[neighbor][color] = distances[node][1 - color] + 1
+                    queue.append([neighbor, 1 - color])
+        return [dist if dist < float("inf") else -1 for dist in map(min, distances)]
+        
+# Approach 3:
+class Solution:
+    def shortestAlternatingPaths(self, n: int, redEdges: List[List[int]], blueEdges: List[List[int]]) -> List[int]:        
+        def dfs(vertex: int, color: int, cnt: int) -> None:
+            edges = redEdges if color == 0 else blueEdges
+            for u, v in edges:
+                if vertex == u and steps[1 - color][v] > cnt + 1:
+                    steps[1 - color][v] = cnt + 1
+                    dfs(v, 1 - color, cnt + 1)
+
+        steps = [[inf] * n, [inf] * n]
+        steps[0][0] = steps[1][0] = 0
+
+        dfs(0, 0, 0)
+        dfs(0, 1, 0)
+        
+        return [min(a, b) if min(a, b) < inf else -1 for a, b in zip(steps[0], steps[1])]  
