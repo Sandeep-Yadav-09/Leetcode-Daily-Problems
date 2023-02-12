@@ -1,0 +1,79 @@
+** 2477. Minimum Fuel Cost to Report to the Capital **
+
+# Approach 1:
+class Solution:
+  def minimumFuelCost(self, roads: List[List[int]], seats: int) -> int:
+    ans = 0
+    graph = [[] for _ in range(len(roads) + 1)]
+
+    for u, v in roads:
+      graph[u].append(v)
+      graph[v].append(u)
+
+    def dfs(u: int, prev: int) -> int:
+      nonlocal ans
+      people = 1
+      for v in graph[u]:
+        if v == prev:
+          continue
+        people += dfs(v, u)
+      if u > 0:
+        # # of cars needed.
+        ans += int(math.ceil(people / seats))
+      return people
+
+    dfs(0, -1)
+    return ans
+
+# Approach 2:
+class Solution:
+    def minimumFuelCost(self, roads: List[List[int]], seats: int) -> int:
+        n = 0
+        # adjacency list/neighbors list
+        adj = defaultdict(set)
+        for a, b in roads:
+            adj[a].add(b)
+            adj[b].add(a)
+            n = max(n,a,b)
+        leaves = deque()
+        people = [1]*(n+1) # Every city has a representative, n+1 is the number of cities
+        for i in range(n+1):
+            # len(adj[i]) == 1 denotes there is only one connected node, it's parent
+            if i and len(adj[i]) == 1: leaves.append(i)
+        while leaves:
+            for i in range(len(leaves)):
+                leaf = leaves.popleft()
+                neighbor = adj[leaf].pop()
+                people[neighbor] += people[leaf]
+                adj[neighbor].remove(leaf)
+                # if the neighbour only has its parent as connected node,
+                # then it becomes a new leaf.
+                if neighbor and len(adj[neighbor]) == 1: leaves.append(neighbor)
+
+        # People at 0 are not considered as they won't travel anymore
+        return sum(ceil(people[i]/seats) for i in range(1, n+1))
+
+# Approach 3:
+class Solution:
+  def minimumFuelCost(self, roads: List[List[int]], seats: int) -> int:
+    ans = 0
+    graph = [[] for _ in range(len(roads) + 1)]
+
+    for u, v in roads:
+      graph[u].append(v)
+      graph[v].append(u)
+
+    def dfs(u: int, prev: int) -> int:
+      nonlocal ans
+      people = 1
+      for v in graph[u]:
+        if v == prev:
+          continue
+        people += dfs(v, u)
+      if u > 0:
+        # # of cars needed.
+        ans += int(math.ceil(people / seats))
+      return people
+
+    dfs(0, -1)
+    return ans
