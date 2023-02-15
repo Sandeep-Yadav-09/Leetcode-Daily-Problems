@@ -1,0 +1,59 @@
+** 989. Add to Array-Form of Integer **
+
+# Approach 1:
+class Solution:
+    def addToArrayForm(self, num: List[int], k: int) -> List[int]:
+        if not num:
+            return [int(d) for d in str(k)]
+        carry = 0
+        res = []
+        for i in range(len(num)-1, -1, -1):
+            total = num[i] + carry + (k % 10)
+            carry = total // 10
+            res.append(total % 10)
+            k //= 10
+        while k > 0:
+            total = carry + (k % 10)
+            carry = total // 10
+            res.append(total % 10)
+            k //= 10
+        if carry > 0:
+            res.append(carry)
+        return res[::-1]
+        
+# Approach 2:
+class Solution:
+    def addToArrayForm(self, num: List[int], k: int) -> List[int]:
+        for i in range(len(num) - 1, -1, -1):
+            k, num[i] = divmod(num[i] + k, 10)
+        while k:
+            k, a = divmod(k, 10)
+            num = [a] + num
+        return num
+
+# Approach 3:
+class Solution:
+    def addToArrayForm(self, num: List[int], k: int) -> List[int]:
+        ans = []
+        n = len(num)
+        carry = 0
+        i = n - 1
+        while k > 0 or i >= 0 or carry > 0:
+            sum = carry
+            if k > 0:
+                remainder = k % 10
+                sum += remainder
+                k //= 10
+            if i >= 0:
+                sum += num[i]
+                i -= 1
+            carry = sum // 10
+            ans.insert(0, sum % 10)
+        return ans
+        
+# Approach 4:
+class Solution:
+    def addToArrayForm(self, A: List[int], K: int) -> List[int]:
+        for i in range(len(A) - 1, -1, -1):
+            K, A[i] = divmod(A[i] + K, 10)
+        return [int(i) for i in str(K)] + A if K else A
