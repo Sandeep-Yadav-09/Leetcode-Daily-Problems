@@ -1,0 +1,75 @@
+** 783. Minimum Distance Between BST Nodes **
+
+# Approach 1:
+class Solution:
+    def minDiffInBST(self, root: Optional[TreeNode]) -> int:
+        stack=[]
+        node=root
+        prev=-sys.maxsize
+        res=sys.maxsize
+        
+        while stack or node:
+            while node:
+                stack.append(node)
+                node=node.left
+            node=stack.pop()
+            res=min(res,node.val-prev)
+            prev=node.val
+            node=node.right
+        return res
+        
+# Approach 2:
+class Solution:
+    def minDiffInBST(self, root: Optional[TreeNode]) -> int:
+        prev = float("-inf")
+
+        def dfs(node):
+            nonlocal prev
+            if not node:
+                return float("inf")
+            min_diff = dfs(node.left)
+            min_diff = min(min_diff, node.val - prev)
+            prev = node.val
+            min_diff = min(min_diff, dfs(node.right))
+            return min_diff
+
+        return dfs(root)
+        
+# Approach 3:
+class Solution:
+    def __init__(self):
+        self.Inorder = []
+    
+    def inorder(self, root):
+        if not root:
+            return
+        self.inorder(root.left)
+        self.Inorder.append(root.val)
+        self.inorder(root.right)
+    
+    def minDiffInBST(self, root):
+        if not root:
+            return 0
+        self.inorder(root)
+        res = float('inf')
+        for i in range(1, len(self.Inorder)):
+            res = min(res, self.Inorder[i] - self.Inorder[i-1])
+        return res
+        
+# Approach 4:
+class Solution:
+    def minDiffInBST(self, root: TreeNode) -> int:
+        self.ans = float('inf')
+        self.pred = None
+        self.inorder(root)
+        return self.ans
+
+    def inorder(self, root: TreeNode) -> None:
+        if root is None:
+            return
+        
+        self.inorder(root.left)
+        if self.pred is not None:
+            self.ans = min(self.ans, root.val - self.pred)
+        self.pred = root.val
+        self.inorder(root.right)
