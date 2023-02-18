@@ -1,0 +1,41 @@
+** 226. Invert Binary Tree **
+
+# Approach 1:
+class Solution:
+    def invertTree(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
+        if not root:
+            return None
+        
+        queue = collections.deque([root])
+        while queue:
+            current = queue.popleft()
+            current.left, current.right = current.right, current.left
+            
+            if current.left:
+                queue.append(current.left)
+            
+            if current.right:
+                queue.append(current.right)
+        
+        return root
+        
+# Approach 2:
+class Solution:
+    def invertTree(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
+        # Base case...
+        if root == None:
+            return root
+        # swapping process...
+        root.left, root.right = root.right, root.left
+        # Call the function recursively for the left subtree...
+        self.invertTree(root.left)
+        # Call the function recursively for the right subtree...
+        self.invertTree(root.right)
+        return root     # Return the root...
+        
+# Approach 3:
+class Solution: #3-line
+    def invertTree(self, root: Optional[TreeNode]) -> Optional[TreeNode]:        
+        if root:
+            root.left, root.right = self.invertTree(root.right), self.invertTree(root.left)
+        return root 
