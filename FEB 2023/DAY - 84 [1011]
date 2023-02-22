@@ -1,0 +1,86 @@
+** 1011. Capacity To Ship Packages Within D Days **
+
+# Approach 1:
+class Solution:
+    def shipWithinDays(self, weights: List[int], days: int) -> int:
+        maxWeight, totalWeight = -1, 0
+        for weight in weights:
+            maxWeight = max(maxWeight, weight)
+            totalWeight += weight
+        left, right = maxWeight, totalWeight
+        while left < right:
+            mid = (left + right) // 2
+            daysNeeded, currWeight = 1, 0
+            for weight in weights:
+                if currWeight + weight > mid:
+                    daysNeeded += 1
+                    currWeight = 0
+                currWeight += weight
+            if daysNeeded > days:
+                left = mid + 1
+            else:
+                right = mid
+        return left
+
+# Approach 2:
+class Solution:
+    def shipWithinDays(self, weights: List[int], days: int) -> int:
+        left = 0
+        right = 0
+        for i in weights:
+            left = max(left, i)
+            right += i
+        ans = right
+        while left <= right:
+            mid = (left + right) // 2
+            if self.check(weights, days, mid):
+                ans = mid
+                right = mid - 1
+            else:
+                left = mid + 1
+        return ans
+
+    def check(self, weights: List[int], days: int, capacity: int) -> bool:
+        required_days = 1
+        curr_weight = 0
+        for i in weights:
+            if curr_weight + i > capacity:
+                required_days += 1
+                curr_weight = 0
+            curr_weight += i
+        if required_days > days:
+            return False
+        return True
+
+# Approach 3:
+class Solution:
+    def shipWithinDays(self, weights, days):
+        min_capacity = max(weights)
+        max_capacity = sum(weights)
+
+        def search_best_capacity(min_capacity, max_capacity, days):
+            while min_capacity < max_capacity:
+                mid_capacity = (max_capacity + min_capacity) // 2
+                curr_days = calculate_days(weights, mid_capacity)
+
+                if curr_days > days:
+                    min_capacity = mid_capacity + 1
+                else:
+                    max_capacity = mid_capacity
+
+            return min_capacity
+
+        def calculate_days(weights, capacity):
+            load = 0
+            num_days = 1
+
+            for weight in weights:
+                if load + weight <= capacity:
+                    load += weight
+                else:
+                    num_days += 1
+                    load = weight
+
+            return num_days
+
+        return search_best_capacity(min_capacity, max_capacity, days)
