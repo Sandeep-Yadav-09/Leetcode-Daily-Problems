@@ -1,0 +1,79 @@
+** 427. Construct Quad Tree **
+
+# Approach 1:
+class Solution:
+    def construct(self, grid: List[List[int]]) -> 'Node':
+        def dfs(x = 0, y = 0, n = len(grid)):               # <- (x,y) is the upper-left corner of the quad
+                                                            #    and n is the length of the side of the quad
+
+            if all (grid[i+x][j+y] == grid[x][y]            # <- check whether all elements in the quad are the  
+                    for i in range(n) for j in range(n)):   #    same, thenthe same. If so, then the quad is a leaf ... 
+    
+                return Node(grid[x][y] == 1, True)
+
+            n//= 2                                              
+            
+            return Node(False, False,                       # <- ... if not, then divide the quad in four and recuse.
+                        dfs(x,y,n),     dfs(x,y+n,n), 
+                        dfs(x+n,y,n), dfs(x+n,y+n,n))
+
+        return dfs()                                        # <- initial case is the entire grid
+
+# Approach 2:
+class Node:
+    def __init__(self, val, isLeaf, topLeft=None, topRight=None, bottomLeft=None, bottomRight=None):
+        self.val = val
+        self.isLeaf = isLeaf
+        self.topLeft = topLeft
+        self.topRight = topRight
+        self.bottomLeft = bottomLeft
+        self.bottomRight = bottomRight
+
+class Solution:
+    def construct(self, grid: List[List[int]]) -> Node:
+        return self.helper(grid, 0, 0, len(grid))
+
+    def helper(self, grid, i, j, w):
+        if self.allSame(grid, i, j, w):
+            return Node(grid[i][j] == 1, True)
+
+        node = Node(True, False)
+        node.topLeft = self.helper(grid, i, j, w // 2)
+        node.topRight = self.helper(grid, i, j + w // 2, w // 2)
+        node.bottomLeft = self.helper(grid, i + w // 2, j, w // 2)
+        node.bottomRight = self.helper(grid, i + w // 2, j + w // 2, w // 2)
+        return node
+
+    def allSame(self, grid, i, j, w):
+        for x in range(i, i + w):
+            for y in range(j, j + w):
+                if grid[x][y] != grid[i][j]:
+                    return False
+        return True
+
+# Approach 3:
+class Solution:
+    def construct(self, grid: List[List[int]]) -> 'Node':
+        return self.constructHelper(grid, 0, 0, len(grid)-1, len(grid[0])-1)
+    
+    def constructHelper(self, grid, rowStart, colStart, rowEnd, colEnd):
+        if rowStart > rowEnd or colStart > colEnd:
+            return None
+        isLeaf = True
+        val = grid[rowStart][colStart]
+        for i in range(rowStart, rowEnd+1):
+            for j in range(colStart, colEnd+1):
+                if grid[i][j] != val:
+                    isLeaf = False
+                    break
+            if not isLeaf:
+                break
+        if isLeaf:
+            return Node(val == 1, True, None, None, None, None)
+        rowMid = (rowStart + rowEnd) // 2
+        colMid = (colStart + colEnd) // 2
+        topLeft = self.constructHelper(grid, rowStart, colStart, rowMid, colMid)
+        topRight = self.constructHelper(grid, rowStart, colMid+1, rowMid, colEnd)
+        bottomLeft = self.constructHelper(grid, rowMid+1, colStart, rowEnd, colMid)
+        bottomRight = self.constructHelper(grid, rowMid+1, colMid+1, rowEnd, colEnd)
+        return Node(False, False, topLeft, topRight, bottomLeft, bottomRight)
