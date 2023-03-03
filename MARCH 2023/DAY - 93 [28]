@@ -1,0 +1,43 @@
+** 28. Find the Index of the First Occurrence in a String **
+
+# Approach 1:
+class Solution:
+    def strStr(self, haystack: str, needle: str) -> int:
+        if len(needle) == 0:
+            return 0
+        elif needle not in haystack:
+            return -1
+        else:
+            return len(haystack.split(needle)[0])
+
+# Approach 2:
+class Solution:
+    def strStr(self, haystack: str, needle: str) -> int:
+        n, h = len(needle), len(haystack)
+        i, j, nxt = 1, 0, [-1]+[0]*n
+        while i < n:                # calculate next array
+            if j == -1 or needle[i] == needle[j]:   
+                i += 1
+                j += 1
+                nxt[i] = j
+            else:
+                j = nxt[j]
+        i = j = 0
+        while i < h and j < n:
+            if j == -1 or haystack[i] == needle[j]:
+                i += 1
+                j += 1
+            else:
+                j = nxt[j]
+        return i-j if j == n else -1
+
+# Approach 3:
+class Solution:
+    def strStr(self, haystack: str, needle: str) -> int:
+        n, h = len(needle), len(haystack)
+        hash_n = hash(needle)
+        
+        for i in range(h-n+1):
+            if hash(haystack[i:i+n]) == hash_n:
+                return i
+        return -1
