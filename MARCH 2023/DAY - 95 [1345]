@@ -1,0 +1,81 @@
+** 1345. Jump Game IV **
+
+# Approach 1:
+from collections import defaultdict, deque
+
+class Solution:
+    def minJumps(self, arr: List[int]) -> int:
+        n = len(arr)
+        if n == 1:
+            return 0
+        
+        # Create a dictionary to store the indices of each value in the array
+        indices = defaultdict(list)
+        for i, num in enumerate(arr):
+            indices[num].append(i)
+        
+        # Initialize variables for the BFS algorithm
+        visited = set()
+        q = deque([(0, 0)]) # (index, steps)
+        
+        while q:
+            index, steps = q.popleft()
+            
+            # Check if we have reached the end of the array
+            if index == n - 1:
+                return steps
+            
+            # Add neighbors to the queue
+            for neighbor in indices[arr[index]]:
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    q.append((neighbor, steps + 1))
+            
+            # Clear the list of indices for this value, since we have already visited them
+            indices[arr[index]] = []
+            
+            # Add adjacent indices to the queue
+            if index - 1 not in visited and index - 1 >= 0:
+                visited.add(index - 1)
+                q.append((index - 1, steps + 1))
+            if index + 1 not in visited and index + 1 < n:
+                visited.add(index + 1)
+                q.append((index + 1, steps + 1))
+
+# Approach 2:
+class Solution:
+  def minJumps(self, arr: List[int]) -> int:
+    n = len(arr)
+    # {num: indices}
+    graph = collections.defaultdict(list)
+    steps = 0
+    q = collections.deque([0])
+    seen = {0}
+
+    # Create graph where keys are elements and values are their indices in arr
+    for i, a in enumerate(arr):
+      graph[a].append(i)
+
+    # BFS
+    while q:
+      # Process all nodes at current level
+      for _ in range(len(q)):
+        i = q.popleft()
+        # If last index is reached, return number of steps
+        if i == n - 1:
+          return steps
+        seen.add(i)
+        u = arr[i]
+        # Add adjacent indices to graph
+        if i + 1 < n:
+          graph[u].append(i + 1)
+        if i - 1 >= 0:
+          graph[u].append(i - 1)
+        # Process all adjacent nodes
+        for v in graph[u]:
+          if v in seen:
+            continue
+          q.append(v)
+        # Clear indices in graph to avoid revisiting
+        graph[u].clear()
+      steps += 1
