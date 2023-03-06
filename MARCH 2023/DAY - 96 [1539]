@@ -1,0 +1,31 @@
+** 1539. Kth Missing Positive Number **
+
+# Approach 1:
+class Solution:
+    def findKthPositive(self, arr: List[int], k: int) -> int:
+        arr_set = set(arr)
+        for i in range(1, k + len(arr) + 1):
+            if i not in arr_set: k -= 1
+            if k == 0: return i
+
+# Approach 2:
+class Solution:
+    def findKthPositive(self, arr, k):
+        beg, end = 0, len(arr)
+        while beg < end:
+            mid = (beg + end) // 2
+            if arr[mid] - mid - 1 < k:
+                beg = mid + 1
+            else:
+                end = mid
+        return end + k
+
+# Approach 3:
+class Solution:    
+    def findKthPositive(self, arr: List[int], k: int) -> int:
+        lo, hi = 0, len(arr)
+        while lo < hi:
+            mid = lo + (hi - lo) // 2
+            if arr[mid] - mid > k: hi = mid
+            else: lo = mid + 1
+        return lo + k
