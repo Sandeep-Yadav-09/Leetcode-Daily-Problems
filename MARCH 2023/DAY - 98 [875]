@@ -1,0 +1,68 @@
+** 875. Koko Eating Bananas **
+
+# Approach 1:
+class Solution:
+    def minEatingSpeed(self, piles: List[int], h: int) -> int:
+        # Define the search space
+        left = 1
+        right = max(piles)
+
+        # Define a function to check if it's possible to eat all bananas in h hours
+        def can_eat_all_bananas(speed):
+            time = 0
+            for pile in piles:
+                time += (pile + speed - 1) // speed
+            return time <= h
+
+        # Binary search for the minimum speed
+        while left < right:
+            mid = (left + right) // 2
+            if can_eat_all_bananas(mid):
+                right = mid
+            else:
+                left = mid + 1
+
+        return left
+
+# Approach 2:
+class Solution:
+    def minEatingSpeed(self, piles, H):
+        l, r = 1, max(piles)
+        while l < r:
+            m = l + (r-l) // 2
+            time = sum([math.ceil(i/m) for i in piles])
+            if time > H:
+                l = m + 1
+            else:
+                r = m
+        return l
+
+# Approach 3:
+class Solution:
+	def minEatingSpeed(self, piles: List[int], H: int) -> int:
+	#If the length of the piles is equal to the H, return max(piles)
+		if H == len(piles):
+			return max(piles)
+	
+	#Binary search
+	#Koko could each at least 1 banana and at most max(piles) bananas each time
+		lo, hi = 1, max(piles)
+
+		while lo < hi:
+	#Get the mid number of bananas to eat
+			mid = (lo+hi) // 2
+	
+	#Calculate how many hours that koko need to finish eating all of the piles given the eating speed mid 
+			h = 0
+			for p in piles:
+				if p < mid:
+					h += 1
+				else:
+					h += math.ceil(p/mid)
+	#If the time that koko need is less than or equal to H, we need to search for the left part
+			if h <= H:
+				hi = mid
+	#If the time that koko need is bigger than H, we need to search for the right part
+			else:
+				lo = mid + 1
+		return lo
