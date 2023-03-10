@@ -1,0 +1,53 @@
+** 382. Linked List Random Node **
+
+# Approach 1:
+class Solution:
+    def __init__(self, head: Optional[ListNode]):
+        self.ll=[]
+        while head:
+            self.ll.append(head.val)
+            head=head.next
+    def getRandom(self) -> int:
+        return self.ll[randint(0, len(self.ll)-1)]
+
+# Approach 2:
+class Solution:
+    def __init__(self, head: Optional[ListNode]):
+        self.head = head
+        
+    def getRandom(self) -> int:
+        reservoir = self.head.val
+        
+        i = 2
+        next = self.head.next
+        while next:
+            if random.random() < 1/i:
+                reservoir = next.val
+                
+            i += 1
+            next = next.next
+            
+        return reservoir
+
+# Approach 3:
+import random
+class Solution:
+
+    def __init__(self, head: Optional[ListNode]):
+            self.nodes_array = self.buildArray(head)
+            self.n = len(self.nodes_array)
+        
+    def buildArray(self, head):
+            nodes_array = list()
+        
+            ptr = head
+            while ptr is not None:
+                    nodes_array.append(ptr)
+                    ptr = ptr.next
+           
+            return nodes_array
+            
+        
+    def getRandom(self) -> int:
+            i = random.randint(0, (self.n)-1)
+            return self.nodes_array[i].val
