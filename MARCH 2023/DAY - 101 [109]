@@ -1,0 +1,82 @@
+** 109. Convert Sorted List to Binary Search Tree **
+
+# Approach 1:
+class Solution:
+    def constructBST(self, leftHead: ListNode, rightHead: ListNode) -> TreeNode:
+        if leftHead == rightHead:
+            return None
+        slow, fast = leftHead, leftHead
+        while fast != rightHead and fast.next != rightHead:
+            slow = slow.next
+            fast = fast.next.next
+        root = TreeNode(slow.val)
+        root.left = self.constructBST(leftHead, slow)
+        root.right = self.constructBST(slow.next, rightHead)
+        return root
+    
+    def sortedListToBST(self, head: Optional[ListNode]) -> Optional[TreeNode]:
+        if not head:
+            return None
+        if not head.next:
+            root = TreeNode(head.val)
+            return root
+        return self.constructBST(head, None)
+        
+# Approach 2:
+class Solution:
+    def sortedListToBST(self, head):
+        A, n = [], head
+        while n:
+            A.append(n.val)
+            n = n.next
+        def make(i,j):
+            if i<=j:
+                m  =  (i+j)//2
+                n  = TreeNode(A[m])
+                n.left  = make(i  ,m-1)
+                n.right = make(m+1,j  )
+                return n
+        return make(0, len(A)-1)
+        
+# Approach 3:
+class Solution:
+    def sortedListToBST(self, head: ListNode) -> TreeNode:
+        if head is None:
+            return None
+        
+        if head.next is None:
+            return TreeNode(head.val)
+        
+        slow = head
+        fast = head.next
+        prev = None
+        while fast and fast.next:
+            prev = slow
+            slow = slow.next
+            fast = fast.next.next
+        
+        if prev:
+            prev.next = None
+        else:
+            head = None #means slow is still at my head
+        
+        node = TreeNode(slow.val)
+        node.left = self.sortedListToBST(head)
+        node.right = self.sortedListToBST(slow.next)
+        
+        return node
+# Approach 4:
+class Solution:
+    def make(self,A):
+        if A:
+            m       =  len(A)//2
+            n       =  TreeNode(A[m])
+            n.left  = self.make(A[   :m])
+            n.right = self.make(A[m+1:] )
+            return n
+    def sortedListToBST(self, head: ListNode) -> TreeNode:
+        A, n = [], head
+        while n:
+            A.append(n.val)
+            n = n.next
+        return self.make(A)
