@@ -1,0 +1,73 @@
+** 23. Merge k Sorted Lists **
+
+# Approach 1:
+class Solution:
+    def mergeKLists(self, lists: List[Optional[ListNode]]) -> Optional[ListNode]:
+        # validate input
+        if not lists:
+            return None
+        # shortcut, just return 1st linkedlist if only a single list
+        if len(lists) == 1:
+            return lists[0]
+
+        # Create an empty array and fill it with all the elements
+        #     from the LinkedLists
+        array = []
+        for ll in lists:
+            node = ll
+            while node:
+                array.append(node)
+                node = node.next
+        # Verify elements were actually added to the array (LL could have all been empty)
+        if not array:
+            return None                
+
+        # Sort the array
+        array.sort(key=lambda node: node.val)
+    
+        # Create a new linked list from the array
+        head = array[0]
+        for i in range(1, len(array)):
+            prev = array[i-1]
+            node = array[i]
+            prev.next = node
+        return head
+        
+# Approach 2:
+class Solution:
+    def mergeKLists(self, lists: List[Optional[ListNode]]) -> Optional[ListNode]:
+        heap, res = [], ListNode()
+        for i, list in enumerate(lists):
+            if list: 
+                heappush(heap, (list.val, i, list))
+
+        cur = res
+        while heap:
+            _, i, list = heappop(heap)
+            if list.next:
+                heappush(heap, (list.next.val, i, list.next))
+
+            cur.next, cur = list, list
+
+        return res.next
+        
+# Approach 3:
+class Solution:
+    def mergeKLists(self, lists: List[Optional[ListNode]]) -> Optional[ListNode]:
+        head = ListNode(None)
+        curr = head
+        h = []
+        for i in range(len(lists)):
+            if lists[i]:
+                heapq.heappush(h, (lists[i].val, i))
+                lists[i] = lists[i].next
+        
+        while h:
+            val, i = heapq.heappop(h)
+            curr.next = ListNode(val)
+            curr = curr.next
+            if lists[i]:
+                heapq.heappush(h, (lists[i].val, i))
+                lists[i] = lists[i].next
+        
+        return head.next
