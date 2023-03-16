@@ -1,0 +1,93 @@
+** 106. Construct Binary Tree from Inorder and Postorder Traversal **
+
+# Approach 1:
+class Solution:
+    def buildTree(self, inorder: List[int], postorder: List[int]) -> Optional[TreeNode]:
+        if not inorder:
+            return
+        
+        r=postorder.pop() 
+        root=TreeNode(r) 
+        i=inorder.index(r) 
+        
+        root.right=self.buildTree(inorder[i+1:],postorder) 
+        root.left=self.buildTree(inorder[:i],postorder) 
+        return root
+        
+# Approach 2:
+class Solution:
+    def buildTree(self, inorder: List[int], postorder: List[int]) -> TreeNode:
+        
+        ## dictionary
+        # key: number
+        # value: index in inorder array
+        val_index_dict = { num:idx for idx, num in enumerate(inorder) }
+        
+        def helper( left, right):
+            
+            if left > right:
+                # Base case:
+                # return empty node as leaf node's child
+                return None
+            
+            else:
+                
+                # Recall:
+                # definition of postorder traversal: Left, Right, Center
+                # rebuild with reversed direction ( from right to left )
+                root = TreeNode( postorder.pop() )
+                
+                mid = val_index_dict[ root.val ]
+                
+                root.right = helper( mid+1, right)
+                root.left = helper( left, mid-1 )
+                return root
+        # ----------------------------------------------------
+        
+        ## Top-down rebuild binary tree with definition
+        return helper( left = 0, right = len(inorder)-1 )
+
+# Appraoch 3: 
+class Solution:
+    def buildTree(self, inorder: List[int], postorder: List[int]) -> Optional[TreeNode]:
+        # If either of the input lists are empty, the tree is empty, so return None
+        if not inorder or not postorder:
+            return None
+
+        # Initialize indices to the last elements of the inorder and postorder traversals
+        ip = len(inorder) - 1
+        pp = len(postorder) - 1
+
+        # Create an empty stack to help us build the binary tree
+        st = []
+        # Initialize prev to None since we haven't processed any nodes yet
+        prev = None
+        # Create the root node using the last element in the postorder traversal
+        root = TreeNode(postorder[pp])
+        # Push the root onto the stack and move to the next element in the postorder traversal
+        st.append(root)
+        pp -= 1
+
+        # Process the rest of the nodes in the postorder traversal
+        while pp >= 0:
+            # While the stack is not empty and the top of the stack is the current inorder element
+            while st and st[-1].val == inorder[ip]:
+                # The top of the stack is the parent of the current node, so pop it off the stack and update prev
+                prev = st.pop()
+                ip -= 1
+            # Create a new node for the current postorder element
+            new_node = TreeNode(postorder[pp])
+            # If prev is not None, the parent of the current node is prev, so attach the node as the left child of prev
+            if prev:
+                prev.left = new_node
+            # If prev is None, the parent of the current node is the current top of the stack, so attach the node as the right child of the current top of the stack
+            elif st:
+                curr_top = st[-1]
+                curr_top.right = new_node
+            # Push the new node onto the stack, reset prev to None, and move to the next element in the postorder traversal
+            st.append(new_node)
+            prev = None
+            pp -= 1
+
+        # Return the root of the binary tree
+        return root
