@@ -1,0 +1,69 @@
+** 1319. Number of Operations to Make Network Connected **
+
+# Approach 1:
+class Solution:
+    def makeConnected(self, n: int, connections: List[List[int]]) -> int:
+        if len(connections) < n - 1:
+            return -1
+        
+        graph = [set() for i in range(n)]
+        for u, v in connections:
+            graph[u].add(v)
+            graph[v].add(u)
+        
+        visited = [0] * n
+
+        def dfs(node):
+            if visited[node]:
+                return 0
+            visited[node] = 1
+            for neighbor in graph[node]:
+                dfs(neighbor)
+            return 1
+
+        return sum(dfs(node) for node in range(n)) - 1
+
+# Approach 2:
+class Solution:
+    def makeConnected(self, n: int, connections: List[List[int]]) -> int:
+        if len(connections) < n - 1: return -1
+        
+        graph = [set() for i in range(n)]
+        for u, v in connections:
+            graph[u].add(v)
+            graph[v].add(u)
+        visited = [0] * n
+
+        def dfs(node):
+            if visited[node]: return 0
+            visited[node] = 1
+            for neighbor in graph[node]: dfs(neighbor)
+            return 1
+
+        return sum(dfs(node) for node in range(n)) - 1
+
+# Approach 3:
+class Solution:
+    def makeConnected(self, n: int, connections: List[List[int]]) -> int:
+        count = 0           # number of redundant connections
+        network = [i for i in range(n)]
+
+        def find(x):
+            if network[x] != x:
+                network[x] = find(network[x])
+            return network[x]
+        
+        def union(a, b):
+            # return True if 2 nodes are already connected.
+            root_a = find(a)
+            root_b = find(b)
+            network[root_a] = root_b
+            return True if root_a == root_b else False
+        
+        for link in connections:
+            if union(link[0], link[1]):
+                count += 1
+
+        # count the number of connected clusters
+        a = len(set([find(i) for i in range(n)]))
+        return -1 if a - 1 > count else a - 1
