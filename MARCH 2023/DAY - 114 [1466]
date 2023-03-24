@@ -1,0 +1,42 @@
+** 1466. Reorder Routes to Make All Paths Lead to the City Zero **
+
+# Approach 1:
+class Solution:
+    def minReorder(self, n: int, connections: List[List[int]]) -> int:
+        self.res = 0    
+        roads = set()
+        graph = collections.defaultdict(list)
+        for u, v in connections:
+            roads.add((u, v))
+            graph[v].append(u)
+            graph[u].append(v)
+
+        def dfs(u, parent):
+            
+            self.res += (parent, u) in roads
+           
+            for v in graph[u]:
+                if v == parent:
+                    continue
+                dfs(v, u)    
+        dfs(0, -1)
+        return self.res
+
+# Approach 2:
+class Solution:
+    def minReorder(self, n: int, connections: List[List[int]]) -> int:
+        dt = defaultdict(list)
+        for a,b in connections:
+            dt[a].append((b,True))
+            dt[b].append((a,False))
+        ans = 0
+        q = [0]
+        vis = set()
+        while(q):
+            node = q.pop()
+            vis.add(node)
+            for nd,st in dt[node]:
+                if nd not in vis:
+                    q.append(nd)
+                    if st: ans+=1
+        return ans
