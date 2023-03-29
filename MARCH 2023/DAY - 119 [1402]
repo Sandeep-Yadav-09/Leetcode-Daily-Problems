@@ -1,0 +1,40 @@
+** 1402. Reducing Dishes **
+
+# Approach 1:
+class Solution:
+    def maxSatisfaction(self, satisfaction: List[int]) -> int:
+        satisfaction.sort(reverse=True)
+        n = len(satisfaction)
+        presum, res = 0, 0
+        for i in range(n):
+            presum += satisfaction[i]
+            if presum < 0:
+                break
+            res += presum
+        return res
+
+# Approach 2:
+class Solution:
+    def maxSatisfaction(self, satisfaction: List[int]) -> int:
+        v=sorted(satisfaction,reverse=True)
+        sum=0
+        ans=0
+        for i in v:
+            if(sum+i>0):
+                ans+=sum+i
+                sum+=i
+        return ans
+
+# Approach 3:
+class Solution:
+    def maxSatisfaction(self, satisfaction: List[int]) -> int:
+        satisfaction.sort()
+        n = len(satisfaction)
+        ans, preSum, timeCoefficient = 0, 0, 0
+        for i in range(n-1, -1, -1):
+            if preSum + satisfaction[i] <= 0:
+                break
+            preSum += satisfaction[i]
+            timeCoefficient += preSum
+            ans = max(ans, timeCoefficient)
+        return ans
