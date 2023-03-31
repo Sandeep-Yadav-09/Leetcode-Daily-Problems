@@ -1,0 +1,110 @@
+** 1444. Number of Ways of Cutting a Pizza **
+
+# Approach 1:
+class Solution:
+    MOD = 10**9 + 7
+    
+    def ways(self, pizza: List[str], k: int) -> int:
+        m, n = len(pizza), len(pizza[0])
+        apple = [[0] * (n+1) for _ in range(m+1)]
+        for i in range(m-1, -1, -1):
+            for j in range(n-1, -1, -1):
+                apple[i][j] = apple[i+1][j] + apple[i][j+1] - apple[i+1][j+1] + (pizza[i][j] == 'A')
+        
+        dp = {}
+        def solve(i, j, p):
+            if (i, j, p) in dp:
+                return dp[(i, j, p)]
+            if p == 1:
+                return 1 if apple[i][j] > 0 else 0
+            ans = 0
+            for r in range(i+1, m):
+                if apple[i][j] - apple[r][j] > 0:
+                    ans = (ans + solve(r, j, p-1)) % self.MOD
+            for c in range(j+1, n):
+                if apple[i][j] - apple[i][c] > 0:
+                    ans = (ans + solve(i, c, p-1)) % self.MOD
+            dp[(i, j, p)] = ans
+            return ans
+        
+        return solve(0, 0, k)
+
+# Approach 2:
+class Solution:
+    def ways(self, pizza: List[str], k: int) -> int:
+        M = (10**9) + 7
+        rows = len(pizza)
+        cols = len(pizza[0])
+
+        # create suffixSum
+        suffixSum = [[0] * cols for i in range(rows)]
+        for i in range(rows - 1, -1, -1):
+            for j in range(cols - 1, -1, -1):
+                suffixSum[i][j] = (
+                    (1 if pizza[i][j] == "A" else 0)
+                    + (suffixSum[i + 1][j] if i + 1 < rows else 0)
+                    + (suffixSum[i][j + 1] if j + 1 < cols else 0)
+                    - (suffixSum[i + 1][j + 1] if i + 1 < rows and j + 1 < cols else 0)
+                )
+
+        @cache
+        def countWays(x, y, cuts):
+            if cuts == 0:
+                return 1
+
+            count = 0
+
+            # divide horizontally
+            for i in range(x, rows - 1):
+                if (
+                    suffixSum[i + 1][y] != 0
+                    and (suffixSum[x][y] - suffixSum[i + 1][y]) != 0
+                ):
+                    count += countWays(i + 1, y, cuts - 1)
+
+            # divide vertically
+            for j in range(y, cols - 1):
+                if (
+                    suffixSum[x][j + 1] != 0
+                    and (suffixSum[x][y] - suffixSum[x][j + 1]) != 0
+                ):
+                    count += countWays(x, j + 1, cuts - 1)
+
+            return count % M
+
+        return countWays(0, 0, k - 1)
+
+# Approach 3:
+from functools import cache
+
+class Solution:
+    def ways(self, pizza: List[str], k: int) -> int:
+
+        # From (x1, y1) To (x2, y2)
+        @cache
+        def check (x1,y1,x2,y2):
+            for r in range(x1, x2+1):
+                for c in range(y1, y2+1):
+                    if pizza[r][c] == 'A':
+                        return True 
+            return False 
+        
+        @cache
+        def dp (r, c, k):
+
+            if k == 1 :
+                if check (r, c, len(pizza)-1, len(pizza[0])-1):
+                    return 1
+            
+            cnt = 0 
+            for i in range(c+1, len(pizza[0])):
+                if check (r, c, len(pizza)-1, i-1):
+                    cnt += dp (r, i, k-1)
+            for j in range(r+1, len(pizza)):
+                if check (r, c, j-1, len(pizza[0])-1):
+                    cnt += dp (j, c, k-1)
+            return cnt 
+
+        return dp(0,0,k) % (10 ** 9 + 7)
+
+        
