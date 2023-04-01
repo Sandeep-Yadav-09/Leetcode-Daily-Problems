@@ -1,0 +1,30 @@
+** 704. Binary Search **
+
+# Approach 1:
+class Solution:
+    def search(self, nums: List[int], target: int) -> int:
+        low = 0
+        high = len(nums)-1
+    
+        while low<=high:
+            mid = low+high
+            item = nums[mid]
+            if item == target:
+                return mid
+            elif item > target:
+                high = mid - 1
+            else:
+                low = mid + 1
+        return -1
+
+# Approach 2:
+class Solution:
+    def search(self, nums: List[int], target: int) -> int:
+        hi = len(nums)-1
+        lo = 0
+        while lo<=hi:
+            mid = (lo+hi)//2
+            if nums[mid]==target: return mid
+            if target>nums[mid]: lo = mid+1
+            else: hi = mid-1
+        return -1
