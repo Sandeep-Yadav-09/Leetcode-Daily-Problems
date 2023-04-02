@@ -1,0 +1,40 @@
+** 2300. Successful Pairs of Spells and Potions **
+
+# Approach 1:
+class Solution:
+    def successfulPairs(self, spells: List[int], potions: List[int], success: int) -> List[int]:
+        sorted_potions = sorted(potions)
+        result = []
+        for a in spells:
+            count = len(sorted_potions) - bisect_left(sorted_potions, (success + a - 1) // a)
+            result.append(count)
+        return result
+
+# Approach 2:
+class Solution:
+    def binarySearch(self, spell: int, potions: List[int], success: int) -> int:
+        startIndex = 0
+        lastIndex = len(potions) - 1
+        ansIndex = -1
+        while startIndex <= lastIndex:
+            midIndex = (startIndex + (lastIndex - startIndex) // 2)
+            if spell * potions[midIndex] >= success:
+                ansIndex = midIndex
+                lastIndex = midIndex - 1
+            else:
+                startIndex = midIndex + 1
+        return ansIndex
+    
+    def successfulPairs(self, spells: List[int], potions: List[int], success: int) -> List[int]:
+        potions.sort()
+        m = len(potions)
+        ans = []
+        for spell in spells:
+            countPair = 0
+            index = self.binarySearch(spell, potions, success)
+            if index == -1:
+                countPair += 0
+            else:
+                countPair += (m - index)
+            ans.append(countPair)
+        return ans
