@@ -1,0 +1,42 @@
+** 2405. Optimal Partition of String **
+
+# Approach 1:
+class Solution:
+    def partitionString(self, s: str) -> int:
+        ans = 0
+        ss = ""
+
+        for i in s:
+            if i not in ss:
+                ss += i
+            else:
+                ans += 1
+                ss = i
+
+        return ans + 1
+
+# Approach 2:
+class Solution:
+    def partitionString(self, s: str) -> int:
+        ans,ls = 1,[]
+        for i in s:
+            if i in ls:
+                ls=[i]
+                ans+=1
+            else:
+                ls+=[i]
+        return ans
+
+# Approach 3:
+class Solution:
+    def partitionString(self, s: str) -> int:
+        checkUniqueAlphabet = set()
+        i = 0
+        minCount = 0
+        while i < len(s):
+            minCount += 1
+            while i < len(s) and s[i] not in checkUniqueAlphabet:
+                checkUniqueAlphabet.add(s[i])
+                i += 1
+            checkUniqueAlphabet.clear()
+        return minCount
