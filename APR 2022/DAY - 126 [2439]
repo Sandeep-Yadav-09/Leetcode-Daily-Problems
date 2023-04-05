@@ -1,0 +1,27 @@
+** 2439. Minimize Maximum of Array **
+
+# Approach 1:
+class Solution:
+    def minimizeArrayValue(self, nums):
+        total_sum = 0
+        result = 0
+        for index in range(len(nums)):
+            total_sum += nums[index]
+            result = max(result, (total_sum + index) // (index + 1))
+        return int(result)
+
+# Approach 2:
+class Solution:
+    def minimizeArrayValue(self, A: List[int]) -> int:
+        return max((a + i) // (i + 1) for i,a in enumerate(accumulate(A)))
+        
+# Approach 3:
+class Solution:
+    def minimizeArrayValue(self, nums: List[int]) -> int:
+        cum_sum = maximum = 0
+
+        for i, num in enumerate(nums, start=1):
+            cum_sum += num
+            maximum = max(ceil(cum_sum / i), maximum)
+
+        return maximum
