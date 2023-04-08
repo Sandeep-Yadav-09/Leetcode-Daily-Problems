@@ -1,0 +1,41 @@
+** 133. Clone Graph **
+
+# Approach 1:
+class Solution:
+    
+    def helper(self, node, visited):
+        if node is None:
+            return None
+        
+        newNode = Node(node.val)
+        visited[node.val] = newNode
+        
+        for adjNode in node.neighbors:
+            if adjNode.val not in visited:
+                newNode.neighbors.append(self.helper(adjNode, visited))
+            else:
+                newNode.neighbors.append(visited[adjNode.val])
+        
+        return newNode
+    
+    def cloneGraph(self, node: 'Node') -> 'Node':
+        return self.helper(node, {})
+
+# Approach 2:
+class Solution:
+    def cloneGraph(self, node: 'Node') -> 'Node':
+        if not node: return node
+        
+        q, clones = deque([node]), {node.val: Node(node.val, [])}
+        while q:
+            cur = q.popleft() 
+            cur_clone = clones[cur.val]            
+
+            for ngbr in cur.neighbors:
+                if ngbr.val not in clones:
+                    clones[ngbr.val] = Node(ngbr.val, [])
+                    q.append(ngbr)
+                    
+                cur_clone.neighbors.append(clones[ngbr.val])
+                
+        return clones[node.val]
