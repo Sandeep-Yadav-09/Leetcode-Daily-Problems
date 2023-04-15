@@ -1,0 +1,67 @@
+** 2218. Maximum Value of K Coins From Piles **
+
+# Approach 1:
+class Solution:
+    def maxValueOfCoins(self, piles: List[List[int]], k: int) -> int:
+        dp = [0]*(k+1)
+        for pile in piles:
+            sm = 0
+            ndp = dp[:]
+            for j in range(len(pile)):
+                sm += pile[j]
+                for i in range(0,k-j):
+                    dp[i+j+1] = max(dp[i+j+1],ndp[i]+sm)
+        return dp[-1]        
+        
+# Approach 2:
+class Solution:
+    def maxValueOfCoins(self, piles: List[List[int]], k: int) -> int:
+        # dp(i, remain): the max value we can get starting from that STATE
+        # Base case when i == len(piles) or remain == 0, and the value for the base case is zero.
+        # dp(i, remain) = max(skip, take)
+        # Our key task is to figure out the "take".
+        n = len(piles)
+        @cache   
+        def dp(i, remain):  
+            # Base case.
+            if i == n or remain == 0:
+                return 0
+            
+            # dp(i+1, remain): skip this pile     
+            ans = dp(i+1, remain)
+
+            # pick this pile
+            this_pile = 0
+            for j in range(min(remain, len(piles[i]))):
+                this_pile += piles[i][j]
+                ans = max(ans, this_pile + dp(i + 1, remain - j - 1))
+            
+            return ans
+        return dp(0, k)
+        
+# Approach 3:
+class Solution:
+    def maxValueOfCoins(self, piles: List[List[int]], k: int) -> int:
+        n, m = len(piles), 0
+        prefixSum = []
+        for i in range(n):
+            temp = [0]
+            for j in range(len(piles[i])):
+                temp.append(temp[-1] + piles[i][j])
+                m += 1
+            prefixSum.append(temp)
+        if m == k:
+            return sum(temp[-1] for temp in prefixSum)
+            
+        dp = [[0] * (k + 1) for _ in range(n)]
+        for j in range(1, k + 1):
+            if j < len(prefixSum[0]):
+                dp[0][j] = prefixSum[0][j]
+        
+        for i in range(1, n):
+            for j in range(1, k + 1):
+                for l in range(len(prefixSum[i])):
+                    if l > j:
+                        break
+                    dp[i][j] = max(dp[i][j], prefixSum[i][l] + dp[i - 1][j - l])
+        return dp[n - 1][k]
