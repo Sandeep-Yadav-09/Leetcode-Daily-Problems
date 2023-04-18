@@ -1,0 +1,37 @@
+** 1768. Merge Strings Alternately **
+
+# Approach 1:
+class Solution:
+    def mergeAlternately(self, word1: str, word2: str) -> str:
+        
+        res=''
+        
+        for i in range(min(len(word1),len(word2))):
+            res += word1[i] + word2[i]
+            
+        return res + word1[i+1:] + word2[i+1:]
+
+# Approach 2:
+class Solution:
+    def mergeAlternately(self, word1: str, word2: str) -> str:
+        res = ""
+
+        for i, (c1, c2) in enumerate(zip(word1, word2)):
+            res += c1
+            res += c2
+
+        if (i + 1) * 2 == (len(word1) + len(word2)):
+            return res
+
+        if i + 1 < len(word1):
+            res += word1[i + 1:]
+
+        else:
+            res += word2[i + 1:]
+
+        return res
+
+# Approach 3:
+class Solution:
+    def mergeAlternately(self, word1: str, word2: str) -> str:
+        return "".join(a+b for a, b in itertools.zip_longest(word1, word2, fillvalue=""))
