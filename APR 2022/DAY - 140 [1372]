@@ -1,0 +1,43 @@
+** 1372. Longest ZigZag Path in a Binary Tree **
+
+# Approach 1:
+class Solution:
+    def longestZigZag(self, root: Optional[TreeNode]) -> int:
+        ans=0
+        stack=[(root,0,None)]
+        while stack:
+            node,n,left=stack.pop()
+            if node:
+                ans=max(ans,n)
+                stack.append((node.left,1 if left else n+1,1))
+                stack.append((node.right,n+1 if left else 1,0))
+
+        return ans   
+
+# Approach 2:
+class Solution:
+    def longestZigZag(self, root: Optional[TreeNode]) -> int:
+        def dfs(node):
+            if not node:
+                return [-1, -1, -1]
+            left_subtree, right_subtree = dfs(node.left), dfs(node.right)
+            return [
+                left_subtree[1] + 1, 
+                right_subtree[0] + 1, 
+                max(left_subtree[1] + 1, right_subtree[0] + 1, left_subtree[2], right_subtree[2])
+            ]
+        return dfs(root)[-1]
+
+# Approach 3:
+class Solution:
+    def longestZigZag(self, root: Optional[TreeNode]) -> int:
+        def helper(root, right, total):
+            if not root:
+                return total
+            
+            l = helper(root.left, False, total+1 if right else 1)
+            r = helper(root.right, True, total+1 if not right else 1)
+
+            return max(l,r)
+        
+        return helper(root, None, 0) - 1
