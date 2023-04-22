@@ -1,0 +1,47 @@
+** 1312. Minimum Insertion Steps to Make a String Palindrome **
+
+# Approach 1:
+class Solution:
+    def minInsertions(self, s: str) -> int:
+        def lcs(s: str, r: str) -> int:
+            n = len(r)
+            dp = [[0] * (n + 1) for _ in range(n + 1)]
+            for i, a in enumerate(s):
+                for j, b in enumerate(r):
+                    dp[i + 1][j + 1] = dp[i][j] + 1 if a == b else max(dp[i][j + 1], dp[i + 1][j])
+            return dp[n][n]
+        return len(s) - lcs(s, s[::-1])
+
+# Approach 2:
+class Solution:
+    def minInsertions(self, s: str) -> int:
+        n = len(s)
+        dp = [0] * n
+        for i in range(n - 2, -1, -1):
+            prev = 0
+            for j in range(i + 1, n):
+                temp = dp[j]
+                if s[i] == s[j]:
+                    dp[j] = prev
+                else:
+                    dp[j] = min(dp[j], dp[j-1]) + 1
+                prev = temp
+        return dp[n-1]
+
+# Approach 3:
+class Solution:
+	def minInsertions(self, a: str) -> int:
+		b = a[::-1]
+		n = len(a)
+
+		dp = [[0 for x in range(n + 1)] for y in range(n + 1)]
+
+		for i in range(1, n + 1):
+			for j in range(1, n + 1):
+				if a[i - 1] == b[j - 1]:
+					dp[i][j] = 1 + dp[i - 1][j - 1]
+
+				else:
+					dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])
+
+		return n - dp[-1][-1]
