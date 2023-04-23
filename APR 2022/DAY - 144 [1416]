@@ -1,0 +1,59 @@
+** 1416. Restore The Array **
+
+# Approach 1:
+class Solution:
+    def numberOfArrays(self, s: str, k: int) -> int:
+        n = len(s)
+        t = len(str(k))
+        count = [0] * (n+1)
+        count[0] = 1
+        count[1] = 1
+        for i in range(1, n):
+            for j in range(t):
+                if i-j >= 0 and 1 <= int(s[i-j:i+1]) <= k and s[i-j:i+1][0] != "0":
+                    count[i+1] += count[i-j]
+        return count[-1] % 1000000007
+
+# Approach 2:
+class Solution:
+    def numberOfArrays(self, s: str, k: int) -> int:
+        n = len(s)
+        dp = [0] * (n + 1)
+        dp[-1] = 1
+        
+        for i in range(n - 1, -1, -1):
+            if s[i] == '0':
+                continue
+            num = 0
+            j = i
+            while j < n and int(s[i:j+1]) <= k:
+                num += dp[j+1]
+                j += 1
+            dp[i] = num % (10 ** 9 + 7)
+        
+        return dp[0]
+
+# Approach 3:
+class Solution:
+    def numberOfArrays(self, s: str, k: int) -> int:
+        n = len(s)
+        mod = 10**9+7
+        @lru_cache(None)
+        def rec(i=0):
+            if i==n :
+                return 1
+            
+            if s[i]=="0":
+                return 0
+            
+            res = 0
+            curr = ""
+            for x in range(i, n):
+                curr += s[x]
+                if int(curr)<=k:
+                    res += (rec(x+1)%mod)
+                    res %= mod
+                else:
+                    break
+            return res
+        return rec()
