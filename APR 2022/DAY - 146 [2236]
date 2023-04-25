@@ -1,0 +1,54 @@
+** 2336. Smallest Number in Infinite Set **
+
+# Approach 1:
+class SmallestInfiniteSet:
+
+    def __init__(self):
+        self.c = 1
+        self.s = set()
+
+    def popSmallest(self):
+        if self.s:
+            r = min(self.s)
+            self.s.remove(r)
+            return r
+        else:
+            self.c += 1
+            return self.c - 1
+            
+    def addBack(self, num):
+        if self.c > num:
+            self.s.add(num)
+# Approach 2:
+class SmallestInfiniteSet:
+
+    def __init__(self):
+        self.nums = list(range(1,1001))
+        
+
+    def popSmallest(self) -> int:
+        self.nums.sort()
+        n = self.nums[0]
+        self.nums[:] = self.nums[1:]
+        return n
+
+    def addBack(self, num: int) -> None:
+        if num not in self.nums:
+            self.nums.append(num)
+
+# Approach 3:
+import heapq
+class SmallestInfiniteSet:
+    def __init__(self):
+        self.pq = []
+        for i in range(1, 1001):
+            heapq.heappush(self.pq, i)
+
+    def popSmallest(self):
+        if self.pq:
+            return heapq.heappop(self.pq)
+        return -1
+
+    def addBack(self, num):
+        if num not in self.pq:
+            heapq.heappush(self.pq, num)
