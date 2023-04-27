@@ -1,0 +1,27 @@
+** 319. Bulb Switcher **
+
+# Approach 1:
+class Solution:
+    def bulbSwitch(self, n: int) -> int:
+        return isqrt(n) 
+        
+# Approach 2:
+class Solution:
+    def bulbSwitch(self, n: int) -> int:
+        count = 0
+        i = 1
+        while i*i <= n:
+            count += 1
+            i += 1
+        return count
+        
+# Approach 3:
+import math
+class Solution:
+    def bulbSwitch(self, n: int) -> int:
+        return int(math.sqrt(n))
+        
+# Approach 4:
+class Solution:
+    def bulbSwitch(self, n: int) -> int:
+        return int(n**(1/2))
