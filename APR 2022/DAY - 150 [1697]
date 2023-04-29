@@ -1,0 +1,124 @@
+** 1697. Checking Existence of Edge Length Limited Paths **
+
+# Approach 1:
+class UnionFind:
+    def __init__(self, N: int):
+        self.parent = list(range(N))
+        self.rank = [1] * N
+
+    def find(self, p: int) -> int:
+        if p != self.parent[p]:
+            self.parent[p] = self.find(self.parent[p])
+        return self.parent[p]
+
+    def union(self, p: int, q: int) -> bool:
+        prt, qrt = self.find(p), self.find(q)
+        if prt == qrt: return False 
+        if self.rank[prt] > self.rank[qrt]: 
+            prt, qrt = qrt, prt 
+        self.parent[prt] = qrt 
+        self.rank[qrt] += self.rank[prt] 
+        return True 
+
+
+class Solution:
+    def distanceLimitedPathsExist(self, n: int, edgeList: List[List[int]], queries: List[List[int]]) -> List[bool]:
+        queries = sorted((w, p, q, i) for i, (p, q, w) in enumerate(queries))
+        edgeList = sorted((w, u, v) for u, v, w in edgeList)
+        
+        uf = UnionFind(n)
+        
+        ans = [None] * len(queries)
+        ii = 0
+        for w, p, q, i in queries: 
+            while ii < len(edgeList) and edgeList[ii][0] < w: 
+                _, u, v = edgeList[ii]
+                uf.union(u, v)
+                ii += 1
+            ans[i] = uf.find(p) == uf.find(q)
+        return ans 
+
+# Approach 2:
+class DSU:
+    def __init__(self, n):
+        self.parent = list(range(n))
+        self.rank = [0] * n
+
+    def find(self, x):
+        if self.parent[x] == x:
+            return x
+        self.parent[x] = self.find(self.parent[x])
+        return self.parent[x]
+
+    def union(self, x, y):
+        xset, yset = self.find(x), self.find(y)
+        if xset != yset:
+            if self.rank[xset] < self.rank[yset]:
+                self.parent[xset] = yset
+            else:
+                self.parent[yset] = xset
+            if self.rank[xset] == self.rank[yset]:
+                self.rank[xset] += 1
+            return True
+        return False
+
+class Solution:
+    def distanceLimitedPathsExist(self, n: int, edgeList: List[List[int]], queries: List[List[int]]) -> List[bool]:
+        dsu = DSU(n)
+        for i, q in enumerate(queries):
+            queries[i].append(i)
+
+        queries.sort(key=lambda q: q[2])
+        edgeList.sort(key=lambda e: e[2])
+
+        i = 0
+        res = [False] * len(queries)
+        for q in queries:
+            while i < len(edgeList) and edgeList[i][2] < q[2]:
+                dsu.union(edgeList[i][0], edgeList[i][1])
+                i += 1
+
+            if dsu.find(q[0]) == dsu.find(q[1]):
+                res[q[3]] = True
+
+        return res
+
+# Approach 3:
+class Solution:
+    def distanceLimitedPathsExist(self, length: int, adjList: List[List[int]], queries: List[List[int]]) -> List[bool]:
+        parent = [i for i in range(length)]
+        rank = [0 for i in range(length)]
+        weight = [0 for i in range(length)]
+
+        adjList.sort(key=lambda x: x[2])
+        for edge in adjList:
+            self.unionByRank(edge[0], edge[1], edge[2], parent, rank, weight)
+
+        answer = []
+        for query in queries:
+            answer.append(self.isConnectedAndWithinLimit(query[0], query[1], query[2], parent, weight))
+
+        return answer
+
+    def isConnectedAndWithinLimit(self, p: int, q: int, limit: int, parent: List[int], weight: List[int]) -> bool:
+        return self.find(p, limit, parent, weight) == self.find(q, limit, parent, weight)
+
+    def find(self, x: int, limit: int, parent: List[int], weight: List[int]) -> int:
+        while x != parent[x]:
+            if weight[x] >= limit:
+                break
+            x = parent[x]
+        return x
+
+    def unionByRank(self, x: int, y: int, limit: int, parent: List[int], rank: List[int], weight: List[int]) -> None:
+        x_ref = self.find(x, float('inf'), parent, weight)
+        y_ref = self.find(y, float('inf'), parent, weight)
+        if x_ref != y_ref:
+            if rank[x_ref] < rank[y_ref]:
+                parent[x_ref] = y_ref
+                weight[x_ref] = limit
+            else:
+                parent[y_ref] = x_ref
+                weight[y_ref] = limit
+                if rank[x_ref] == rank[y_ref]:
+                    rank[x_ref] += 1
