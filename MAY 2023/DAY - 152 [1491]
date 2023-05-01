@@ -1,0 +1,20 @@
+** 1491. Average Salary Excluding the Minimum and Maximum Salary **
+
+# Approach 1:
+class Solution:
+    def average(self, salary: List[int]) -> float:
+        salary.sort()
+        salary[0], salary[-1] = 0, 0
+        return float((sum(salary)*1.0) / (len(salary) - 2))
+
+# Approach 2:
+class Solution:
+    def average(self, salary: List[int]) -> float:
+        return (sum(salary) - max(salary) - min(salary)) / (len(salary) - 2)
+        
+# Approach 3:
+class Solution:
+    def average(self, salary: List[int]) -> float:
+        salary.remove(max(salary))
+        salary.remove(min(salary))
+        return sum(salary)/len(salary)
