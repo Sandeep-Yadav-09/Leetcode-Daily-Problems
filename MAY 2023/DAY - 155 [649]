@@ -1,0 +1,66 @@
+** 649. Dota2 Senate **
+
+# Approach 1:
+class Solution:
+    def predictPartyVictory(self, senate: str) -> str:
+        n = len(senate)
+        s, banned = set(), [False] * n
+        ban_d = ban_r = 0
+        while len(s) != 1:
+            s = set()
+            for i, p in enumerate(senate):
+                if banned[i]: continue
+                if p == 'R':
+                    if ban_r > 0:           # current R being banned
+                        ban_r -= 1
+                        banned[i] = True
+                    else:                   # if current R is valid, it will ban D
+                        ban_d += 1
+                        s.add('R')
+                else:        
+                    if ban_d > 0:           # current D being banned
+                        ban_d -= 1
+                        banned[i] = True
+                    else:                   # if current D is valid, it will ban R
+                        ban_r += 1
+                        s.add('D')
+        return 'Radiant' if s.pop() == 'R' else 'Dire'
+
+# Approach 2:
+class Solution:
+    def predictPartyVictory(self, senate: str) -> str:
+
+        n = len(senate)
+
+        r_arr = [i for i in range(len(senate)) if senate[i]=='R']
+        d_arr = [j for j in range(len(senate)) if senate[j]=='D']
+        
+        while r_arr and d_arr:
+            r = r_arr.pop(0)
+            d = d_arr.pop(0)
+            if r < d:
+                r_arr.append(n + r)
+            else:
+                d_arr.append(n + d)
+                
+        return 'Radiant' if r_arr else 'Dire'
+        
+# Approach 3:
+class Solution:
+    def predictPartyVictory(self, senate: str) -> str:
+        rQ = deque()
+        dQ = deque()
+        
+        for i,c in enumerate(senate):
+            if c == "R":
+                rQ.append(i)
+            else:
+                dQ.append(i)
+        while dQ and rQ:
+            d,r = dQ.popleft(), rQ.popleft()
+            
+            if d < r:
+                dQ.append(d+len(senate))
+            else:
+                rQ.append(r+len(senate))
+        return "Radiant" if rQ else "Dire"
