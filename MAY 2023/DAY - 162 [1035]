@@ -1,0 +1,50 @@
+** 1035. Uncrossed Lines **
+
+# Approach 1:
+class Solution:
+    def maxUncrossedLines(self, a: List[int], b: List[int]) -> int:
+        @cache
+        def dp(i: int, j: int) -> int:
+            if i < 0 or j < 0:
+                return 0
+
+            return max(
+                dp(i - 1, j),
+                dp(i, j - 1),
+                dp(i - 1, j - 1) + int(a[i] == b[j]),
+            )
+
+        return dp(len(a) - 1, len(b) - 1)
+
+# Approach 2:
+class Solution:
+    def maxUncrossedLines(self, nums1: List[int], nums2: List[int]) -> int:
+        m, n = len(nums1), len(nums2)
+        if m < n:
+            nums1, nums2, m, n = nums2, nums1, n, m
+        dp = [0] * (n + 1)
+        for i in range(1, m + 1):
+            prev = 0
+            for j in range(1, n + 1):
+                curr = dp[j]
+                if nums1[i-1] == nums2[j-1]:
+                    dp[j] = prev + 1
+                else:
+                    dp[j] = max(dp[j-1], curr)
+                prev = curr
+        return dp[n]
+
+# Approach 3:
+class Solution:
+    def maxUncrossedLines(self, nums1: List[int], nums2: List[int]) -> int:
+        @lru_cache(None)
+        def max_lines(i, j):
+            if i == len(nums1) or j == len(nums2):
+                return 0
+            else:
+                res = max(max_lines(i+1, j), max_lines(i, j+1))
+                if nums1[i] == nums2[j]:
+                    res = max(res, 1+ max_lines(i+1, j+1))
+                return res
+                    
+        return max_lines(0,0)
