@@ -1,0 +1,48 @@
+** 2140. Solving Questions With Brainpower **
+
+# Approach 1:
+class Solution:
+    def mostPoints(self, questions: List[List[int]]) -> int:
+        n = len(questions)
+        game_winner = [0] * n
+
+        for i in reversed(range(n)):
+            curr_points, curr_brainpower = questions[i][0], questions[i][1]
+            next_house = i + curr_brainpower + 1
+            curr_points = curr_points + game_winner[next_house] if next_house < n else curr_points
+            
+            if i < n-1:
+                curr_points = max(curr_points, game_winner[i+1])
+            
+            game_winner[i] = curr_points
+        
+        return game_winner[0]
+        
+# Approach 2:
+class Solution:
+    def mostPoints(self, questions: List[List[int]]) -> int:
+        n = len(questions)
+        dp = [0] * (n+1)
+        for i in range(n-1, -1, -1):
+            point = questions[i][0]
+            jump = questions[i][1]
+            nextQuestion = min(n, i+jump+1)
+            dp[i] = max(dp[i+1], point + dp[nextQuestion])
+        return dp[0]
+        
+# Approach 3:
+class Solution:
+    def mostPoints(self, questions: List[List[int]]) -> int:
+        dp = {}
+        def dfs(i):
+            if i >= len(questions):
+                return 0
+
+            if i in dp:
+                return dp[i]
+
+            points, skipNext = questions[i]
+            dp[i] = max(dfs(i + 1), points + dfs(i + 1 + skipNext))
+            return dp[i]
+
+        return dfs(0)
