@@ -1,0 +1,76 @@
+** 1799. Maximize Score After N Operations **
+
+# Approach 1:
+class Solution:
+    def maxScore(self, nums: List[int]) -> int:
+
+        cache=collections.defaultdict(int)
+        
+        def dfs(mask,op):
+            if mask in cache:
+                return cache[mask]
+
+            for i in range(len(nums)):
+                for j in range(i+1,len(nums)):
+                    if ((1<<i) & mask) or ((1<<j) & mask):
+                        continue
+                    newMask=mask|(1<<i)|(1<<j)
+                    score=op*math.gcd(nums[i],nums[j]) 
+                    cache[mask]=max(cache[mask],score+dfs(newMask,op+1))
+            return cache[mask]
+        
+        return dfs(0,1)
+
+# Approach 2:
+class Solution:
+    def maxScore(self, nums: List[int]) -> int:
+        # Determine number of elements
+        num_elems = len(nums)
+        
+        # Construct matrix of greatest common divisors for all pairs of elements
+        gcd_pairs = [[gcd(nums[i], nums[j]) for j in range(num_elems)] for i in range(num_elems)]
+        
+        # Use dynamic programming to find maximum score
+        max_scores = [0] * (1 << num_elems)
+        for state in range(1, 1 << num_elems):
+            num_selected = bin(state).count('1')
+            
+            # Skip states with odd number of selected elements
+            if num_selected % 2 == 1:
+                continue
+            
+            # Iterate over all pairs of selected elements
+            for i in range(num_elems):
+                if not (state & (1 << i)):
+                    continue
+                for j in range(i+1, num_elems):
+                    if not (state & (1 << j)):
+                        continue
+                    
+                    # Compute score for current state based on previous state and current pair of elements
+                    prev_state = state ^ (1 << i) ^ (1 << j)
+                    current_score = max_scores[prev_state] + num_selected // 2 * gcd_pairs[i][j]
+                    
+                    # Update maximum score for current state
+                    max_scores[state] = max(max_scores[state], current_score)
+        
+        # Return maximum score for state with all elements selected
+        return max_scores[(1 << num_elems) - 1]
+
+# Approach 3:
+class Solution:
+    def maxScore(self, nums: List[int]) -> int:
+        @cache
+        def fn(nums,k):
+            if not nums:
+                return 0
+
+            ans=0
+            for i in range(len(nums)):
+                for j in range(i+1,len(nums)):
+                    rest=nums[:i]+nums[i+1:j]+nums[j+1:]
+                    ans=max(ans,k*gcd(nums[i],nums[j])+fn(tuple(rest),k+1))
+
+            return ans
+
+        return fn(tuple(nums),1)            
