@@ -1,0 +1,64 @@
+** 1721. Swapping Nodes in a Linked List **
+
+# Approach 1:
+class Solution:
+    def swapNodes(self, head: Optional[ListNode], k: int) -> Optional[ListNode]:
+        nodes: List['ListNode'] = []
+        while head:
+            nodes.append(head)
+            head = head.next
+
+        nodes[k - 1], nodes[-k] = nodes[-k], nodes[k - 1]
+        ans: 'ListNode' = ListNode()
+        cur = ans
+        for node in nodes:
+            cur.next = node
+            cur = cur.next
+        cur.next = None
+        return ans.next
+
+# Approach 2:
+class Solution:
+    def swapNodes(self, head: Optional[ListNode], k: int) -> Optional[ListNode]:
+        i = 0
+        node = head
+        while node:
+            i+=1
+            if i == k:
+                first = node
+            node = node.next
+        i = i - k 
+        node = head
+        while i>0:
+            i -= 1
+            node=node.next
+        second = node
+        first.val,second.val = second.val,first.val
+        return head 
+
+# Approach 3:
+class Solution:
+    def swapNodes(self, head: Optional[ListNode], k: int) -> Optional[ListNode]:
+    # Find the length of the linked list
+        n = 0
+        curr = head
+        while curr:
+            n += 1
+            curr = curr.next
+        
+    # Find the kth node from the beginning
+        curr = head
+        for i in range(k-1):
+            curr = curr.next
+        kth_from_beginning = curr
+    
+    # Find the kth node from the end
+        curr = head
+        for i in range(n-k):
+            curr = curr.next
+        kth_from_end = curr
+    
+    # Swap the values of the two nodes
+        kth_from_beginning.val, kth_from_end.val = kth_from_end.val, kth_from_beginning.val
+    
+        return head
