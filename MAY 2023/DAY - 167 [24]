@@ -1,0 +1,33 @@
+** 24. Swap Nodes in Pairs **
+
+# Approach 1:
+class Solution:
+    def swapPairs(self, head: ListNode) -> ListNode:
+
+        dummy = prev = ListNode(0)
+        prev.next = head
+		
+        while prev.next and prev.next.next:
+            a = prev.next
+            b = prev.next.next
+            c = prev.next.next.next
+            prev.next = b
+            prev.next.next = a
+            prev.next.next.next = c
+            prev = prev.next.next
+        return dummy.next
+
+# Approach 2:
+class Solution:
+    def swapPairs(self, head: ListNode) -> ListNode:
+        if not head: return head
+
+        prev, cur, ans = None, head, head.next
+        while cur and cur.next:
+            adj = cur.next
+            if prev: prev.next = adj
+
+            cur.next, adj.next = adj.next, cur
+            prev, cur = cur, cur.next
+
+        return ans or head
