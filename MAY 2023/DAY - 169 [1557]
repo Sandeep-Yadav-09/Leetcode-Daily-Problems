@@ -1,0 +1,47 @@
+** 1557. Minimum Number of Vertices to Reach All Nodes **
+
+# Approach 1:
+class Solution:
+    def findSmallestSetOfVertices(self, n: int, edges: List[List[int]]) -> List[int]:
+        
+        def dfs(g,c,vis,res):
+            vis[c] = True
+            for adj in g[c]:
+                if not vis[adj]:
+                    dfs(g,adj,vis,res)
+                #adj can be visited by current vertex so we dont have to add adj in res
+                elif adj in res:res.remove(adj)
+        
+        #Make a adjecency list
+        g = collections.defaultdict(list)
+        for e in edges:
+            u,v = e
+            g[u].append(v)
+            
+        
+        res = set()
+        vis = [False]*n
+        for i in range(n):
+            if not vis[i]:
+                dfs(g,i,vis,res)
+				#add vertex from which we start traversing
+                res.add(i)
+        return list(res)
+        
+# Approach 2:
+class Solution:
+    def findSmallestSetOfVertices(self, n: int, edges: List[List[int]]) -> List[int]:
+        return set(range(n)) - {b for _, b in edges}
+        
+# Approach 3:
+class Solution:
+    def findSmallestSetOfVertices(self, n: int, edges: List[List[int]]) -> List[int]:
+        l=[i for i in range(n)]
+        ans=[]
+        for i,j in edges:
+            if(l[j]==j):
+                l[j]=l[i]
+        for i in range(n):
+            if(l[i]==i):
+                ans.append(i)
+        return ans
