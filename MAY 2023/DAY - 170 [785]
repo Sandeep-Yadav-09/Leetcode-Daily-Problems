@@ -1,0 +1,68 @@
+** 785. Is Graph Bipartite? **
+
+# Approach 1:
+class Solution:
+    def isBipartite(self, graph: List[List[int]]) -> bool:
+        def dfs(v, c):
+            color[v] = c
+            for node in graph[v]:
+                if color[node] == c:
+                    return False
+                if color[node] == 0 and not dfs(node, -c):
+                    return False
+            return True
+        
+        l = len(graph)
+        color = [0] * l
+        for i in range(l):
+            if color[i] == 0:
+                if not dfs(i, 1):
+                    return False
+        return True
+
+# Approach 2:
+class Solution:
+    def isBipartite(self, graph: List[List[int]]) -> bool:
+        l = len(graph)
+        colors = [0] * l
+
+        for i in range(l):
+            if colors[i] == 0: ## Checking if node is not yet visited
+                colors[i] = 1
+                qu = collections.deque([i])
+                while qu:
+                    currNode = qu.popleft() ## Apparently popleft() is faster than pop(0)
+                    for neighbours in graph[currNode]:
+                        if colors[neighbours] == colors[currNode]:
+                            return False
+                        elif colors[neighbours] == 0:
+                            colors[neighbours] = -colors[currNode] ## Adjacent Nodes musn't have same color. Hence if nodes are A B C, the colors can be (1) (-1) (1) or (-1) (1) (-1)
+                            qu.append(neighbours)
+        return True
+        
+# Approach 3:
+from collections import deque
+
+class Solution:
+    def isBipartite(self, graph: List[List[int]]) -> bool:
+        color = [-1] * len(graph)
+
+        for i, n in enumerate(color):
+            if n != -1:
+                continue
+
+            bfs = deque([(i, 1)])
+            while bfs:
+                ele, clr = bfs.popleft()
+                if color[ele] != -1 and color[ele] != clr:
+                    return False
+                
+                if color[ele] != -1:
+                    continue
+
+                color[ele] = clr
+                
+                for nxt in graph[ele]:
+                    bfs.append((nxt, 1 if clr == 0 else 0))
+        
+        return True
