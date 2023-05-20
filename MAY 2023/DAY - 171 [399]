@@ -1,0 +1,92 @@
+** 399. Evaluate Division **
+
+# Approach 1:
+class Solution:
+    def calcEquation(self, equations: List[List[str]], values: List[float], queries: List[List[str]]) -> List[float]:
+        
+        graph = defaultdict(dict)
+
+        for (a, b), value in zip(equations, values):
+            graph[a][b] = value
+            graph[b][a] = 1 / value
+        
+
+        def solve(x, y, visited):
+            if not( x in graph and y in graph):
+                return -1.0
+
+            if x == y:
+                return 1.0
+            
+            if y in graph[x]:
+                return graph[x][y]
+
+            visited.add(x)
+            for middle in graph[x]:
+                if middle not in visited:
+                    value = solve(middle, y, visited)
+                    if value != -1:
+                        return graph[x][middle] * value
+            
+            return -1
+        return [ solve(c, d, set() ) for c, d in queries ]
+        
+# Approach 2:
+from collections import defaultdict
+class Solution:
+    def unionFind(self, n, ansc):
+        if n not in ansc:
+            ansc[n] = (n, 1)
+            return n, 1
+        if ansc[n][0] == n:
+            return n, 1
+        
+        parent, mul = self.unionFind(ansc[n][0], ansc)
+        ansc[n] = (parent, mul*ansc[n][1])
+        return ansc[n][0], ansc[n][1]
+
+    def calcEquation(self, equations: List[List[str]], values: List[float], queries: List[List[str]]) -> List[float]:
+        ansc = defaultdict(tuple)
+        for i, (n1, n2) in enumerate(equations):
+            p1, mul1 = self.unionFind(n1, ansc)
+            p2, mul2 = self.unionFind(n2, ansc)
+            if p1 <= p2:
+                co = mul1 / (values[i] * mul2)
+                ansc[p2] = (p1, co)
+            else:
+                co = mul2 / (1/values[i] * mul1)
+                ansc[p1] = (p2, co)
+        
+        print(ansc)
+        res = []
+        for n1, n2 in queries:
+            if n1 not in ansc or n2 not in ansc:
+                res.append(-1)
+                continue
+            p1, mul1 = self.unionFind(n1, ansc)
+            p2, mul2 = self.unionFind(n2, ansc)
+            if p1 != p2:
+                res.append(-1)
+            else:
+                res.append(mul1/mul2)
+        
+        return res
+
+# Approach 3:
+class Solution:
+    def calcEquation(self, equations: List[List[str]], values: List[float], queries: List[List[str]]) -> List[float]:
+        relations = defaultdict(dict)
+        for (a, b), val in zip(equations, values):
+            relations[a][b] = val
+            relations[b][a] = 1.0 / val
+        
+        for var in relations:
+            relations[var][var] = 1.0
+                                                        
+        for a in relations:                               
+            for b in (b for b in relations[a] if b != a):
+                for c in (c for c in relations[a] if c != a and c != b and c not in relations[b]):
+                    relations[c][b] = relations[c][a] * relations[a][b]
+                    relations[b][c] = 1.0 / relations[c][b]
+
+        return [relations[a][b] if b in relations[a] else -1.0 for a, b in queries]
