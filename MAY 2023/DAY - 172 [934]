@@ -1,0 +1,154 @@
+** 934. Shortest Bridge **
+
+# Approach 1:
+class Solution:
+    def shortestBridge(self, grid: List[List[int]]) -> int:
+        visit = set()
+        row, col = len(grid), len(grid[0])
+        def dfs(r,c):
+            if r not in range(row) or c not in range(col) or (r,c) in visit or grid[r][c] == 0:
+                return 
+            visit.add((r,c))
+            dfs(r+1,c)
+            dfs(r,c-1)
+            dfs(r-1,c)
+            dfs(r,c+1)
+        
+        flag = False
+        for r in range(len(grid)):
+            if flag:
+                break
+            for c in range(len(grid[0])):
+                if grid[r][c]==1:
+                    dfs(r,c)
+                    flag = True
+                    break
+
+        q = deque(list(visit))
+        bridge_length = 0
+        while q:
+            for _ in range(len(q)):
+                r,c = q.popleft()
+                for cur_x, cur_y in [(r + 1, c), (r - 1, c), (r, c + 1), (r, c - 1)]:
+                    if cur_x in range(row) and cur_y in range(col) and (cur_x,cur_y) not in visit:
+                        if grid[cur_x][cur_y] == 1:
+                            return bridge_length
+                        else:
+                            q.append((cur_x,cur_y))
+                            visit.add((cur_x,cur_y))
+            bridge_length+=1
+            
+# Approach 2:
+class Solution:
+    def shortestBridge(self, grid: List[List[int]]) -> int:
+
+        self.boundaries = set()
+        rows = len(grid)
+        cols = len(grid)
+        def dfs(x, y):
+            if x == rows or y == cols or x < 0 or y < 0:
+                return
+
+            if grid[x][y] == 2:
+                return
+            if grid[x][y] == 0:
+                self.boundaries.add((x, y, 1))
+                return
+            
+            grid[x][y] = 2
+
+            dfs(x + 1, y)
+            dfs(x - 1, y)
+            dfs(x, y + 1)
+            dfs(x, y - 1)
+
+        exitLoop = False
+        no_ones = []
+        for i in range(len(grid)):
+            if 1 not in grid[i]:
+                continue
+            for j in range(len(grid)):
+                if grid[i][j] == 1:
+                    dfs(i, j)
+                    exitLoop = True
+                    break
+            if exitLoop:
+                break
+        
+        self.boundaries = list(self.boundaries)
+        while self.boundaries:
+            x, y, d = self.boundaries.pop(0)
+
+            if x - 1 > -1 and x - 1 < rows and y > -1 and y < cols:
+                if grid[x - 1][y] == 1:
+                    return d
+
+                elif grid[x - 1][y] == 0:
+                    grid[x - 1][y] = -1
+                    self.boundaries.append((x - 1, y, d + 1))
+
+            if x + 1 > -1 and x + 1 < rows and y > -1 and y < cols:
+                if grid[x + 1][y] == 1:
+                    return d
+
+                elif grid[x + 1][y] == 0 and (x + 1, y, d + 1):
+                    grid[x + 1][y] = -1
+                    self.boundaries.append((x + 1, y, d + 1))
+
+            if x > -1 and x < rows and y - 1 > -1 and y - 1 < cols:
+                if grid[x][y - 1] == 1:
+                    return d
+
+                elif grid[x][y - 1] == 0:
+                    grid[x][y - 1] = -1
+                    self.boundaries.append((x, y - 1, d + 1))
+
+            if x > -1 and x < rows and y + 1 > -1 and y + 1 < cols:
+                if grid[x][y + 1] == 1:
+                    return d
+
+                elif grid[x][y + 1] == 0:
+                    grid[x][y + 1] = -1
+                    self.boundaries.append((x, y + 1, d + 1))
+
+# Approach 3:
+class Solution:
+    def shortestBridge(self, grid: List[List[int]]) -> int:
+        n = len(grid)
+        def neighbors(cell):
+            i, j = cell
+            if i > 0 and grid[i - 1][j] != -1:
+                yield i - 1, j
+            if i + 1 < n and grid[i + 1][j] != -1:
+                yield i + 1, j
+            if j > 0 and grid[i][j - 1] != -1:
+                yield i, j - 1
+            if j + 1 < n and grid[i][j + 1] != -1:
+                yield i, j + 1
+                
+        def island():
+            for i in range(n):
+                for j in range(n):
+                    if grid[i][j]:
+                        grid[i][j] = -1
+                        return [(i, j)]
+
+        q, q2, ans = island(), [], 1
+        while q:
+            q_next = []
+            for cell in q:
+                for i, j in neighbors(cell):
+                    (q_next if grid[i][j] else q2).append((i, j))
+                    grid[i][j] = -1
+            q = q_next
+        while q2:
+            q_next = []
+            for cell in q2:
+                for i, j in neighbors(cell):
+                    if grid[i][j] == 1:
+                        return ans
+                    q_next.append((i, j))
+                    grid[i][j] = -1
+            ans += 1
+            q2 = q_next
+        return ans
