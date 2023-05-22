@@ -1,0 +1,56 @@
+** 347. Top K Frequent Elements **
+
+# Approach 1:
+import heapq
+
+class Solution:
+    def topKFrequent(self, nums: List[int], k: int) -> List[int]:
+
+        res = []
+        dict = {}
+        for num in nums:
+            if num not in dict:
+                dict[num] = 1
+            else:
+                dict[num]+=1
+        for key, val in dict.items():
+            if len(res) < k:
+                heapq.heappush(res, [val,key])
+            else:
+                heapq.heappushpop(res, [val,key])
+        return [y for x, y in res]        
+
+# Approach 2:
+class Solution:
+    def topKFrequent(self, nums: List[int], k: int) -> List[int]:
+        hashSet = {}
+        freq = [[] for i in range(len(nums) + 1)]
+
+        for num in nums:
+            hashSet[num] = 1 + hashSet.get(num, 0)
+
+        for num, count in hashSet.items():
+            freq[count].append(num)
+        
+        res = []
+
+        for i in range(len(freq) - 1, 0, -1):
+            for n in freq[i]:
+                res.append(n)
+                if(len(res) == k):
+                    return res
+        return res
+        
+# Approach 3:
+class Solution:
+    def topKFrequent(self, nums: List[int], k: int) -> List[int]:
+        mp = {}
+        for i in range(len(nums)):
+            if nums[i] not in mp:
+                mp[nums[i]] = nums.count(nums[i])
+        l = list(mp.items())
+        l.sort(key = lambda x: (-x[1],x[0]))
+        ret_list = []
+        for i in range(k):
+            ret_list.append(l[i][0])
+        return ret_list
