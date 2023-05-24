@@ -1,0 +1,50 @@
+** 2542. Maximum Subsequence Score **
+
+# Approach 1:
+class Solution:
+    def maxScore(self, nums1: List[int], nums2: List[int], k: int) -> int:
+        pairs = [(n1, n2) for n1, n2 in zip(nums1, nums2)]
+        pairs.sort(key=lambda x: x[-1], reverse=True)
+
+        res = 0
+        n1Sum = 0
+        minHeap = []
+        for n1, n2 in pairs:
+            n1Sum += n1
+            heapq.heappush(minHeap, n1)
+            if len(minHeap) > k:
+                val = heapq.heappop(minHeap)
+                n1Sum -= val
+            if len(minHeap) == k:
+                res = max(res, n1Sum * n2)
+
+        return res
+        
+# Approach 2:
+class Solution:
+   def maxScore(self, A, B, k):
+
+        # best score
+        best = float('-inf')
+
+        # sum of A's element
+        cur_sum = 0
+        minHeap = []
+
+        # order pairs: sorting pairs, in descending order of B
+        order_pairs = sorted( zip(A, B), key = lambda pair: -pair[1] )
+
+        for a, b in order_pairs:
+        
+            heappush(minHeap, a)
+            cur_sum += a
+            #print(f"now adding {a} from order pairs")
+
+            if len(minHeap) > k:
+               cur_sum -= heappop(minHeap)
+
+            if len(minHeap) == k:
+                #print(f"cur score = {cur_sum * b} = {cur_sum} x {b} \n---")
+                best = max(best, cur_sum * b)
+
+        return best
