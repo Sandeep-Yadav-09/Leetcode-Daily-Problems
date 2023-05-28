@@ -1,0 +1,53 @@
+** 1547. Minimum Cost to Cut a Stick **
+
+# Approach 1:
+class Solution:
+    def minCost(self, n: int, cuts: List[int]) -> int:
+
+        cuts = [0] + sorted(cuts) + [n]
+        
+        @cache
+        def dfs(left, right):
+
+            if right - left <= 1:
+                return 0
+
+            stick = cuts[right] - cuts[left]
+            res = float("inf")
+            for mid in range(left + 1, right):
+                res = min(res, stick + dfs(left, mid) + dfs(mid, right))
+
+            return res
+
+        return dfs(0, len(cuts) - 1)
+        
+# Approach 2:
+class Solution:
+    def minCost(self, n: int, cuts: List[int]) -> int:
+        # only the start and end positions of each part matters
+        cuts += [0, n]
+        cuts.sort()
+
+        @cache
+        def dp(start: int, end: int) -> int:
+            # base case, no more cut
+            if end - start <= 1: return 0
+            # the best way to cut two children + the cost of current cut
+            return min((dp(start, i) + dp(i, end)) for i in range(start+1, end)) + (cuts[end] - cuts[start])
+
+        return dp(0, len(cuts)-1)            
+
+# Approach 3:
+class Solution:
+    def minCost(self, n: int, cuts: List[int]) -> int:
+        @cache
+        def dfs(l, r):
+            return min(
+                (
+                    dfs(c, r) + dfs(l, c) + r - l
+                    for c in cuts
+                    if l < c < r
+                ),
+                default=0
+            )
+        return dfs(0, n)
