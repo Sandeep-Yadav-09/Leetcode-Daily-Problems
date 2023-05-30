@@ -1,0 +1,63 @@
+** 705. Design HashSet **
+
+# Approach 1:
+class MyHashSet:
+
+    def __init__(self):
+        self.lis = dict()
+        
+
+    def add(self, key: int) -> None:
+        self.lis[key] = 1
+        
+
+    def remove(self, key: int) -> None:
+        self.lis[key] = 0
+        
+
+    def contains(self, key: int) -> bool:
+        try:
+            return self.lis[key] > 0
+        except:
+            return False
+       
+# Approach 2:
+class MyHashSet:
+
+    def __init__(self):
+        self.h={}
+
+    def add(self, key: int) -> None:
+        if key in self.h:
+            self.h[key]+=1
+        else:
+            self.h[key]=1
+
+    def remove(self, key: int) -> None:
+        if key in self.h:
+            del self.h[key]
+        
+    def contains(self, key: int) -> bool:
+        return key in self.h
+
+# Approach 3:
+class MyHashSet:
+
+    def __init__(self):
+        self.keys=[0 for _ in range(int(1e6)+3)]
+        
+
+    def add(self, key: int) -> None:
+        self.keys[key]=1
+        
+
+    def remove(self, key: int) -> None:
+        if self.keys[key]:
+            self.keys[key]-=1
+        
+
+    def contains(self, key: int) -> bool:
+        if self.keys[key]:
+            return True
+        return False
+        
