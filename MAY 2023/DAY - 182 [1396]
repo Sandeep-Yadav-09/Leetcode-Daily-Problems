@@ -1,0 +1,85 @@
+** 1396. Design Underground System **
+
+# Approach 1:
+class UndergroundSystem:
+
+    def __init__(self):
+        self.customers = {}
+        self.time = {}
+
+    def checkIn(self, id: int, stationName: str, t: int) -> None:
+        self.customers[id] = (stationName, t)
+
+    def checkOut(self, id: int, stationName: str, t: int) -> None:
+        startStation, startTime = self.customers[id]
+        endStation, endTime = stationName, t
+
+        key = (startStation, endStation)
+        self.time[key] = self.time[key] if self.time.get(key) else []
+        self.time[key].append(endTime-startTime)
+
+    def getAverageTime(self, startStation: str, endStation: str) -> float:
+        key = (startStation, endStation)
+        return sum(self.time[key])/len(self.time[key])
+
+# Approach 2:
+class StationPair:
+    def __init__(self, s: str, e: str):
+        self.s = s
+        self.e = e
+
+    def __eq__(self, other):
+        return self.s == other.s and self.e == other.e
+
+    def __hash__(self):
+        return hash(self.s+":"+self.e)
+
+class UndergroundSystem:
+
+    def __init__(self):
+        self.checkin: dict = {} # id : (stationName, enter_time)
+        self.time_avg: dict = {} # StationPair : (total_time, count)
+
+    def checkIn(self, id: int, stationName: str, t: int) -> None:
+        self.checkin[id] = [stationName, t]
+
+    def checkOut(self, id: int, stationName: str, t: int) -> None:
+        enter_station, enter_time = self.checkin.get(id)
+        si: StationPair = StationPair(enter_station, stationName)
+        
+        if self.time_avg.get(si):
+            self.time_avg[si][0] += t-enter_time
+            self.time_avg[si][1] += 1
+        
+        else:
+            self.time_avg[si] = [t-enter_time, 1]
+
+
+    def getAverageTime(self, startStation: str, endStation: str) -> float:
+        si: StationPair = StationPair(startStation, endStation)
+        return self.time_avg[si][0]/self.time_avg[si][1]
+
+# Approach 3:
+class UndergroundSystem:
+
+    def __init__(self):
+        self.register = {}
+        self.time_keeper = {}
+
+    def checkIn(self, id: int, stationName: str, t: int) -> None:
+        self.register[id] = [stationName, t]
+
+    def checkOut(self, id: int, stationName: str, t: int) -> None:
+        start_station = self.register[id][0]
+        start_time = self.register[id][1]
+        end_station = stationName
+        end_time = t
+        try:
+            self.time_keeper[start_station+','+end_station].append(end_time-start_time)
+        except :
+            self.time_keeper[start_station+','+end_station] = [end_time-start_time]
+
+    def getAverageTime(self, startStation: str, endStation: str) -> float:
+        time_list = self.time_keeper[startStation+','+endStation]
+        avg_time = sum(time_list)/len(time_list)
+        return avg_time
