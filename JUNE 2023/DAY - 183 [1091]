@@ -1,0 +1,83 @@
+** 1091. Shortest Path in Binary Matrix **
+
+# Approach 1:
+class Solution:
+    def shortestPathBinaryMatrix(self, grid: List[List[int]]) -> int:
+        n = len(grid)
+        q = deque([(0,0,1)])
+        vis = set((0,0))
+        directions = [[0,1],[1,0],[0,-1],[-1,0],[1,1],[1,-1],[-1,1],[-1,-1]]
+
+        while q:
+            r,c,length = q.popleft()
+            #validate
+            if (min(r,c) < 0 or max(r,c) >= n  or grid[r][c]):
+                continue
+            if r == n-1 and c == n-1:
+                return length
+
+            for dr,dc in directions:
+                if (r+dr,c+dc) not in vis:
+                    q.append((r+dr,c+dc,length+1))  
+                    vis.add((r+dr,c+dc))
+
+        return -1
+
+# Approach 2:
+class Solution:
+    def shortestPathBinaryMatrix(self, grid: List[List[int]]) -> int:
+        n = len(grid)
+        
+        if grid[0][0] or grid[-1][-1]:
+            return -1
+        
+        queue = [(0,0,1)]
+        grid[0][0] = 1
+
+        for i,j,d in queue:
+            if i==n-1 and j==n-1:
+                return d
+            
+            directs = [(i-1,j-1),(i-1,j),(i-1,j+1),(i,j-1),(i,j+1),(i+1,j-1),(i+1,j),(i+1,j+1)]
+
+            for row,col in directs:
+                if 0<=row<n and 0<=col<n and grid[row][col]==0:
+                    grid[row][col] = 1
+                    queue.append((row,col,d+1))
+        
+        return -1
+
+# Approach 3:
+class Solution:
+	def shortestPathBinaryMatrix(self, grid: List[List[int]]) -> int:
+
+		length = len(grid)
+
+		if grid[0][0] == 1 or grid[length - 1][length - 1] == 1:
+			return -1
+
+		visited = set((0,0))
+
+		directions = [[-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [-1, 1], [1, 1], [1, -1]]
+
+		queue = collections.deque([(1,0,0)])
+
+		while queue:
+
+			current_distance, current_position_x , current_position_y = queue.popleft()
+
+			if current_position_x == length - 1 and current_position_y == length - 1:
+				return current_distance
+
+			for direction in directions:
+
+				x , y = direction
+
+				next_position_x , next_position_y =  current_position_x + x , current_position_y + y
+
+				if 0 <= current_position_x < length and 0 <= current_position_y < length and grid[current_position_x][current_position_y] == 0 and (next_position_x , next_position_y) not in visited: 
+
+					queue.append((current_distance + 1 , next_position_x , next_position_y))
+					visited.add((next_position_x , next_position_y))
+
+		return -1
