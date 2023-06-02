@@ -1,0 +1,80 @@
+** 2101. Detonate the Maximum Bombs **
+
+# Approach 1:
+class Solution:
+    def maximumDetonation(self, bombs: List[List[int]]) -> int:
+        
+        def distance(x1, y1, x2, y2):
+            return (x1 - x2) ** 2 + (y1 - y2) ** 2
+        ans = 0
+        for index, el in enumerate(bombs): 
+            exploded = [False] * len(bombs)
+            exploded[index] = True
+
+            def dfs(i):
+                cur_x, cur_y, cur_r = bombs[i]
+                for ind, element in enumerate(bombs):
+                    if exploded[ind]:
+                        continue
+                    if distance(cur_x, cur_y, element[0], element[1]) <= cur_r ** 2:
+                        exploded[ind] = True
+                        dfs(ind)
+            dfs(index)
+            ans = max(ans, sum(exploded))
+        return ans
+
+# Approach 2:
+class Solution:
+    def maximumDetonation(self, bombs: List[List[int]]) -> int:
+        mx=0
+        n=len(bombs)
+        for i in range(n):
+            vis=[0]*n
+            ct=1
+            queue=[(bombs[i])]
+            vis[i]=1
+            while queue:
+                x=queue.pop(0)
+                # print(x,ct)
+                for j in range(n):
+                    if vis[j]==0 and((x[0]-bombs[j][0])**2+(x[1]-bombs[j][1])**2)<=x[2]**2:
+                        ct+=1
+                        queue.append((bombs[j]))
+                        vis[j]=1
+            mx=max(mx,ct)
+        return mx
+         
+# Approach 3:
+from collections import Counter
+class Solution:
+    def dfs(self, graph, color, visited, start, set_of_bad):
+        visited[start] = color
+        n = 1
+        for vertex in graph[start]:
+            set_of_bad.add(vertex)
+            if visited[vertex] == -1:
+                n += self.dfs(graph, color, visited, vertex, set_of_bad)
+        return n
+    def maximumDetonation(self, bombs: List[List[int]]) -> int:
+        graph = {}
+        for i in range(len(bombs)):
+            graph[i] = []
+        for i in range(len(bombs)):
+            for j in range(len(bombs)):
+                if i!= j and (bombs[i][0] - bombs[j][0])**2 +\
+                (bombs[i][1] - bombs[j][1])**2 <= bombs[i][2]**2:
+                    if graph.get(i) is None:
+                        graph[i] = []
+                    graph[i].append(j)
+        visited = [-1 for i in range(len(bombs))]
+        color = 0
+        answ = -1
+        set_of_bad = set()
+        for i in range(len(visited)):
+            if not i in set_of_bad:
+                visited = [-1 for i in range(len(bombs))]
+                cand = self.dfs(graph, color, visited, i, set_of_bad)
+                answ = max(cand, answ)
+      
+        return answ
+        
