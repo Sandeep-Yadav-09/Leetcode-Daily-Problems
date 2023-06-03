@@ -1,0 +1,58 @@
+** 1376. Time Needed to Inform All Employees **
+
+# Approach 1:
+class Solution:
+    def numOfMinutes(self, n: int, headID: int, manager: List[int], informTime: List[int]) -> int:
+        subs = dict()
+        for i, person in enumerate(manager):
+            if person in subs:
+                subs[person].append(i)
+            else:
+                subs[person] = [i]
+        def timeInformSubs(id):
+            if id in subs: 
+                return informTime[id] + max([timeInformSubs(x) for x in subs[id]])
+            return 0
+        return timeInformSubs(headID)
+
+# Approach 2:
+class Solution:
+    def dfs(self,i,graph,informTime):
+        if i in graph:
+            mx=0
+            for j in graph[i]:
+                mx = max(mx,informTime[i]+self.dfs(j,graph,informTime))
+            return mx
+        else:
+            return 0
+
+    def numOfMinutes(self, n: int, headID: int, manager: List[int], informTime: List[int]) -> int:
+        graph={}
+        for i in range(len(manager)):
+            if manager[i] in graph:
+                graph[manager[i]].append(i)
+            else:
+                graph[manager[i]]=[i]
+
+        return self.dfs(headID,graph,informTime)
+
+# Approach 3:
+class Solution:
+    def numOfMinutes(self, n: int, headID: int, manager: List[int], informTime: List[int]) -> int:
+        
+        graph = defaultdict(list)
+        result = 0
+
+        for index in range(len(manager)): 
+            if manager[index] == -1: continue
+            graph[manager[index]].append(index)
+        
+        def dfs(index,current):
+            nonlocal result
+            current += informTime[index]
+            result = max(current,result)
+            for nextNode in graph[index]:
+                dfs(nextNode,current)
+            
+        dfs(headID,0)
+        return result
