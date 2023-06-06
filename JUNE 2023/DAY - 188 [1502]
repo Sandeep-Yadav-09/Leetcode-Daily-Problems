@@ -1,0 +1,32 @@
+** 1502. Can Make Arithmetic Progression From Sequence **
+
+# Approach 1:
+class Solution:
+    def canMakeArithmeticProgression(self, arr: List[int]) -> bool:
+        m = min(arr)
+        gap = (max(arr) - m) / (len(arr) - 1)
+        if gap == 0: return True
+        s = set(num - m for num in arr)
+        return len(s) == len(arr) and all(diff % gap == 0 for diff in s)
+
+# Approach 2:
+class Solution:
+    def canMakeArithmeticProgression(self, arr: List[int]) -> bool:
+        return all(sorted(arr)[i+1] - sorted(arr)[i] == sorted(arr)[i+2] - sorted(arr)[i+1] for i in range(len(arr)-2))
+
+# Approach 3:
+class Solution:
+    def canMakeArithmeticProgression(self, arr: List[int]) -> bool:
+        smallest, greatest = min(arr), max(arr)
+        diff = (greatest - smallest) / (len(arr) - 1)
+        if diff == 0: return True
+        if not diff.is_integer(): return False
+        else: diff = int(diff)
+        setNums = {smallest + (diff * i) for i in range(len(arr))}
+        for i in range(len(arr)):
+            try:
+                setNums.remove(arr[i])
+            except:
+                return False
+
+        return True
