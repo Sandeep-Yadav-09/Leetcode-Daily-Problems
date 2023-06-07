@@ -1,0 +1,51 @@
+** 1318. Minimum Flips to Make a OR b Equal to c **
+
+# Approach 1:
+class Solution:
+    def minFlips(self, a: int, b: int, c: int) -> int:
+        return (c:=(a|b)^c).bit_count()+(a&b&c).bit_count()
+        
+# Approach 2:
+class Solution:
+    def minFlips(self, a: int, b: int, c: int) -> int:
+        ba=bin(a)[2:]
+        bb=bin(b)[2:]
+        bc=bin(c)[2:]
+        n=max(len(ba),len(bb),len(bc))
+        ba="0"*(n-len(ba))+ba
+        bb="0"*(n-len(bb))+bb
+        bc="0"*(n-len(bc))+bc
+        ct=0
+        for i in range(n):
+            if bc[i]=="0":
+                if ba[i]=="1":
+                    ct+=1
+                if bb[i]=="1":
+                    ct+=1
+            else:
+                if ba[i]=="1"or bb[i]=="1":
+                    continue
+                else:
+                    ct+=1
+        return ct
+
+# Approach 3:
+class Solution:
+    def minFlips(self, a: int, b: int, c: int) -> int:
+        cnt = 0 
+        while a or b or c:
+            a1, b1, c1 = a & 1, b & 1, c & 1
+            if a1 == b1 == 1:
+                if c1 == 0:
+                    cnt += 2
+            elif a1 == b1 == 0:
+                if c1 == 1:
+                    cnt += 1
+            elif a1 or b1:
+                if c1 == 0:
+                    cnt += 1
+
+            a >>= 1
+            b >>= 1
+            c >>= 1 
+        return cnt  
