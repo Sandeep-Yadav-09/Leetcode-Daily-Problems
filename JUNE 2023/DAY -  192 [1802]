@@ -1,0 +1,99 @@
+** 1802. Maximum Value at a Given Index in a Bounded Array **
+
+Approach 1:
+class Solution:
+    def maxValue(self, n: int, index: int, maxSum: int) -> int:
+        rem = maxSum - n
+        level = 1
+        low, high = index - 1, index
+        length = high - low
+        while rem > 0 and length < n:            
+            rem -= length
+            if rem >= 0:
+                level += 1
+            low = max(low - 1, -1)
+            high = min(high + 1, n - 1)
+            length = high - low
+        
+        if length == n and rem > 0:
+            level += rem // n
+            return level
+        return level
+
+Approach 2:
+class Solution:
+    def maxValue(self, n: int, index: int, maxSum: int) -> int:
+        left = 1
+        right = maxSum
+        left_idx = index
+        right_idx = n-index-1
+        while left<=right:
+            mid = (left+right) // 2
+            arr_sum = mid
+
+            left_min_val = mid-left_idx
+            left_sum = arithmetic_progression(left_min_val,mid-1,left_idx)
+            left_sum+= fill_non_correct_value(left_min_val)
+
+            right_min_val = mid-right_idx
+            right_sum = arithmetic_progression(right_min_val,mid-1,right_idx)
+            right_sum+= fill_non_correct_value(right_min_val)
+
+            arr_sum += left_sum
+            arr_sum += right_sum
+            if arr_sum <= maxSum:
+                left = mid+1
+            else:
+                right = mid-1
+        return right
+
+def arithmetic_progression(min_value,max_value,lenght):
+    return (min_value+max_value)*lenght//2
+
+def fill_non_correct_value(value):
+    if value > 0:
+        return 0
+    diff = 1 - value
+    return arithmetic_progression(1,diff,diff)
+
+Approach 3:
+class Solution:
+    def maxValue(self, n: int, index: int, ms: int) -> int:
+
+        def helper(m):  # return bool, possible to raise nums[index] by m?
+            need = m
+
+            # left
+            leftb = index - (m - 1)
+            need += ((m - 1) * m) // 2
+            if leftb < 0:
+                tmp = abs(leftb)
+                offset = (tmp * (tmp + 1)) // 2
+                need -= offset
+
+            # right
+            rightb = index + (m - 1)
+            need += ((m - 1) * m) // 2
+            if rightb >= n:
+                tmp = rightb - (n - 1)
+                offset = (tmp * (tmp + 1)) // 2
+                need -= offset
+
+            return need <= remain
+
+        remain = ms - n
+        l, r = 0, remain
+        ans = 0
+
+        if helper(r): # can take max value initially
+            return r + 1
+
+        while l < r:
+            m = (l + r) // 2
+
+            if helper(m):  # possible to take
+                ans = max(ans, m)
+                l = m + 1
+            else:
+                r = m
+        return ans + 1
