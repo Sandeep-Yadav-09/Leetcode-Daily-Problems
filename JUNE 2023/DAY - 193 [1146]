@@ -1,0 +1,90 @@
+** 1146. Snapshot Array **
+
+# Approach 1:
+class SnapshotArray:
+
+    def __init__(self, length: int):
+        self.snaps = [{}]
+
+    def set(self, index: int, val: int) -> None:
+        self.snaps[-1][index] = val
+
+    def snap(self) -> int:
+        self.snaps.append({})
+        return len(self.snaps) - 2
+
+    def get(self, index: int, snap_id: int) -> int:
+        return next((self.snaps[i][index] for i in range(snap_id, -1, -1) if index in self.snaps[i]), 0)
+
+# Approach 2:
+from dataclasses import dataclass
+
+class SnapshotArray:
+    def __init__(self, length: int):
+        self.arr = [VersionedItem(0) for _ in range(length)]
+        self.cur_snapshot = 0
+
+    def set(self, index: int, val: int) -> None:
+        self.arr[index].set(self.cur_snapshot, val)
+
+    def snap(self) -> int:
+        self.cur_snapshot += 1
+        return self.cur_snapshot - 1
+
+    def get(self, index: int, snap_id: int) -> int:
+        return self.arr[index].get(snap_id)
+
+
+class VersionedItem:
+    def __init__(self, init_value: int):
+        self.snapshots = [Item(-1, init_value)]
+    
+    def get(self, snapshot_id):
+        l = 0
+        r = len(self.snapshots)
+        while r - l > 1:
+            m = l + (r - l) // 2
+            if self.snapshots[m].snapshot_id <= snapshot_id:
+                l = m
+            else:
+                r = m
+        return self.snapshots[l].value
+    
+    def set(self, snapshot_id, value):
+        self.snapshots.append(Item(snapshot_id, value))
+
+@dataclass
+class Item:
+    snapshot_id: int
+    value: int
+
+# Approach 3:
+class SnapshotArray:
+
+    def __init__(self, length: int):
+        self.snapshots = [[] for _ in range(length)]
+        self.snap_id = -1
+        self.added = {}
+
+    def set(self, index: int, val: int) -> None:
+        self.added[index] = val
+
+    def snap(self) -> int:
+        self.snap_id += 1
+        for i, val in self.added.items():
+            snapshots = self.snapshots[i]
+            if not snapshots or snapshots[-1][1] != val:
+                snapshots.append((self.snap_id, val))
+                
+        self.added.clear()
+        return self.snap_id
+
+    def get(self, index: int, snap_id: int) -> int:
+        snapshots = self.snapshots[index]       
+        i = bisect_left(snapshots, snap_id, key=itemgetter(0))
+        if i < len(snapshots) and snapshots[i][0] == snap_id:
+            return snapshots[i][1]
+        elif i > 0:
+            return snapshots[i-1][1]
+        else:
+            return 0
