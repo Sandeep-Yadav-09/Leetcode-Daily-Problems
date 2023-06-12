@@ -1,0 +1,69 @@
+** 228. Summary Ranges **
+
+# Approach 1:
+class Solution:
+    def summaryRanges(self, nums: List[int]) -> List[str]:
+        start_index = 0
+        result = []
+        
+        for i in range(len(nums)):
+            if i + 1 < len(nums) and nums[i] + 1 == nums[i+1]:
+                continue
+
+            if start_index == i:
+                result.append(str(nums[start_index]))
+            else:
+                result.append(str(nums[start_index]) + "->" + str(nums[i]))
+
+            start_index = i + 1
+
+        return result
+
+# Approach 2:
+class Solution:
+    def summaryRanges(self, nums: List[int]) -> List[str]:
+        res = []
+        start = 0
+        end = 0
+        for i in range(len(nums)-1):
+
+            if nums[i+1] != nums[i] + 1:
+                if start == end:
+                    res.append(str(nums[i]))
+                else:
+                    res.append(str(nums[start])+"->"+str(nums[end]))
+                start = i+1
+                end = i+1
+
+            else:
+                end = i+1
+        if start<len(nums) and end<len(nums) and start != end:
+            res.append(str(nums[start])+"->"+str(nums[end]))
+        elif start<len(nums):
+            res.append(str(nums[start]))
+        if nums:
+            return res
+        else:
+            return []
+
+# Approach 3:
+class Solution:
+    def summaryRanges(self, nums: List[int]) -> List[str]:
+        res = []
+        i = 0
+        while i < len(nums):
+            j = i + 1
+            inc = 1
+            while j < len(nums) and nums[i] + inc == nums[j]:
+                inc += 1
+                j += 1
+
+            if j - 1 - i > 0:
+                res.append(f"{nums[i]}->{nums[j - 1]}")
+
+            else:
+                res.append(f"{nums[i]}")
+
+            i = j
+
+        return res
