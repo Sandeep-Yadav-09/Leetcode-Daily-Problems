@@ -1,0 +1,46 @@
+** 2352. Equal Row and Column Pairs **
+
+# Approach 1:
+class Solution:
+    def equalPairs(self, grid: List[List[int]]) -> int:
+        count = 0
+
+        for i in range(len(grid)):
+            temp_list = []
+
+            for j in grid:
+                temp_list.append(j[i])
+
+            print(temp_list)
+            if temp_list in grid:
+                count+=grid.count(temp_list)
+
+        return count
+
+# Approach 2:
+class Solution:
+    def equalPairs(self, grid: List[List[int]]) -> int:
+        n = len(grid)
+        ans = 0
+        for i in range(n):
+            for j in range(n):
+                flag = True
+                for k in range(n):
+                    if grid[i][k] != grid[k][j]:
+                        flag = False
+                if flag:
+                    ans += 1
+        return ans
+
+# Approach 3:
+class Solution:
+    def equalPairs(self, grid: List[List[int]]) -> int:
+        hashmap, res = defaultdict(int), 0
+        for row in grid:
+            hashmap[str(row)] += 1
+        for i in range(len(grid)):
+            col = []
+            for j in range(len(grid)):
+                col.append(grid[j][i])
+            res += hashmap[str(col)]
+        return res
