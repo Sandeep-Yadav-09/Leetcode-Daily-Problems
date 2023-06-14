@@ -1,0 +1,55 @@
+** 530. Minimum Absolute Difference in BST **
+
+# Approach 1:
+class Solution:
+    def getMinimumDifference(self, root: Optional[TreeNode]) -> int:
+        min_diff = float('inf')
+        ans =  float('inf')
+        def func(node):
+            nonlocal min_diff, ans
+            if node:
+                func(node.left)
+                min_diff = min(min_diff, abs(ans-node.val))
+                ans = node.val
+                func(node.right)
+        func(root)
+        return min_diff
+
+# Approach 2:
+def preorder(root, v):
+    if root is None:
+        return
+    v.append(root.val)
+    preorder(root.left, v)
+    preorder(root.right, v)
+
+class Solution:
+    def getMinimumDifference(self, root: Optional[TreeNode]) -> int:
+        min = sys.maxsize
+        lst = []
+        preorder(root, lst)
+        for i in range(len(lst)-1):
+            for j in range(i+1, len(lst)):
+                if(min > abs(lst[i]-lst[j])):
+                    min = abs(lst[i]-lst[j])
+        return min
+
+# Approach 3:
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+class Solution:
+    def getMinimumDifference(self, root: Optional[TreeNode]) -> int:
+        ans = []
+        def func(node):
+            if node:
+                func(node.left)
+                ans.append(node.val)
+                func(node.right)
+        func(root)
+        min_diff = float('inf')
+        for i in range(1, len(ans)):
+            min_diff = min(min_diff, abs(ans[i]-ans[i-1]))
+        return min_diff
