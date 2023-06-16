@@ -1,0 +1,91 @@
+** 1569. Number of Ways to Reorder Array to Get Same BST **
+
+# Approach 1:
+class Solution:
+    def numOfWays(self, nums: List[int]) -> int:
+        def countWays(nums):
+            if len(nums) <= 1:
+                return 1
+        
+            root = nums[0]
+            left = [x for x in nums if x < root]
+            right = [x for x in nums if x > root]
+            
+            left_count = countWays(left)
+            right_count = countWays(right)
+
+            x = len(left)
+            y = len(right)
+
+            ways = left_count * right_count * math.comb(x + y, x)
+            return ways
+        return (countWays(nums) - 1) % (10**9 + 7)
+        
+# Approach 2:
+import math
+
+class Solution:
+    ans = 1
+    def helper(self, nums): 
+        if len(nums)<3:
+            return       
+        root = nums[0]
+        left = [x for x in nums if x < root]
+        right = [x for x in nums if x > root]
+
+        n_l = len(left)
+        n_r = len(right)
+
+        self.ans *= math.comb(n_l+n_r,n_r)
+        self.helper(left)
+        self.helper(right)
+
+    def numOfWays(self, nums: List[int]) -> int:
+        self.helper(nums)
+        return int((self.ans-1)%1000000007)
+
+# Approach 3:
+class Solution:
+    def numOfWays(self, nums: List[int]) -> int:
+
+        def numOfWays2(nums, MOD):
+
+            splitter = nums[0]
+            greater_than = []
+            less_than = []
+            
+            last_gt = float('-inf')
+            last_lt = float('-inf')
+            is_gt_sorted = True
+            is_lt_sorted = True
+
+            for num in nums[1:]:
+                if num > splitter:
+                    greater_than.append(num)
+                    if num < last_gt:
+                        is_gt_sorted = False
+                    last_gt = num
+                else:
+                    less_than.append(num)
+                    if num < last_lt:
+                        is_lt_sorted = False
+                    last_lt = num
+
+            n = len(greater_than)
+            m = len(less_than)
+            gt = 1
+            lt = 1
+            
+            # Only recurse if the greater_than array is not sorted
+            if greater_than and not is_gt_sorted:
+                gt = numOfWays2(greater_than, MOD)
+            # Only recurse if the less_than array is not sorted
+            if less_than and not is_lt_sorted:
+                lt = numOfWays2(less_than, MOD)
+
+            ways = math.comb(n + m, m)
+
+            return (ways * lt * gt) % MOD
+
+        MOD = 10**9 + 7
+        return numOfWays2(nums, MOD) - 1
