@@ -1,0 +1,59 @@
+** 2328. Number of Increasing Paths in a Grid **
+
+# Approach 1:
+class Solution:
+    def countPaths(self, grid: List[List[int]]) -> int:
+        m, n = len(grid), len(grid[0])
+        mod = 10**9 + 7
+        
+        @cache
+        def dp(r, c):
+            ans = 1
+            for dr, dc in (r+1, c), (r-1, c), (r, c+1), (r, c-1):
+                if 0 <= dr < m and 0 <= dc < n and grid[dr][dc] > grid[r][c]:
+                    ans += dp(dr, dc) % mod
+            return ans % mod
+
+        return sum(dp(r, c) for r in range(m) for c in range(n)) % mod
+
+# Approach 2:
+class Solution:
+    def countPaths(self, grid: List[List[int]]) -> int:
+        mod = 10 ** 9 + 7
+        m, n = len(grid), len(grid[0])
+        @cache
+        def dp(i, j):
+            v = grid[i][j]
+            return 1 + sum([
+                dp(i + 1, j) if i + 1 < m and v < grid[i + 1][j] else 0,
+                dp(i, j + 1) if j + 1 < n and v < grid[i][j + 1] else 0,
+                dp(i - 1, j) if i > 0 and v < grid[i - 1][j] else 0,
+                dp(i, j - 1) if j > 0 and v < grid[i][j - 1] else 0,
+                ]) % mod
+        return sum(dp(i, j) for i in range(m) for j in range(n)) % mod
+
+# Approach 3:
+class Solution:
+    def maxPath(self, grid, i, j):
+        if (i, j) in self.dp:
+            return self.dp[(i, j)]
+        res = 0
+        for r, c in self.dirs:
+            nr = r + i
+            nc = c + j
+            if 0 <= nr < self.m and 0 <= nc < self.n and grid[nr][nc] > grid[i][j]:
+                res += 1
+                res += self.maxPath(grid, nr, nc)
+        self.dp[(i, j)] = res % self.MOD
+        return res % self.MOD
+    def countPaths(self, grid: List[List[int]]) -> int:
+        self.m = len(grid)
+        self.n = len(grid[0])
+        self.dirs = [[1, 0], [-1, 0], [0, 1], [0, -1]]
+        self.dp = {}
+        self.MOD = 10 ** 9 + 7
+        ans = 0
+        for i in range(self.m):
+            for j in range(self.n):
+                ans += self.maxPath(grid, i, j) % self.MOD
+        return ans % self.MOD + (self.m * self.n) % self.MOD
