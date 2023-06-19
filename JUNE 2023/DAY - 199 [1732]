@@ -1,0 +1,29 @@
+** 1732. Find the Highest Altitude **
+
+# Approach 1:
+class Solution:
+    def largestAltitude(self, gain: List[int]) -> int:
+        maxi = 0
+        sums = 0
+        for i in gain:
+            sums += i
+            if(sums > maxi):
+                maxi = sums
+        return maxi
+
+# Approach 2:
+class Solution:
+    def largestAltitude(self, gain: List[int]) -> int:
+
+        high_alt,temp=0,0
+        
+        for i in gain:
+            temp+=i
+            high_alt=max(high_alt,temp)
+            
+        return high_alt
+
+# Approach 3:
+class Solution:
+    def largestAltitude(self, gain: List[int]) -> int:
+        return max([0] + [sum(gain[:i+1]) for i in range(len(gain))])
