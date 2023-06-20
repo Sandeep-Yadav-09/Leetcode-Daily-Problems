@@ -1,0 +1,56 @@
+** 2090. K Radius Subarray Averages **
+
+# Approach 1:
+class Solution:
+    def getAverages(self, nums: List[int], k: int) -> List[int]:
+        prefix_sum = [0]
+        tot = 0
+        for num in nums:
+            tot += num
+            prefix_sum.append(tot)
+            
+        avgs = [-1 for _ in range(len(nums))]
+        for i in range(len(nums)):
+            if i - k < 0 or i + k >= len(nums):
+                continue
+
+            count = 2*k + 1
+            tot = prefix_sum[i+k+1]-prefix_sum[i-k]
+            average = tot // count
+            avgs[i] = average
+            
+        return avgs
+
+# Approach 2:
+class Solution:
+    def getAverages(self, nums: List[int], k: int) -> List[int]:
+        if k==0:
+            return nums
+        N = len(nums)
+        L = 2*k+1
+        if N<L:
+            return [-1 for i in range(N)]
+        result = [-1 for i in range(k)]
+        s = sum(nums[:L])
+        for i in range(N-L):
+            result.append(s//L)
+            s-=nums[i]-nums[i+L]
+        result.append(s//L)
+        result.extend([-1 for i in range(k)])
+        return result
+
+# Approach 3:
+class Solution:
+    def getAverages(self, nums: List[int], k: int) -> List[int]:
+        n,t = len(nums),2*k
+        res = [-1]*n
+        l,r = 0,t
+        s = sum(nums[l:1+r])
+        for i in range(k,n-k):
+            res[i]=s//(t+1)
+            r+=1
+            if r<n:s = s-nums[l]+nums[r]
+            l+=1
+        return res
+
+        
