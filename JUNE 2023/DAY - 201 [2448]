@@ -1,0 +1,59 @@
+** 2448. Minimum Cost to Make Array Equal **
+
+# Approach 1:
+class Solution:
+    def minCost(self, nums: List[int], cost: List[int]) -> int:
+        left = min(nums)
+        right = max(nums)
+
+        while left<=right: 
+            middle = (left+right)//2
+            middle_plus = middle+1
+            curr_cost = 0
+            plus_cost = 0
+            for i,item in enumerate(nums):
+                diff = abs(item-middle)
+                curr_cost+=(cost[i]*diff)
+
+                diff = abs(item-middle_plus)
+                plus_cost+=(cost[i]*diff)
+
+            answer = min(curr_cost,plus_cost)
+            
+            if curr_cost > plus_cost:
+                left = middle+1
+            else:
+                right = middle-1
+        return answer
+
+# Approach 2:
+import numpy as np
+class Solution:
+    def minCost(self, nums: List[int], cost: List[int]) -> int:
+        indicies = np.argsort(nums)
+        nums = np.array(nums)[indicies]
+        cost = np.array(cost)[indicies]
+
+        total_cost = (cost * (nums - nums[0])).sum()
+        pc = np.cumsum(cost)
+        tc = np.diff(nums) * (2 * pc[:-1] - pc[-1])
+        return total_cost + min(0, tc.cumsum().min())
+
+# Approach 3:
+class Solution:
+    def minCost(self, nums: List[int], cost: List[int]) -> int:
+        ii,j=min(nums),max(nums)
+        while ii<j:
+            mid=(ii+j)//2
+            total1,total2=0,0
+            for i in range(len(nums)):
+                total1+=abs(mid-nums[i])*cost[i]
+                total2+=abs(mid+1-nums[i])*cost[i]
+            if total1<total2:
+                j=mid
+            else:
+                ii=mid+1
+        ans=0
+        for i in range(len(nums)):
+            ans+=abs(ii-nums[i])*cost[i]
+        return ans
