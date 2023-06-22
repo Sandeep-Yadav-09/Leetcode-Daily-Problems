@@ -1,0 +1,60 @@
+** 714. Best Time to Buy and Sell Stock with Transaction Fee **
+
+# Approach 1:
+class Solution:
+    def maxProfit(self, prices: List[int], fee: int) -> int:
+        n = len(prices)
+        
+        @lru_cache(None)
+        def dfs(i: int, purchased: bool) -> int:            
+            if i >= n:
+                return 0
+            
+            if purchased:
+                buy = dfs(i + 1, not purchased) + prices[i] - fee
+                skip = dfs(i + 1, purchased)
+                
+                return max(buy, skip)
+            
+            else:
+                sell = dfs(i + 1, not purchased) - prices[i]
+                skip = dfs(i + 1, purchased)
+
+                return max(sell, skip)
+
+        return dfs(0, False)
+
+# Approach 2:
+class Solution:
+    def maxProfit(self, prices: List[int], fee: int) -> int:
+        buy = float('-inf')
+        sell = 0
+
+        for price in prices:
+            buy = max(buy, sell - price)
+            sell = max(sell, buy + price - fee)
+
+        return sell
+
+# Approach 3:
+class Solution:
+    def maxProfit(self, prices: List[int], fee: int) -> int:
+
+        @lru_cache(None)
+        def dp(i, buy): # return max profit
+            if i == len(prices):
+                return 0
+            
+            res = 0
+            if buy:
+                # buy
+                res = max(res, dp(i + 1, not buy) - prices[i])
+                # skip
+                res = max(res, dp(i + 1, buy))
+            else:
+                # sell
+                res = max(res, dp(i + 1, not buy) - fee + prices[i])
+                #skip
+                res = max(res, dp(i + 1, buy))
+            return res
+        return dp(0, True)
