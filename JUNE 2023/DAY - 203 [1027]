@@ -1,0 +1,72 @@
+** 1027. Longest Arithmetic Subsequence **
+
+# Approach 1:
+class Solution:
+    def longestArithSeqLength(self, nums: List[int]) -> int:
+        n,hi,lo=len(nums),0,500
+        idxMap=collections.defaultdict(list)
+        for i in range(n):
+            hi=max(nums[i],hi)
+            lo=min(nums[i],lo)
+            idxMap[nums[i]].append(i)
+        # the min length of sequence is 2
+        result=2
+        # k is the difference we are testing
+        for k in range(lo-hi,hi-lo):
+            dp=[1]*n
+            for i in range(1,n):
+                for j in idxMap[nums[i]-k]:
+                    if j>=i:
+                        break
+                    dp[i]=max(dp[i],dp[j]+1)
+            result=max(result,max(dp))
+        return result
+
+# Approach 2:
+import collections
+
+class Solution:
+    def longestArithSeqLength(self, nums: List[int]) -> int:
+
+        i2diff2list = dict()
+        ln = len(nums)
+
+        for i in range(ln):
+            for nxt in range(ln-1, i, -1):
+                if i not in i2diff2list:
+                    i2diff2list[i] = dict()
+                diff = nums[nxt] - nums[i]
+                i2diff2list[i][diff] = nxt
+
+        @lru_cache(None)
+        def dp(i, diff): # return int, longest sequence with this diff
+            res = 0
+            if i in i2diff2list and diff in i2diff2list[i]:
+                nxt = i2diff2list[i][diff]
+                res = max(res, dp(nxt, diff))
+            return res + 1
+        
+        ans = 0
+        for i in range(ln):
+            for nxt in range(i + 1, ln):
+                diff = nums[nxt] - nums[i]
+                ans = max(ans, dp(nxt, diff) + 1)
+        return ans
+
+# Approach 3:
+class Solution(object):
+    def longestArithSeqLength(self, nums):
+      
+        n=len(nums)
+        dp=[{} for _ in range(n)]
+        ans=0
+        for i in range(n):
+            dp[i][0]=1
+            for j in range(i):
+                diff=nums[i]-nums[j]
+                if diff not in dp[j]:
+                    dp[i][diff]=2
+                else:
+                    dp[i][diff]=dp[j][diff]+1
+            ans=max(ans,max(dp[i].values()))
+        return ans               
