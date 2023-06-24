@@ -1,0 +1,36 @@
+** 956. Tallest Billboard **
+
+# Approach 1:
+class Solution:
+    def tallestBillboard(self, rods: List[int]) -> int:
+        dp = {0:0}
+
+        for rod in rods: 
+            for diff, val in dp.copy().items(): 
+                dp[diff + rod] = max(dp.get(diff + rod, 0), val)
+                dp[abs(diff - rod)] = max(dp.get(abs(diff - rod), 0), val + min(rod, diff))
+
+        return dp[0]
+
+# Approach 2:
+from functools import cache
+class Solution:
+    def tallestBillboard(self, rods: List[int]) -> int:
+        
+        n = len(rods)
+
+        @cache
+        def dp(i,d):
+            if i == n and d == 0:
+                return 0
+
+            if i == n:
+                return float(-inf)
+
+            return max(
+                dp(i+1, d), # Skipping it
+                rods[i] + dp(i+1, d+rods[i]), # Add it to r2
+                rods[i] + dp(i+1, d-rods[i]) # Add to r1
+            )
+
+        return dp(0,0) // 2
