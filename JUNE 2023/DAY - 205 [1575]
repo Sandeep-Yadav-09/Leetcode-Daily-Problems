@@ -1,0 +1,66 @@
+** 1575. Count All Possible Routes **
+
+# Approach 1:
+class Solution:
+    def countRoutes(self, locations: List[int], start: int, finish: int, fuel: int) -> int:
+        dp = {}
+
+        def recur(start,fuel):
+            if fuel < 0: return 0
+
+            if (start,fuel) in dp: return dp[(start,fuel)]
+
+            result = 0
+
+            if start == finish: result = 1
+
+            for city in range(len(locations)):
+                if start != city:
+                    result = (result + recur(city,fuel- abs(locations[city] - locations[start]))) % (10**9 + 7) 
+            dp[(start,fuel)] = result
+
+            return result
+        
+        return recur(start,fuel)
+
+# Approach 2:
+class Solution:
+    def countRoutes(self, locations: List[int], start: int, finish: int, fuel: int) -> int:
+        n = len(locations)
+        dp = [[0]*(fuel+1) for _ in range(n)] # create dp to calculate the number of routes to start from i (len(locations)) with certain fuel (fuel+1)
+
+        for f in range(fuel+1):
+            dp[finish][f] = 1 # for any route start from finish with any fuel we consider as 1 route
+
+        for f in range(fuel+1):
+            for start_loc in range(n):
+                for next_loc in range(n):
+                    if next_loc == start_loc: # we should not go to same location
+                        continue
+                    if (cost:= abs(locations[start_loc] - locations[next_loc])) <= f: # if we dont exceed fuel after move to next location
+                        dp[start_loc][f] = (dp[start_loc][f] + dp[next_loc][f-cost]) % (10**9 + 7)
+
+        return dp[start][f]
+
+# Approach 3:
+class Solution:
+    def countRoutes(self, locations: List[int], start: int, finish: int, fuel: int) -> int:
+        mod = 10**9+7
+        @cache
+        def helper(pre, fuel):
+            if fuel==0:
+                if pre==finish:
+                    return 1
+                return 0
+
+            ans = 0
+            if pre==finish:
+                ans = 1
+            for i in range(len(locations)):
+                if i!=pre:
+                    need = abs(locations[i]-locations[pre])
+                    if fuel-need>=0:
+                        ans+=helper(i, fuel-need)%mod
+                        ans%=mod
+            return ans
+        return helper(start, fuel)
