@@ -1,0 +1,101 @@
+** 2462. Total Cost to Hire K Workers **
+
+# Approach 1:
+from heapq import *
+class Solution:
+    def totalCost(self, costs: List[int], k: int, candidates: int) -> int:
+        leftIdx, rightIdx = candidates, max(len(costs)-candidates, candidates)-1
+        leftHeap, rightHeap = costs[:leftIdx], costs[rightIdx+1:]
+        heapify(leftHeap)
+        heapify(rightHeap)
+        cost = 0
+        for i in range(k):
+            if leftHeap and rightHeap:
+                if leftHeap[0]<=rightHeap[0]:
+                    if leftIdx <= rightIdx:
+                        cost += heapreplace(leftHeap, costs[leftIdx])
+                        leftIdx += 1
+                    else: cost += heappop(leftHeap)
+                else:
+                    if leftIdx <= rightIdx:
+                        cost += heapreplace(rightHeap, costs[rightIdx])
+                        rightIdx -= 1
+                    else: cost += heappop(rightHeap)
+            elif leftHeap: cost += heappop(leftHeap)
+            else: cost += heappop(rightHeap)
+        return cost
+
+# Approach 2:
+class Solution:
+    def totalCost(self, costs: List[int], k: int, candidates: int) -> int:
+        N = len(costs)
+        left, right = 0, N - 1
+        min_heap = []
+        used = set()
+        for _ in range(candidates):
+            if left < N and left not in used:
+                heappush(min_heap, (costs[left], left))
+                used.add(left)
+                left += 1
+            if right >= 0 and right not in used:
+                heappush(min_heap, (costs[right], right))
+                used.add(right)
+                right -= 1
+                
+        res = 0
+        for _ in range(k):
+            cost, i = heappop(min_heap)
+            res += cost
+            if i <= left and left < N and left not in used:
+                heappush(min_heap, (costs[left], left))
+                used.add(left)
+                left += 1
+            if i >= right and right >= 0 and right not in used:
+                heappush(min_heap, (costs[right], right))
+                used.add(right)
+                right -= 1
+        return res
+
+# Approach 3:
+import heapq
+class Solution:
+    def totalCost(self, costs: List[int], k: int, candidates: int) -> int:
+        n=len(costs)
+        if 2*candidates>=n:
+            costs.sort()
+            return sum(costs[:k])
+        df=n-(2*candidates)
+        df2=df
+        sm=0
+        s1=costs[:candidates]
+        s2=costs[n-candidates:]
+        heapq.heapify(s1)
+        heapq.heapify(s2)
+        i=candidates
+        j=n-candidates-1
+        # print(costs[i],costs[j])
+        ct=k
+        while df>0 and k>0:
+            x=heapq.heappop(s1)
+            y=heapq.heappop(s2)
+            if x<=y:
+                sm+=x
+                heapq.heappush(s1,costs[i])
+                heapq.heappush(s2,y)
+                i+=1
+            else:
+                sm+=y
+                heapq.heappush(s1,x)
+                heapq.heappush(s2,costs[j])
+                j-=1
+            df-=1
+            k-=1
+        lst1=heapq.nsmallest(min(k,len(s1)),s1)
+        lst2=heapq.nsmallest(min(k,len(s2)),s2)
+        lst=[]
+        lst+=lst1[:]
+        lst+=lst2[:]
+        lst.sort()
+        return sm+sum(lst[:k])
+
+        
