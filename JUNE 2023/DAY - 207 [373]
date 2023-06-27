@@ -1,0 +1,79 @@
+** 373. Find K Pairs with Smallest Sums **
+
+# Approach 1:
+class Solution:
+    def kSmallestPairs(self, nums1: List[int], nums2: List[int], k: int) -> List[List[int]]:
+        pq = []
+        for i in range(len(nums1)):
+            total = nums1[i] + nums2[0]
+            pq.append((total, nums1[i], nums2[0], 0))
+        heapq.heapify(pq)
+
+        len_num2 = len(nums2)
+        res = []
+        while k > 0 and pq:
+            total, num1, num2, counter = heapq.heappop(pq)
+            res.append([num1, num2])
+            #update counter
+            counter += 1
+            if counter < len_num2:
+                #update values
+                num2 = nums2[counter]
+                total = num1 + nums2[counter]
+                heapq.heappush(pq, (total, num1, num2, counter))
+            k -= 1
+        return res
+
+# Approach 2:
+class Solution:
+    def kSmallestPairs(self, nums1: List[int], nums2: List[int], k: int) -> List[List[int]]:
+        n1=len(nums1)
+        n2=len(nums2)
+        lst=[]
+        heapq.heapify(lst)
+        for i in range(n1):
+            for j in range(n2):
+                if k>0:
+                    heapq.heappush(lst,(-1*(nums1[i]+nums2[j]),nums1[i],nums2[j]))
+                    k-=1
+                else:
+                    pd,x,y=heapq.heappop(lst)
+                    if nums1[i]+nums2[j]>=-1*pd:
+                        heapq.heappush(lst,(pd,x,y))
+                        break
+                    else:
+                        heapq.heappush(lst,(-1*(nums1[i]+nums2[j]),nums1[i],nums2[j]))
+        flst=[]
+        for i in range(len(lst)):
+            pd,x,y=heapq.heappop(lst)
+            flst.append((x,y))
+        return flst
+
+# Approach 3:
+import heapq
+
+class Solution:
+    def kSmallestPairs(self, nums1, nums2, k):
+        pq = []
+        res = []
+        tem=k
+        if not nums1 or not nums2 or k == 0:
+            return res
+        
+        for i in range(min(len(nums1), k)):
+            heapq.heappush(pq, [nums1[i] + nums2[0], nums1[i], nums2[0], 0])
+        
+        while k > 0 and pq:
+            cur = heapq.heappop(pq)
+            res.append([cur[1], cur[2]])
+            
+            if cur[3] == len(nums2) - 1:
+                continue
+            
+            heapq.heappush(pq, [cur[1] + nums2[cur[3] + 1], cur[1], nums2[cur[3] + 1], cur[3] + 1])
+            
+            k -= 1
+        if(len(res)>tem):
+            while(len(res)>tem):
+                res.pop()
+        return res
