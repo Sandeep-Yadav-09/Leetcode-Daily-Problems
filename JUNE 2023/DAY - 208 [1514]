@@ -1,0 +1,71 @@
+** 1514. Path with Maximum Probability **
+
+# Approach 1:
+class Solution:
+    def maxProbability(self, n: int, edges: List[List[int]], succProb: List[float], start: int, end: int) -> float:
+        graph, deq = defaultdict(list), deque([start])
+        
+        for idx, edge in enumerate(edges):
+            x, y = edge
+            graph[x].append((y, idx))
+            graph[y].append((x, idx))
+            
+        probs = [0] * n
+        probs[start] = 1
+        
+        while deq:
+            node = deq.popleft()
+                
+            for child, idx in graph[node]:
+                if probs[node] * succProb[idx] > probs[child]:
+                    probs[child] = probs[node] * succProb[idx]
+                    deq.append(child)
+        return probs[end]
+
+# Approach 2:
+class Solution:
+    def maxProbability(self, n: int, edges: List[List[int]], succProb: List[float], start: int, end: int) -> float:
+        graph = defaultdict(list)
+        for j, (a, b) in enumerate(edges):
+            graph[a] += [(b, succProb[j])]
+            graph[b] += [(a, succProb[j])]
+
+        seen = {}
+        pq = [(-1, start)]
+        while pq:
+            dist, vert = heappop(pq)
+            seen[vert] = dist
+            if vert == end: return -dist
+            for neigh, cost in graph[vert]:
+                if neigh in seen and seen[neigh] <= dist*cost: continue
+                heappush(pq, (dist*cost, neigh))
+        
+        return 0
+
+# Approach 3:
+class Solution:
+    def maxProbability(self, n: int, edges: List[List[int]], succProb: List[float], start: int, end: int) -> float:
+        graph = defaultdict(dict)
+        
+        for edge, prob in zip(edges, succProb):
+            graph[edge[0]][edge[1]] = prob
+            graph[edge[1]][edge[0]] = prob
+        
+        queue = [[-1, start]]
+        visited = set()
+        
+        while queue:
+            prob, node = heapq.heappop(queue)
+            
+            if node == end:
+                return -prob
+            
+            visited.add(node)
+            
+            for next_node, next_prob in graph[node].items():
+                if next_node in visited:
+                    continue
+                
+                heapq.heappush(queue, [prob * next_prob, next_node])
+        
+        return 0
