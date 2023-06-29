@@ -1,0 +1,139 @@
+** 864. Shortest Path to Get All Keys **
+
+# Approach 1:
+from collections import deque
+class Solution:
+    def shortestPathAllKeys(self, grid: List[str]) -> int:
+        x,y= -1,-1
+        m,n = len(grid),len(grid[0])
+        max_len = -1
+        #finding the maximum length i.e from 0 to 6 how many keys area there
+        for i in range(m):
+            for j in range(n):
+                #value at (i,j) coordinate
+                c = grid[i][j]
+                if c=='@':
+                    #finding where is start point is present
+                    x,y = i,j
+                if 'a' <= c <= 'f':
+                    max_len = max(ord(c) - ord('a') + 1, max_len)
+        start = [0,x,y]
+        #0 is in bit form here 101 represents keys are c,a till now like that till 000000 6 zeros
+        q = deque()
+        visited = set()
+        visited.add(f"{0} {x} {y}")
+        q.append(start)
+        step = 0
+        directions = [[-1,0],[1,0],[0,1],[0,-1]]
+        while q:
+            size = len(q)
+            for _ in range(size):
+                curr = q.popleft()
+                if curr[0] == (1<< max_len) - 1:
+                    return step
+                for d in directions:
+                    i = curr[1] + d[0]
+                    j = curr[2] + d[1]
+                    keys = curr[0]
+                    if 0<= i < m and 0<= j < n:
+                        c = grid[i][j]
+                        if c=='#':
+                            continue
+                        if 'a'<= c<= 'f':
+                            keys |= 1<<(ord(c) - ord('a'))
+                        if 'A' <= c<= 'F'and ((keys >> (ord(c) - ord('A'))) & 1) == 0:
+                            continue
+                        if f"{keys} {i} {j}" not in visited:
+                            visited.add(f"{keys} {i} {j}")
+                            q.append([keys, i, j])
+            step += 1
+        return -1
+            
+# Approach 2:
+class Solution:
+    def shortestPathAllKeys(self, grid: List[str]) -> int:
+        n = len(grid)
+        m = len(grid[0])
+        K = 0
+        start = (0, 0)
+        # check how many keys in the graph, and the start position
+        for i in range(n):
+            for j in range(m):
+                if (ord("a") <= ord(grid[i][j]) <= ord("f")):
+                    K+= 1
+                if (grid[i][j] == '@'):
+                    start = (i, j)
+
+        # the element in q stores the location, and the state of finding each key
+        next_q = collections.deque([(start[0], start[1], (0 ,0, 0, 0, 0, 0))])
+        visited = set()
+
+        moves = 0
+                
+        while next_q:
+            curr_q = next_q
+            next_q = collections.deque()
+
+            while curr_q:
+                i, j, keys = curr_q.popleft()
+
+                if (i, j, keys) in visited:
+                    continue
+                
+                visited.add((i, j, keys))
+
+                # meet a lock
+                if ("A" <= grid[i][j] <= "F"):
+                    if (keys[ord(grid[i][j]) - ord("A")] != 1):
+                        continue
+                
+                # meet a key
+                if ("a" <= grid[i][j] <= "f"):
+                    keys = list(keys)
+                    keys[ord(grid[i][j]) - ord("a")] = 1
+                    keys = tuple(keys)
+                
+                if sum(keys) == K:
+                    return moves
+
+                for di, dj in [(1, 0), (0, 1), (-1, 0), (0, -1)]:
+                    ii = i + di
+                    jj = j + dj
+                    if ii >= 0 and ii < n and jj >= 0 and jj < m and grid[ii][jj] != '#':
+                        next_q.append((ii, jj, keys))
+                    
+            moves+= 1
+
+        return -1
+
+# Approach 3:
+class Solution:
+    def shortestPathAllKeys(self, grid: List[str]) -> int:
+        m = len(grid)
+        n = len(grid[0])
+        que = deque([])
+        keys = "abcdef"
+        locks = "ABCEDEF"
+        tot_keys = 0
+        for i in range(m):
+            for j in range(n):
+                if grid[i][j] == "@":
+                    que.append((i,j,(),0))
+                elif grid[i][j] in keys:
+                    tot_keys+=1
+        visited = set()
+        while que:
+            i,j,curr_key,moves = que.popleft()
+            curr = grid[i][j]
+            if curr in locks and curr.lower() not in curr_key or curr == "#":
+                continue
+            if curr in keys:
+                if curr not in curr_key:
+                    curr_key  = curr_key + tuple(curr)
+                if len(curr_key) == tot_keys:
+                    return moves
+            for x,y in [(i+1,j),(i,j+1),(i-1,j),(i,j-1)]:
+                    if 0<=x<m and 0<=y<n and (x,y,curr_key) not in visited:
+                        visited.add((x,y,curr_key))
+                        que.append((x,y,curr_key,moves+1))
+        return -1
