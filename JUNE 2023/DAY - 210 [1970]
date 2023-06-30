@@ -1,0 +1,110 @@
+** 1970. Last Day Where You Can Still Cross **
+
+# Approach 1:
+class Solution:
+    def latestDayToCross(self, row: int, col: int, cells: List[List[int]]) -> int:
+        water_cells = set()
+        # here we need +2 because of borders
+        parent = [i for i in range(row*col+2)]
+        left_most = parent[0]
+        right_most = parent[-1]
+
+        # here we need +1 because index = 0 is for the leftmost border
+        def get_index(i, j):
+            return i*col + j + 1
+        
+        def find(i):
+            while parent[i] != i:
+                parent[i] = parent[parent[i]]
+                i = parent[i]
+            return parent[i]
+        
+        def union(p, q):
+            p = find(p)
+            q = find(q)
+            if p == q: return
+            parent[q] = p
+        
+        for day, (i, j) in enumerate(cells):
+            # we are using 0-indexed array
+            i -= 1
+            j -= 1
+
+            water_cells.add((i, j))
+
+            if j == 0: union(left_most, get_index(i, j))
+            if j == col-1: union(right_most, get_index(i, j))
+
+            # looking for water cells in 8 directions
+            for di, dj in [(-1, -1), (-1, 0), (0, -1), (-1, 1), (1, -1), (0, 1), (1, 0), (1, 1)]:
+                new_i, new_j = i + di, j + dj
+                if -1 < new_i < row and -1 < new_j < col and (new_i, new_j) in water_cells:
+                    union(get_index(i, j), get_index(new_i, new_j))
+
+            if find(left_most) == find(right_most):
+                return day
+
+# Approach 2:
+class Solution:
+    def latestDayToCross(self, row: int, col: int, cells: List[List[int]]) -> int:
+        def dfs(i, j, visited):
+            if i<0 or j<0 or i==row or j==col or (i,j) in visited:
+                return 0
+            if i==row-1:
+                return 1
+            visited.add((i,j))
+            return dfs(i,j+1,visited)|dfs(i,j-1,visited)|dfs(i+1,j,visited)|dfs(i-1,j,visited)
+
+        left = 0
+        right = len(cells)-1
+        while left<=right:
+            mid = (left+right)//2
+            visited = set()
+            for i in range(mid+1):
+                visited.add((cells[i][0]-1, cells[i][1]-1))
+            result = False
+            for j in range(col):
+                if dfs(0, j, visited):
+                    result = True
+                    break
+            if result:
+                left = mid+1
+            else:
+                right = mid-1
+        return left
+
+# Approach 3:
+class Solution:
+    def canCross(self, row, col, cells, day):
+        grid = [[0] * col for _ in range(row)]
+        
+        for r, c in cells[:day]:
+            grid[r - 1][c - 1] = 1
+            
+        def dfs(r, c):
+            if r < 0 or r >= row or c < 0 or c >= col or grid[r][c] != 0:
+                return False
+            if r == row - 1:
+                return True
+            grid[r][c] = -1
+            for dr, dc in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
+                if dfs(r + dr, c + dc):
+                    return True
+            return False
+        
+        for i in range(col):
+            if grid[0][i] == 0 and dfs(0, i):
+                return True
+
+        return False
+    def latestDayToCross(self, row: int, col: int, cells: List[List[int]]) -> int:
+        left, right = 1, row * col
+        
+        while left < right:
+            mid = right - (right - left) // 2
+            if self.canCross(row, col, cells, mid):
+                left = mid
+            else:
+                right = mid - 1
+                
+        return left
