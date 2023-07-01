@@ -1,0 +1,63 @@
+** 2305. Fair Distribution of Cookies **
+
+# Approach 1:
+class Solution:
+    def distributeCookies(self, cookies: List[int], k: int) -> int:
+        ret = 1000000
+        state = [0] * k
+        if k == len(cookies):
+            return max(cookies)
+        def helper(j):
+            nonlocal cookies
+            nonlocal ret
+            nonlocal state
+            if j == len(cookies):
+                ret = min(ret, max(state))
+            else:
+                for i in range(k):
+                    state[i] += cookies[j]
+                    helper(j+1)
+                    state[i] -= cookies[j]
+        helper(0)
+        return ret
+
+# Approach 2:
+class Solution:
+    def distributeCookies(self, cookies, k):
+        cookies.sort(reverse=True)
+        n = len(cookies)
+        self.min_unfairness = float("inf")
+        self.backtrack(cookies, k, 0, [0] * k, 0)
+        return self.min_unfairness
+
+    def backtrack(self, cookies, k, index, children, max_unfairness):
+        if index == len(cookies):
+            self.min_unfairness = min(self.min_unfairness, max_unfairness)
+            return
+
+        for i in range(k):
+            children[i] += cookies[index]
+            if children[i] <= self.min_unfairness:
+                self.backtrack(cookies, k, index + 1, children, max(max_unfairness, children[i]))
+            children[i] -= cookies[index]
+            if children[i] == 0:
+                break
+
+# Approach 3:
+class Solution:
+    def distributeCookies(self, cookies: List[int], k: int) -> int:
+        min_unfairness=float("inf")
+        distribution=[0]*k
+        def backtracking(ind):
+            nonlocal min_unfairness,distribution
+            if ind==len(cookies):
+                min_unfairness=min(min_unfairness,max(distribution))
+                return
+            if(min_unfairness<=max(distribution)):
+                return 
+            for j in range(k):
+                distribution[j]+=cookies[ind]
+                backtracking(ind+1)
+                distribution[j]-=cookies[ind]
+        backtracking(0)
+        return min_unfairness
