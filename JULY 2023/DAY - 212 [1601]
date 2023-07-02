@@ -1,0 +1,53 @@
+** 1601. Maximum Number of Achievable Transfer Requests **
+
+# Approach 1:
+class Solution:
+    def maximumRequests(self, n: int, requests: List[List[int]]) -> int:
+        dp=[0 for _ in range(n)]
+        answer=0
+        def helper(idx,count):
+            nonlocal answer
+            if idx==len(requests):
+                if all(v==0 for v in dp):
+                    answer=max(answer,count)
+                return
+            helper(idx+1,count)
+            
+            dp[requests[idx][0]]+=1
+            dp[requests[idx][1]]-=1
+            helper(idx+1,count+1)
+            dp[requests[idx][0]]-=1
+            dp[requests[idx][1]]+=1
+        
+        helper(0,0)
+        return answer
+
+# Approach 2:
+class Solution:
+    def maximumRequests(self, n: int, requests: List[List[int]]) -> int:
+        for k in range(len(requests),0,-1):
+            for c in itertools.combinations(range(len(requests)),k):
+                degree=[0]*n
+                for i in c:
+                    degree[requests[i][0]]-=1
+                    degree[requests[i][1]]+=1
+                if(not any(degree)):
+                    return k
+        return 0 
+
+# Approach 3:
+class Solution:
+    def maximumRequests(self, n: int, requests: List[List[int]]) -> int:
+        originalLen = len(requests)
+        requests = list(filter(lambda x: x[0] != x[1], requests))
+        for numRequests in range(len(requests), -1, -1):
+            for comb in itertools.combinations(requests, numRequests):
+                buildings = [0]*n
+                for request in comb:
+                    buildings[request[0]] -= 1
+                    buildings[request[1]] += 1
+            
+                if buildings.count(0) == n:
+                    return numRequests + (originalLen - len(requests))
+        
+        return 0
