@@ -1,0 +1,62 @@
+** 859. Buddy Strings **
+
+# Approach 1:
+class Solution:
+    def buddyStrings(self, s: str, goal: str) -> bool:
+        if len(s) != len(goal):
+            return False
+        
+        freq = Counter(s)
+
+        d = []
+        for i in range(len(goal)):
+            if goal[i] != s[i]:
+                d.append(i) 
+            # more than 2 dissimilarities cannot be fixed
+            if len(d) > 2:
+                return False
+        # only one dissimlarity cannot be fixed
+        if len(d) == 1:
+            return False
+        # same strings only pass if a swap can be made
+        # and a swap can only be made if there's a character with frequency >= 2
+        if len(d) == 0:
+            return any([freq[key] > 1 for key in freq])
+
+        # two dissimilarities can only be fixed if a swap can be made
+        return True if s[d[0]] == goal[d[1]] and s[d[1]] == goal[d[0]] else False 
+        
+# Approach 2:
+class Solution:
+    def buddyStrings(self, s: str, goal: str) -> bool:
+        cnt = 0
+        for c1, c2 in zip(s, goal): 
+            if c1!=c2: cnt += 1
+
+        repeat_flag = 0
+        tmp = sorted(s)
+        for idx in range(len(s)-1):
+            if tmp[idx]==tmp[idx+1]:
+                repeat_flag = 1
+
+        return (cnt==0 and repeat_flag) or \
+                (cnt==2 and sorted(s)==sorted(goal))
+        
+# Approach 3:
+class Solution:
+    def buddyStrings(self, s: str, goal: str) -> bool:
+
+        # return False if length is not same
+        if len(s) != len(goal):
+            return False
+        
+        # return true if 2 strings are same and have same chars, then they can be swapped
+        if s == goal and len(set(s)) < len(goal):
+            return True
+        
+        # calculate differnt pairs 
+        diff = [(a, b) for a, b in zip(s, goal) if a != b]   # [('a', 'b'), ('b', 'a')]
+        
+        # return true if len of diff is 2 and first element is equal to reverse of second element
+        return len(diff) == 2 and diff[0] == diff[1][::-1]
+        
