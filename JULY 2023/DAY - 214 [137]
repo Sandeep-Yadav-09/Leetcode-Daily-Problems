@@ -1,0 +1,29 @@
+** 137. Single Number II **
+
+# Approach 1:
+class Solution:
+    def singleNumber(self, nums: List[int]) -> int:
+        s=list(set(nums))
+        for i in s:
+            if nums.count(i)==1:
+                return i
+
+# Approach 2:
+class Solution:
+    def singleNumber(self, nums: List[int]) -> int:
+        numDict = {}
+        for i in nums:
+            numDict[i] = numDict.get(i, 0) + 1
+            if numDict.get(i, 0) == 3:
+                del numDict[i]
+        return list(numDict.keys())[0]
+
+# Approach 3:
+class Solution:
+    def singleNumber(self, nums: List[int]) -> int:
+        count={}
+        for i in nums:
+            count[i]=1+count.get(i,0)
+        for k,v in count.items():
+            if v==1:
+                return k
