@@ -1,0 +1,63 @@
+** 1493. Longest Subarray of 1's After Deleting One Element **
+
+# Approach 1:
+class Solution:
+    def longestSubarray(self, nums: List[int]) -> int:
+        prev_count = max_size = prev = curr_count = zero_count = 0
+        for no in nums:
+            if no:
+                if not prev:
+                    curr_count = prev_count
+                curr_count += 1
+            else:
+                zero_count += 1
+                max_size = max(max_size,curr_count)
+                prev_count = (curr_count - prev_count) if prev else 0
+                curr_count = 0
+            prev = no
+        max_size = max(max_size,curr_count)
+        if not zero_count:
+            max_size -= 1
+        return max_size
+
+# Approach 2:
+class Solution:
+    def longestSubarray(self, nums: List[int]) -> int:
+        n = len(nums)
+
+        dp = [[None] * n for _ in range(2)]
+    
+
+        dp[0][n - 1] = 0
+        dp[1][n - 1] = int(nums[n - 1] == 1)
+
+
+        for i in reversed(range(0, n - 1)):
+            if nums[i] == 1:
+                dp[1][i] = 1 + dp[1][i + 1]
+                dp[0][i] = 1 + dp[0][i + 1]
+            else:
+                dp[1][i] = 0
+                dp[0][i] = dp[1][i + 1]
+
+        return max(dp[0][i] for i in range(n))
+
+# Approach 3:
+class Solution:
+    def longestSubarray(self, nums: List[int]) -> int:
+        n = len(nums)
+        if not 0 in nums:
+            return n - 1
+
+        single = double = most = 0
+        for num in nums + [0]:
+            if num == 0:
+                if double > most:
+                    most = double
+                double = single
+                single = 0
+            else:
+                single += 1
+                double += 1
+
+        return most
