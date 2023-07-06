@@ -1,0 +1,53 @@
+** 209. Minimum Size Subarray Sum **
+
+# Approach 1:
+class Solution:
+    def minSubArrayLen(self, target: int, nums: List[int]) -> int:
+        minV=len(nums)+1
+        if sum(nums)<target:
+            return 0
+        start=0
+        tot=0
+        for end in range(len(nums)):
+            tot+=nums[end]
+            while tot>=target:
+                minV=min(minV,end-start+1)
+                tot-=nums[start]
+                start+=1
+        return minV
+
+# Approach 2:
+class Solution:
+    def minSubArrayLen(self, s: int, nums: List[int]) -> int:
+        n = len(nums)
+        left,right=0,0
+        min_len = float('inf')
+        curr_sum = 0
+
+        while right < n:
+            curr_sum += nums[right]
+
+            while curr_sum >= s:
+                min_len = min(min_len, right - left + 1)
+                curr_sum -= nums[left]
+                left += 1
+            right += 1
+
+        return min_len if min_len != float('inf') else 0
+
+# Approach 3:
+class Solution:
+    def minSubArrayLen(self, target: int, nums: List[int]) -> int:
+        l=0     #declaring a left variable starting at 0
+        ans=len(nums)+1  #setting a defult value of ans
+        s=0     #initial sum of the subarrays
+        for r in range(len(nums)):   #iterating the right till last
+            s+=nums[r]   # will add the right element to the sum
+            if s>=target:   #add to answer if target is fulfilled
+                ans=min(ans,r-l+1)   #minimum of answer is taken
+            while s>target:  #we will shift the right till targetnot satisfied
+                s-=nums[l]
+                l+=1
+                if s>=target:
+                    ans=min(ans,r-l+1)   #will add the target fulfilled
+        return ans if ans<len(nums)+1 else 0
