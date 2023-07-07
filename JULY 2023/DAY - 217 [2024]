@@ -1,0 +1,52 @@
+** 2024. Maximize the Confusion of an Exam **
+
+# Approach 1:
+class Solution:
+    def maxConsecutiveAnswers(self, answerKey: str, k: int) -> int:
+        n = len(answerKey)
+        def find(x):
+            i = -1 
+            ans = count = 0
+            for j in range(n):
+                if answerKey[j] != x and count < k:
+                    count += 1
+                elif answerKey[j] != x:
+                    ans = max(ans, j - i - 1)
+                    i += 1
+                    while i < n and answerKey[i] == x:
+                        i += 1
+            return max(ans, n - i - 1)
+        return max(map(find, ["T", "F"]))
+
+# Approach 2:
+class Solution:
+    def maxConsecutiveAnswers(self, answerKey: str, k: int) -> int:
+        F,T,X = deque([-1]),deque([-1]),k
+        for e,i in enumerate(answerKey):
+            if i == "T":
+                if len(F)>k:
+                    X = max(X,e-F.popleft()-1)
+                F.append(e)
+            else:
+                if len(T)>k:
+                    X = max(X,e-T.popleft()-1)
+                T.append(e)
+        return max(X,len(answerKey)-min(T[0],F[0])-1)
+
+# Approach 3:
+class Solution:
+
+    def maxConsecutiveAnswers(self, answerKey, k):
+        max_freq = i = 0
+        char_count = collections.Counter()
+
+        for j in range(len(answerKey)):
+
+            char_count[answerKey[j]] += 1
+            max_freq = max(max_freq, char_count[answerKey[j]])
+
+            if j - i + 1 > max_freq + k:
+                char_count[answerKey[i]] -= 1
+                i += 1
+
+        return len(answerKey) - i
