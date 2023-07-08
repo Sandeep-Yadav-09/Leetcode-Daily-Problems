@@ -1,0 +1,37 @@
+** 2551. Put Marbles in Bags **
+
+# Approach 1:
+class Solution:
+    def putMarbles(self, weights: List[int], k: int) -> int:
+        n=len(weights)-1
+        res=[0]*n
+        for i in range(len(res)):
+            res[i]=weights[i]+weights[i+1]
+        res.sort()
+        ans=0
+        for i in range(k-1):
+            ans+=res[n-1-i]-res[i]
+        return ans
+
+# Approach 2:
+class Solution:
+    def putMarbles(self, w: List[int], k: int) -> int:
+        sums=sorted(w[i]+w[i+1] for i in range(len(w)-1))
+        return sum(sums[-k+1:])-sum(sums[:k-1]) if k>1 else 0
+
+# Approach 3:
+class Solution:
+    def putMarbles(self, weights: List[int], k: int) -> int:
+        if k == 1 or k == len(weights): return 0
+        cut_index = len(weights) - 1
+        res = 0
+        arr = [0]*cut_index
+        for i in range(cut_index):
+            arr[i] = weights[i] + weights[i+1]
+        arr.sort()
+        # only need cut k-1 time, so k-1 cut 
+        for i in range(k-1):
+            # each result is max - min,and since max is starting from last index, which is cut_index-1 in python
+            # as the arr is length of cut_index
+            res += arr[cut_index-1-i] - arr[i]
+        return res
