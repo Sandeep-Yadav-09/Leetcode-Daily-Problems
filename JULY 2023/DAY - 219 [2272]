@@ -1,0 +1,85 @@
+** 2272. Substring With Largest Variance **
+
+# Approach 1:
+class Solution:
+    def largestVariance(self, s: str) -> int:
+        counter=collections.Counter(s)
+        ans=0
+        for c1 in string.ascii_lowercase:
+            for c2 in string.ascii_lowercase:
+                if c1==c2 or counter[c1]==0 or counter[c2]==0:
+                    continue
+                majorCount=0
+                minorCount=0
+                restMinor=counter[c2]
+
+                for c in s:
+                    if c==c1:
+                        majorCount+=1
+                    if c==c2:
+                        minorCount+=1
+                        restMinor-=1
+                    
+                    if minorCount > 0:
+                        ans=max(ans,majorCount-minorCount)
+                    if majorCount < minorCount and restMinor>0:
+                        majorCount=0
+                        minorCount=0
+        return ans
+
+# Approach 2:
+class Solution:
+    def largestVariance(self, s: str) -> int:
+        c1 = c2 = ans = 0
+        for _ in range(2):
+            for ch1 , ch2 in permutations(set(s),2):
+                c1 = c2 =0
+                for c in s :
+                    if c == ch1 :
+                        c1 += 1
+                    elif c == ch2 :
+                        c2 += 1
+                    else :
+                        continue
+                    if c1 > 0 and c2 > 0 and c1 >= c2 :
+                        ans = max(ans , c1-c2)
+                    if c2 > c1 :
+                        c1 = 0
+                        c2 = 0
+            s = s[::-1]
+        return ans
+                
+# Approach 3:
+class Solution:
+    def largestVariance(self, s: str) -> int:
+
+        cdict: dict[str, int] = {}
+        for c in s:
+            cdict[c] = 1 if not cdict.get(c) else cdict[c] + 1
+        if len(cdict) == 1:
+            return 0
+
+        def kadanes(x: str, y: str) -> int:
+            xcnt: int = 0; ycnt: int = 0
+            xleft: int = cdict[x]; yleft: int = cdict[y]
+            best: int = 0
+            for c in s:
+                if c == x:
+                    xcnt += 1; xleft -= 1
+                elif c == y:
+                    ycnt += 1; yleft -= 1
+                else:
+                    continue
+                if xcnt < ycnt and yleft:
+                    xcnt, ycnt = 0, 0
+                if xcnt and ycnt:
+                    best = max(best, xcnt - ycnt)
+                if (not xleft and ycnt) or (not yleft and not ycnt):
+                    break
+            return best
+        
+        maxbest: int = 0
+        for c1 in cdict.keys():
+            for c2 in cdict.keys():
+                maxbest = max(maxbest, 0 if c1 == c2 else kadanes(c1, c2))
+        return maxbest               
