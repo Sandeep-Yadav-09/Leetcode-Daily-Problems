@@ -1,0 +1,97 @@
+** 863. All Nodes Distance K in Binary Tree **
+
+# Approach 1:
+class Solution:
+    def distanceK(self, root: TreeNode, target: TreeNode, k: int) -> List[int]:
+        # define a function to add parent node pointers to all nodes 
+        def add_parent(node, parent): 
+            if node: 
+                node.parent = parent 
+                add_parent(node.left, node) 
+                add_parent(node.right, node) 
+        # initialize answer list and visited set 
+        answer = [] 
+        visited = set() 
+        # define a function to perform DFS from target 
+        def dfs(node, distance): 
+            if node is None or node in visited: 
+                return 
+            visited.add(node) 
+            if distance == k: 
+                answer.append(node.val) 
+                return 
+            dfs(node.left, distance+1) 
+            dfs(node.right, distance+1) 
+            dfs(node.parent, distance+1) 
+        # add parent pointers to all nodes and perform DFS 
+        add_parent(root, None) 
+        dfs(target, 0) 
+        return answer 
+
+# Approach 2:
+class Solution:
+    def distanceK(self, root: TreeNode, target: TreeNode, k: int) -> List[int]:
+        neighbors = defaultdict(list)
+        def dfs(node):
+            if node.left:
+                neighbors[node.val].append(node.left.val)
+                neighbors[node.left.val].append(node.val)
+                dfs(node.left)
+            if node.right:
+                neighbors[node.val].append(node.right.val)
+                neighbors[node.right.val].append(node.val)
+                dfs(node.right)
+        dfs(root)
+        q = deque([[target.val, 0]])
+        res = []
+        visited = set([target.val])
+        while q:
+            node, dist = q.popleft()
+            if dist == k:
+                res.append(node)
+            for neighbor in neighbors[node]:
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    q.append([neighbor, dist + 1])
+        return res
+
+# Approach 3:
+class Solution:
+    def distanceK(self, root: TreeNode, target: TreeNode, k: int) -> List[int]:
+        parent = {}
+
+        def dfs(node, p):
+            if node == None:
+                return 
+            
+            parent[node] = p
+
+            dfs(node.left, node)
+            dfs(node.right, node)
+
+            pass
+
+        dfs(root, None)
+        result = []
+        pq = [(target, 0)]
+        seen = set()
+        # seen.add(target)
+        while len(pq) != 0:
+            x = pq[0]
+            pq.pop(0)
+
+            if x[0] == None:
+                continue
+            
+            if x[0] in seen:continue
+            seen.add(x[0])
+
+            if x[1] == k:
+                result.append(x[0].val)
+                continue
+            
+            pq.append((x[0].left, x[1] + 1))
+            pq.append((x[0].right, x[1] + 1))
+            pq.append((parent[x[0]], x[1] + 1))
+
+        return result
