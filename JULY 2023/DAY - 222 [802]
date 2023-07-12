@@ -1,0 +1,92 @@
+** 802. Find Eventual Safe States **
+
+# Approach 1:
+class Solution:
+    def eventualSafeNodes(self, graph: List[List[int]]) -> List[int]:
+
+        n = len(graph)
+        visited = set()
+        in_stack = set()
+        #perform a dfs and return true if there is a cycle
+        def dfs(node): 
+            if node in in_stack:
+                return True
+
+            # means its not in instack but already visited
+            if node in visited: 
+                return False
+
+            visited.add(node)
+            in_stack.add(node)
+            for neighbor in graph[node]:
+                if dfs(neighbor):
+                    return True
+
+            #remove the starting node from the instack
+            in_stack.discard(node)
+            return False
+
+        res = []
+        for i in range(n):
+            dfs(i)
+        for i in range(n):
+            if i not in in_stack:
+                res.append(i)
+
+
+        return res
+
+# Approach 2:
+class Solution:
+    def eventualSafeNodes(self, graph: List[List[int]]) -> List[int]:
+        outdegree = defaultdict(int)
+        nodes_coming_in = defaultdict(list)
+        zero_outdegree = []
+        ans = []
+        for i, nodes in enumerate(graph):
+            outdegree[i] = len(nodes)
+            if outdegree[i] == 0:
+                zero_outdegree.append(i)
+            for node in nodes:
+                nodes_coming_in[node].append(i)
+
+        while zero_outdegree:
+            node = zero_outdegree.pop()
+            for nd in nodes_coming_in[node]:
+                outdegree[nd] -= 1
+                if outdegree[nd] == 0:
+                    zero_outdegree.append(nd)
+            ans.append(node)
+        ans.sort()         
+        return ans
+
+# Approach 3:
+class Solution:
+    def eventualSafeNodes(self, graph: List[List[int]]) -> List[int]:
+        dp = {}
+        def dfs(i,seen):
+            
+            if i in dp:
+                return dp[i]
+
+            if i in seen:
+                return False
+
+            if not graph[i]:
+                return True
+
+            seen.add(i)
+            for n in graph[i]:
+                if not dfs(n,seen):
+                    dp[n] = False
+                    return False
+            seen.remove(i)
+
+            dp[i] = True
+            return True
+        
+        ans = []
+        for j in range(len(graph)):
+            if dfs(j,set()):
+                ans.append(j)
+        return ans
