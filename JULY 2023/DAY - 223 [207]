@@ -1,0 +1,79 @@
+** 207. Course Schedule **
+
+# Approach 1:
+class Solution:
+    def canFinish(self, numCourses: int, prerequisites: List[List[int]]) -> bool:
+        if len(prerequisites) == 1:
+            if prerequisites[0][0] == prerequisites[0][1]:
+                return False
+            return True
+        pre = prerequisites.copy()
+        pre.sort()
+        visited = {}
+        def dfs(i):
+            if i[1] in visited:
+                return visited[i[1]]
+            visited[i[0]] = False
+            for val in pre:
+                if (i[1] == val[0] and not dfs(val)):
+                    return visited[i[0]]
+            visited[i[0]] = True
+            return visited[i[0]]
+        for n in pre:
+            if n[0] == n[1]:
+                return False
+            if not dfs(n):
+                return False
+        return True
+
+# Approach 2:
+class Solution:
+    def canFinish(self, numCourses: int, prerequisites: List[List[int]]) -> bool:
+
+        crs_with_req = {} #course with its required
+        for crs, req in prerequisites:
+            if crs in crs_with_req:
+                crs_with_req[crs].add(req)
+            else:
+                crs_with_req[crs] = set([req])
+        
+
+        all_courses = set(list(range(numCourses)))
+
+        not_required = all_courses - crs_with_req.keys()
+        
+        while not_required:
+            buffer = set()
+            for n_rq in not_required:
+                for k in list(crs_with_req.keys()):
+                    if n_rq in crs_with_req[k]:
+                        crs_with_req[k].remove(n_rq)
+                        if len(crs_with_req[k])==0:
+                            del crs_with_req[k]
+                            buffer.add(k)
+            not_required = buffer
+            
+        
+        return crs_with_req=={}
+
+# Approach 3:
+class Solution:
+    def canFinish(self, numCourses: int, prerequisites: List[List[int]]) -> bool:
+
+        gr = defaultdict(list)
+        depth = defaultdict(int)
+        for tr, sr in prerequisites:
+            gr[sr].append(tr)
+            depth[tr] += 1
+        
+        q = deque([ind for ind in range(numCourses) if not depth[ind]])
+
+        while q:
+            nd = q.popleft()
+            numCourses -= 1
+            for sn in gr[nd]:
+                depth[sn] -= 1
+                if not depth[sn]:
+                    q.append(sn)
+        
+        return not numCourses
