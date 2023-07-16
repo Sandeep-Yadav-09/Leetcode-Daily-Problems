@@ -1,0 +1,94 @@
+** 1125. Smallest Sufficient Team **
+
+# Approach 1:
+class Solution:
+    def smallestSufficientTeam(self, req_skills: List[str], people: List[List[str]]) -> List[int]:
+        mp = {skill : i for i, skill in enumerate(req_skills)} # digitized skills
+        
+        cand = []
+        for skills in people: 
+            val = 0
+            for skill in skills: 
+                val |= 1 << mp[skill] # digitized skill
+            cand.append(val)
+        
+        @cache
+        def fn(i, mask): 
+            if mask == 0: return []
+            if i == len(people): return [0]*100 # impossible
+            if not (mask & cand[i]): return fn(i+1, mask)
+            return min(fn(i+1, mask), [i] + fn(i+1, mask & ~cand[i]), key=len)
+        
+        return fn(0, (1 << len(req_skills)) - 1)
+
+# Approach 2:
+class Solution:
+    def smallestSufficientTeam(self, req_skills: List[str], people: List[List[str]]) -> List[int]:
+        
+        n_skills = len(req_skills)
+        n_people = len(people)
+        
+        # index skills
+        skill_map = {x: i for i, x in enumerate(req_skills)}
+        
+        # descending sort by length of skills per person
+        people = sorted([(i, x) for i, x in enumerate(people)], key=lambda x: -len(x[1]))
+        
+        # bit people skill
+        people_bit = {}
+        for i, p in people:
+            tmp = 0
+            for s in p:
+                tmp |= 1 << skill_map[s]
+            # if a person skill cannot be covered from pervious people then added
+            if all(x | tmp != x for x in people_bit): people_bit[tmp] = i 
+        
+        # reverse skill set and id
+        people_bit = {v: k for k, v in people_bit.items()}
+        cands = [*people_bit.keys()]
+
+        # final answer and size for recording minimum team size
+        self.ans = None
+        self.size = float('inf')
+
+        @lru_cache(None)
+        def dp(i, mask, team):
+            if mask == (1 << n_skills) - 1 and self.size > len(team):
+                self.size = len(team)
+                self.ans = team
+                return
+            if i == len(cands):
+                return
+            # if current person has skill not covered by previous included skills
+            if mask | people_bit[cands[i]] != mask:
+                dp(i + 1, mask | people_bit[cands[i]], tuple(set(team)|{cands[i]}))
+            dp(i + 1, mask, team)
+
+
+        dp(0, 0, tuple())
+        return self.ans
+
+# Approach 3:
+class Solution:
+    def smallestSufficientTeam(self, req_skills: List[str], people: List[List[str]]) -> List[int]:
+        
+        res = [''] * 17
+        n = len(req_skills)
+        def dfs(idx, has, path):
+            nonlocal res
+            if idx == n:
+                res = path
+            elif req_skills[idx] in has:
+                dfs(idx + 1, has, path)
+            else:
+                if len(path) + 1 < len(res):
+                    for i, p in enumerate(people):
+                        p = set(p)
+                        if req_skills[idx] in p:
+                            union = p & has
+                            has |= p
+                            dfs(idx + 1, has, path + [i])
+                            has -= p
+                            has |= union
+        dfs(0, set(), [])
+        return res
