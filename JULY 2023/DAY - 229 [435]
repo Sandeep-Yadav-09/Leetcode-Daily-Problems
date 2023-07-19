@@ -1,0 +1,44 @@
+** 435. Non-overlapping Intervals **
+
+# Approach 1:
+class Solution:
+    def eraseOverlapIntervals(self, intervals: List[List[int]]) -> int:
+        intervals.sort(key=lambda x:x[1])
+        i=1
+        cnt=0
+        while i<len(intervals) :
+            if intervals[i][0]<intervals[i-1][1] :
+                intervals.pop(i)
+                cnt+=1
+            else :
+                i+=1
+        return cnt
+
+# Approach 2:
+class Solution:
+    def eraseOverlapIntervals(self, intervals: List[List[int]]) -> int:
+        intervals.sort()
+        prev=intervals[0]
+        num=-1
+        for A in intervals:
+            if A[0]<prev[1] and A[1]<=prev[1]:
+                num+=1
+                prev=A
+            elif A[0]<prev[1] and A[1]>prev[1]:
+                num+=1
+            else:
+                prev=A
+        return num
+
+# Approach 3:
+class Solution:
+    def eraseOverlapIntervals(self, intervals: List[List[int]]) -> int:
+        intervals.sort()
+        result, prev = 0, -sys.maxsize
+        for l, r in intervals:
+            if l < prev:
+                result += 1
+                if r > prev:
+                    continue
+            prev = r
+        return result
