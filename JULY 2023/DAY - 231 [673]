@@ -1,0 +1,121 @@
+** 673. Number of Longest Increasing Subsequence **
+
+# Approach 1:
+class Solution:
+    def findNumberOfLIS(self, nums: List[int]) -> int:
+        n = len(nums)
+        if n <= 1:
+            return n
+
+        lengths = [1] * n
+        counts = [1] * n
+
+        for i in range(1, n):
+            for j in range(i):
+                if nums[i] > nums[j]:
+                    if lengths[j] + 1 > lengths[i]:
+                        lengths[i] = lengths[j] + 1
+                        counts[i] = counts[j]
+                    elif lengths[j] + 1 == lengths[i]:
+                        counts[i] += counts[j]
+
+        max_length = max(lengths)
+        return sum(count for length, count in zip(lengths, counts) if length == max_length)
+
+# Approach 2:
+class Solution:
+    def findNumberOfLIS(self, nums: List[int]) -> int:
+
+        class BIT:
+            def __init__(self, size) -> None:
+                self.size = size + 1
+                self.lic = [0] * self.size
+                self.count = [0] * self.size
+
+            def update(self, idx, lic, count):
+                idx += 1
+                while idx < self.size:
+                    if self.lic[idx] == lic:
+                        self.count[idx] += count
+                    elif self.lic[idx] < lic:
+                        self.lic[idx] = lic
+                        self.count[idx] = count
+                    idx += idx & (-idx)
+
+            def query(self, idx):
+                lic = 0
+                count = 0
+                idx += 1
+                while idx > 0:
+                    if self.lic[idx] == lic:
+                        count += self.count[idx]
+                    elif self.lic[idx] > lic:
+                        lic = self.lic[idx]
+                        count = self.count[idx]
+                    idx -= idx & (-idx)
+                return lic, count 
+
+        def solve(nums):
+            temp = sorted(set(nums))
+            n = len(temp)
+            bit = BIT(n)
+            maxlength = 0
+            total = 0
+            for num in nums:
+                idx = bisect.bisect_left(temp, num)
+                # get the values up until this index
+                lic, count = bit.query(idx - 1)
+                # add the inclusion of this iterated value in its lic
+                lic += 1
+                if lic == 1:
+                    count = 1
+                if lic == maxlength:
+                    total += count
+                elif lic > maxlength:
+                    maxlength = lic
+                    total = count
+                bit.update(idx, lic, count)
+            return total
+
+        return solve(nums)
+
+# Approach 3:
+class Solution:
+    def findNumberOfLIS(self, nums: List[int]) -> int:
+
+        if not nums:
+            # Quick response for empty list
+            return 0
+        
+        n = len(nums)
+        
+        # record of length of increasing subsequence
+        length = [1 for _ in range(n)]
+        
+        # record the path count of increasing subsequence
+        count = [1 for _ in range(n)]
+            
+        # scan each number, where increasing subsequence ending in nums[i]
+        for i in range(n):
+            
+            # for every number before nums[i]
+            for j in range(i):
+                
+                
+                if nums[j] < nums[i]:
+                    # nums[j] can add to increasing subsequence ending in nums[i]
+                    
+                    if (length[j] + 1) > length[i]:
+                        # nums[j] make it longer to increasing subsequence ending in nums[i]
+                        length[i], count[i] = length[j]+1, count[j]
+                
+                    elif (length[j] + 1) == length[i]:
+                        # nums[j] add some new paths of increasing subsequence ending in nums[i]
+                        count[i] += count[j]
+        
+        
+		# get the length of lonest increasing subsequence
+        max_length = max(length)
+        
+        # report total path count of longest increasing subsequence
+        return sum( count for length, count in zip(length, count) if length == max_length )
