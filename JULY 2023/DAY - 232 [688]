@@ -1,0 +1,66 @@
+** 688. Knight Probability in Chessboard **
+
+# Approach 1:
+class Solution:
+    def knightProbability(self, n: int, k: int, row: int, column: int) -> float:
+        @lru_cache(None)
+        def dp(cur_r,cur_c,k):
+            if k==0:
+                return 1
+
+            else:
+                ans=0
+                for r,c in moves:
+                    now_r=cur_r+r
+                    now_c=cur_c+c
+                    if 0<=now_r<=n-1 and 0<=now_c<=n-1:
+                        ans+=dp(now_r,now_c,k-1)
+
+                return ans
+
+        if k==0:
+            return 1
+
+        moves=[[1,2],[2,1],[1,-2],[2,-1],[-1,2],[-2,1],[-1,-2],[-2,-1]]
+        return dp(row,column,k)/8**k            
+
+# Approach 2:
+class Solution:
+  def knightProbability(self, N: int, K: int, r: int, c: int) -> float:
+  	@functools.lru_cache(None)
+  	def travels(xcurr, ycurr, k):
+  		if xcurr < 0 or xcurr >= N or ycurr < 0 or ycurr >= N: 
+  			return 0
+  		elif k == 0:
+  			return 1
+  		else:
+  			return (travels(xcurr + 2, ycurr + 1, k - 1) + 
+  					travels(xcurr + 1, ycurr + 2, k - 1) + 
+  					travels(xcurr - 1, ycurr + 2, k - 1) + 
+  					travels(xcurr - 2, ycurr + 1, k - 1) + 
+  					travels(xcurr - 2, ycurr - 1, k - 1) + 
+  					travels(xcurr - 1, ycurr - 2, k - 1) + 
+  					travels(xcurr + 1, ycurr - 2, k - 1) +   
+  					travels(xcurr + 2, ycurr - 1, k - 1)) / 8
+  
+  	return travels(r, c, K)
+
+# Approach 3:
+class Solution:
+    MOVES = (
+        (1, 2), (1, -2),
+        (2, 1), (2, -1),
+        (-1, 2), (-1, -2),
+        (-2, 1), (-2, -1),
+    )
+
+    def knightProbability(self, n: int, moves: int, start_row: int, start_col: int) -> float:
+        @cache
+        def dp(i: int, j: int, k: int) -> float:
+            if not (0 <= i < n) or not (0 <= j < n):
+                return 0.0
+            if k <= 0:
+                return (1 / len(self.MOVES)) ** moves
+            return sum(dp(i + di, j + dj, k - 1) for di, dj in self.MOVES)
+
+        return dp(start_col, start_row, moves)
