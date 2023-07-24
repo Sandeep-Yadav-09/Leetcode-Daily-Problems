@@ -1,0 +1,56 @@
+** 50. Pow(x, n) **
+
+# Approach 1:
+class Solution:
+    def myPow(self, x: float, n: int) -> float:
+
+        def function(base=x, exponent=abs(n)):
+            if exponent == 0:
+                return 1
+            elif exponent % 2 == 0:
+                return function(base * base, exponent // 2)
+            else:
+                return base * function(base * base, (exponent - 1) // 2)
+
+        f = function()
+        
+        return float(f) if n >= 0 else 1/f
+
+# Approach 2:
+class Solution:
+    def myPow(self, x: float, n: int) -> float:
+        # x**n == (1/x)**(-n) 
+        # by using the property above we can transform the negetive power problem to positive power problem
+        # so that we solve the positive power situation, we also solved the negtive power situation.
+        if n < 0:
+            x = 1/x
+            n = -n
+        # We solve the positive power here:
+        power = 1
+        current_product = x
+        while n > 0:
+            # if n is odd numberm, we need to time x one more time
+            if n%2 : 
+                power = power * current_product
+            current_product = current_product * current_product
+            n = n//2
+        return power
+            
+# Approach 3:
+class Solution:
+    def myPow(self, x: float, n: int) -> float:
+        ans = 1
+        #Create temporary variable to store n 
+        N = n
+        #If it is negative, make it positive
+        if(N < 0): N = -N
+        #Iterate while it is greater than 0    
+        while(N > 0):
+            #If it is an odd number, multiply ans by x, decrease N by 1
+            if(N % 2 == 1): ans, N = ans*x, N-1
+            #If it is an even number, square x, divide N by 2
+            else: x, N = x*x, N/2
+        #If it was negative, invert it (since it is to a negative power)
+        if(n <0): ans = 1 / ans
+        return ans
+        
