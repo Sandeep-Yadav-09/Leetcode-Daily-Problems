@@ -1,0 +1,71 @@
+** 1870. Minimum Speed to Arrive on Time **
+
+# Approach 1:
+class Solution:
+    def minSpeedOnTime(self, dist: List[int], hour: float) -> int:
+	
+		# helper returns required time to reach the office given a speed
+        def getRequiredTime(speed):
+            time = sum([ceil(d/speed) for d in dist[:-1]])
+            time += dist[-1]/speed
+			
+            return time
+        
+        dec = hour % 1 or 1 # decimal part of the `hour`
+        lo, hi = 1, ceil( max(dist) / dec ) # min and max speed
+		
+        res = -1
+    
+        while lo <= hi:
+            mid = (lo + hi) // 2
+            
+            time = getRequiredTime(mid)
+            if time == hour:
+                return mid
+            
+            if time < hour:
+                res = mid
+                hi = mid - 1
+            else:
+                lo = mid + 1
+            
+        return res
+
+# Approach 2:
+class Solution:
+    def minSpeedOnTime(self, dist: List[int], hour: float) -> int:
+        if len(dist) >= hour + 1  : return -1
+        left,right = 1, ceil(max(max(dist),dist[-1]/(1 if hour.is_integer() else hour-int(hour))))
+        while left<right:
+            mid=(left+right)//2
+            if sum([ceil(i/mid) for i in dist[:-1]])+(dist[-1]/mid) <= hour :
+                right=mid
+            else:
+                left=mid+1
+        return left
+
+# Approach 3:
+class Solution:
+    def minSpeedOnTime(self, dist: List[int], hour: float) -> int:
+        if len(dist) - 1 >= hour:
+            return -1
+        mini, maxi = 1, max(dist)
+        tmp = hour - len(dist) + 1
+        if tmp < 1:
+            maxi = max(maxi, ceil(dist[-1]/tmp))
+        d1, d2 = dist[:-1], dist[-1]
+        res = -1
+        while mini <= maxi:
+            if mini == maxi:
+                return mini
+            speed = (mini+maxi)//2
+            time = 0
+            for d in d1:
+                time += ceil(d/speed)
+            time += (d2/speed)
+            if time <= hour:
+                res = speed
+                maxi = speed
+            else:
+                mini = speed + 1
+        return res
