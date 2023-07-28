@@ -1,0 +1,46 @@
+** 486. Predict the Winner **
+
+# Approach 1:
+class Solution:
+    def PredictTheWinner(self, A: List[int]) -> bool:
+        memo = {}
+        def maxscore(i,j):
+            if (i,j) in memo:
+                return memo[i,j]
+            if i>j:
+                return 0
+            sA = A[i] + min( maxscore(i+1,j-1), maxscore(i+2,j  ) )
+            sB = A[j] + min( maxscore(i  ,j-2), maxscore(i+1,j-1) )
+            score = max(sA,sB)
+            memo[i,j] = score
+            return score
+        p1 = maxscore(0,len(A)-1) # Score Player 1
+        return p1>=(sum(A)-p1) # p1 >= p2
+
+# Approach 2:
+class Solution:
+    def PredictTheWinner(self, nums: List[int]) -> bool:
+
+        arr = [0] * (n:= len(nums))
+        
+        for i in range(n-1,-1,-1):
+            arr[i] = nums[i]
+            
+            for j in range(i+1, n):
+                arr[j] = max(nums[i]-arr[j  ],
+                             nums[j]-arr[j-1])
+            
+        return arr[n-1] >= 0
+
+# Approach 3:
+class Solution:
+    def PredictTheWinner(self, nums: List[int]) -> bool:
+        n = len(nums) 
+        dp = [[0]*n for _ in range(n)] 
+        for i in range(n-1, -1, -1): 
+            for j in range(i, n): 
+                if i == j: 
+                    dp[i][j] = nums[i] 
+                else: 
+                    dp[i][j] = max(nums[i] - dp[i+1][j], nums[j] - dp[i][j-1])    
+        return dp[0][n-1] >= 0 
