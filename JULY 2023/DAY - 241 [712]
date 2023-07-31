@@ -1,0 +1,59 @@
+** 712. Minimum ASCII Delete Sum for Two Strings **
+
+# Approach 1:
+class Solution:
+    def minimumDeleteSum(self, s1: str, s2: str) -> int:
+        s1, s2 = list(map(ord, s1)), list(map(ord, s2))
+        m, n = len(s1), len(s2)
+        dp = [[0 for _ in range(m)] for _ in range(n)]   
+        for j, i in product(range(m), range(n)):
+            dp[i][j] = max((j>0) * dp[i][j-1], 
+                           (i>0) * dp[i-1][j], 
+                           (s1[j] == s2[i]) * ((i>0 and j >0) * dp[i-1][j-1] + s1[j]))
+        return sum(s1) + sum(s2) - 2 * dp[-1][-1]
+
+# Approach 2:
+class Solution:
+    def minimumDeleteSum(self, s1: str, s2: str) -> int:
+        m, n = len(s1), len(s2)
+        
+        # Create a 1D DP array to store the LCS lengths
+        dp = [0] * (n + 1)
+        
+        # Calculate the LCS lengths
+        for i in range(1, m + 1):
+            prev = dp[0]  # store the value of the previous row's first element
+            for j in range(1, n + 1):
+                temp = dp[j]  # store the current value of dp[j]
+                if s1[i - 1] == s2[j - 1]:
+                    dp[j] = prev + ord(s1[i - 1])
+                else:
+                    dp[j] = max(dp[j], dp[j - 1])
+                prev = temp  # update prev to store the value of dp[j]
+        
+        # Calculate the sum of ASCII values of characters not part of LCS
+        sum_ascii = 0
+        for c in s1:
+            sum_ascii += ord(c)
+        for c in s2:
+            sum_ascii += ord(c)
+        
+        return sum_ascii - 2 * dp[n]
+
+# Approach 3:
+class Solution:
+    def minimumDeleteSum(self, s1: str, s2: str) -> int:    
+        @cache
+        def f(i,j):
+            if i == -1 and j == -1:
+                return 0
+            if i < 0:
+                return sum(ord(s2[k]) for k in range(j,-1,-1))
+            if j < 0:
+                return sum(ord(s1[k]) for k in range(i,-1,-1))
+            if s1[i] == s2[j]:
+                return f(i-1,j-1)
+            return min(ord(s1[i]) + f(i-1,j), ord(s2[j]) + f(i,j-1))
+        
+        return f(len(s1)-1,len(s2)-1)
+
