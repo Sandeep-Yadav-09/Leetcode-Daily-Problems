@@ -1,0 +1,42 @@
+** 77. Combinations **
+
+# Approach 1:
+class Solution:
+    def combine(self, n: int, k: int) -> List[List[int]]:
+        sol=[]
+        def backtrack(remain,comb,nex):
+			# solution found
+            if remain==0:
+                sol.append(comb.copy())
+            else:
+				# iterate through all possible candidates
+                for i in range(nex,n+1):
+					# add candidate
+                    comb.append(i)
+					#backtrack
+                    backtrack(remain-1,comb,i+1)
+					# remove candidate
+                    comb.pop()
+            
+        backtrack(k,[],1)
+        return sol
+
+# Approach 2:
+class Solution:
+    def combine(self, n: int, k: int) -> List[List[int]]:
+        res = []
+        self.dfs(n, k, 0, [], res)
+        return res
+    
+    def dfs(self, n, k, start, path, res):
+        if len(path) == k:
+            res.append(path)
+            return None
+        
+        for index in range(start, n):
+            self.dfs(n, k, index+1, path+[index+1], res)
+
+# Approach 3:
+class Solution:
+    def combine(self, n: int, k: int) -> List[List[int]]:
+        return combinations(range(1,n+1),k)
