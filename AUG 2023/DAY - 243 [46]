@@ -1,0 +1,43 @@
+** 46. Permutations **
+
+# Approach 1:
+class Solution:
+    def permute(self, nums):
+        res = []
+        self.dfs(nums, [], res)
+        return res
+        
+    def dfs(self, nums, path, res):
+        if not nums:
+            res.append(path)
+        for i in range(len(nums)):
+            self.dfs(nums[:i]+nums[i+1:], path+[nums[i]], res)
+
+# Approach 2:
+from collections import deque
+
+class Solution :    
+    def permute(self, nums: List[int]) -> List[List[int]]:        
+        if len(nums) <= 1:
+            return [nums]
+
+        ans = []
+        queue = deque([([], nums)])
+
+        while queue:
+            arr, options = queue.popleft()
+
+            for i in range(len(options)):
+                next_options = options[:i] + options[i+1:]
+                new_arr = arr + [options[i]]
+
+                if next_options:
+                    queue.append((new_arr, next_options))
+                else:
+                    ans.append(new_arr)
+        return ans
+
+# Approach 3:
+class Solution :    
+    def permute(self, nums: List[int]) -> List[List[int]]:        
+        return list(itertools.permutations(nums))
