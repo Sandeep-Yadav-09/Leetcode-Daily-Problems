@@ -1,0 +1,55 @@
+** 139. Word Break **
+
+# Approach 1:
+class Solution:
+    def wordBreak(self, s: str, wordDict: List[str],):
+        
+        memo = {}
+        
+        def memoize(target, wordDict):
+            if target == "":
+                return True
+            if target in memo:
+                return memo[target]
+            
+            for word in wordDict:
+                if target[:len(word)] == word and memoize(target[len(word):], wordDict):
+                    memo[target] = True
+                    return memo[target]
+            memo[target] = False
+            return memo[target]
+        
+        return memoize(s, wordDict)
+
+# Approach 2:
+class Solution:
+    def wordBreak(self, s: str, wordDict: List[str]) -> bool:
+        
+        n = len(s)
+        dic = set(wordDict)
+
+        dp = [False for _ in range(n + 1)]
+        dp[0] = True
+        
+        for i in range(n):
+            for j in range(i+1, n+1):
+                if dp[i] == True and s[i:j] in dic:
+                    dp[j] = True
+        
+        return dp[-1]
+
+# Approach 3:
+class Solution:
+    def wordBreak(self, s: str, wordDict: List[str]) -> bool:
+        
+        n=len(s)
+        dp = [False for _ in range(n+1)]
+        dp[0]=True
+        
+        for i in range(n):
+            if dp[i]:
+                for w in wordDict:
+                    if s[i:i+len(w)]==w:
+                        dp[i+len(w)]=True
+        return dp[-1]
+	
