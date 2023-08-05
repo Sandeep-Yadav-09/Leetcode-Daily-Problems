@@ -1,0 +1,51 @@
+** 95. Unique Binary Search Trees II **
+
+# Approach 1:
+class Solution:
+    def generateTrees(self, n: int) -> List[Optional[TreeNode]]:
+        def generate(first, last):
+            trees = []
+            for root in range(first, last+1):
+                for left in generate(first, root-1):
+                    for right in generate(root+1, last):
+                        node = TreeNode(root)
+                        node.left = left
+                        node.right = right
+                        trees += node,
+            return trees or [None]
+        return generate(1, n)
+
+# Approach 2:
+class Solution:
+    def generateTrees(self, n: int) -> List[TreeNode]:
+        def generate(l, r):   # split between [l, r)
+            if l == r:
+                return [None]
+            nodes = []
+            for i in range(l, r):
+                for lchild in generate(l, i):
+                    for rchild in generate(i+1, r):
+                        node = TreeNode(i+1)   # +1 to convert the index to the actual value
+                        node.left = lchild
+                        node.right = rchild
+                        nodes.append(node)
+            return nodes
+        return generate(0, n) if n else []
+
+# Approach 3:
+class Solution:
+
+    def generateTrees(self, n: int) -> List[Optional[TreeNode]]:
+        return self.__generate(lo=1, hi=n)
+
+    @classmethod
+    @cache
+    def __generate(cls, lo: int, hi: int) -> list:
+        if lo > hi:
+            return [None]
+        return [
+            TreeNode(root, left, right)
+            for root in range(lo, hi + 1)              # All possible roots for the current subarray
+            for left in cls.__generate(lo, root - 1)   # All possible trees to the left of the root element
+            for right in cls.__generate(root + 1, hi)  # All possible trees to the right of the root element
+        ]
