@@ -1,0 +1,59 @@
+** 920. Number of Music Playlists **
+
+# Approach 1:
+class Solution:
+    def numMusicPlaylists(self, n: int, goal: int, k: int) -> int:
+        @lru_cache(None)
+        def dp(uniques, repeats, rem, songsTilNewRepeat):
+            if songsTilNewRepeat == 0:
+                repeats += 1
+                songsTilNewRepeat = 1
+            if uniques > rem:
+                return 0
+            if rem == 0:
+                return 1
+            
+            res = 0
+            # either pick from uniques, or from repeats
+            if uniques > 0:
+                res += dp(uniques - 1, repeats, rem - 1, songsTilNewRepeat - 1) * uniques
+            if repeats > 0:
+                res += dp(uniques, repeats - 1, rem - 1, songsTilNewRepeat - 1) * repeats
+            return res
+        
+        return dp(n, 0, goal, k + 1) % (10 ** 9 + 7)
+
+# Approach 2:
+class Solution:
+    def numMusicPlaylists(self, n: int, goal: int, k: int) -> int:
+        # size means current size without item we are going to add
+        # unique is the count of unique items
+        def solve(size , unique):
+            if size == goal : return 1
+            if (size,unique) in dp:return dp[(size,unique)]
+            ans = 0
+            repeat = 0
+            # check if we can repeat
+            if goal - size > n - unique and size >= k+1:repeat = unique - k
+            non_repeat = n - unique
+            if repeat > 0 :ans += solve(size+1,unique) * repeat
+            ans += solve(size+1,unique+1) * non_repeat
+            dp[(size,unique)] = ans
+            return ans
+        dp = {}
+        return solve(0,0)%1000000007
+
+# Approach 3:
+class Solution:
+    def numMusicPlaylists(self, n: int, goal: int, k: int) -> int:
+        dp=[[0 for _ in range(n+1)] for _ in range(goal+1)]
+        dp[0][0]=1
+        mod=10**9+7
+        for i in range(1,goal+1):
+            for j in range(1,min(i,n)+1):
+                dp[i][j]+=dp[i-1][j-1]*(n-j+1)
+                #dp[i][j]%=mod
+                dp[i][j]+=dp[i-1][j]*max(j-k,0)
+                #dp[i][j]%=mod
+
+        return dp[goal][n]%mod
