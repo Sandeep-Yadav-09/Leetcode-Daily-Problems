@@ -1,0 +1,41 @@
+** 74. Search a 2D Matrix **
+
+# Approach 1:
+class Solution:
+    def searchMatrix(self, matrix: List[List[int]], target: int) -> bool:
+        for i in matrix:
+            for j in i:
+                if target == j:
+                    return True
+        return False
+
+# Approach 2:
+class Solution:
+    def searchMatrix(self, matrix: List[List[int]], target: int) -> bool:
+        row,col=len(matrix),len(matrix[0])
+        left,right=0,row*col-1
+        while left<=right:
+            mid=(left+right)//2
+            num=matrix[mid//col][mid%col]
+            if num==target:
+                return True
+            if num>target:
+                right=mid-1
+            else:
+                left=mid+1
+        return False
+
+# Approach 3:
+class Solution:
+    def searchMatrix(self, matrix: List[List[int]], target: int) -> bool:
+        if len(matrix) == 0:
+            return False
+        
+        row, col = 0, len(matrix[0]) - 1
+        
+        while row < len(matrix) and col >= 0:
+            if matrix[row][col] == target: return True
+            elif matrix[row][col] < target: row += 1
+            elif matrix[row][col] > target: col -= 1
+        
+        return False
