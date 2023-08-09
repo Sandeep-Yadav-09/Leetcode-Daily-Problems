@@ -1,0 +1,79 @@
+** 2616. Minimize the Maximum Difference of Pairs **
+
+# Approach 1:
+class Solution:
+    def minimizeMax(self, nums: list[int], p: int) -> int:
+
+        def pairCtr(mx: int) -> int:                        # Example: nums = [10,1,2,7,1,3]  p = 2
+            cnt, idx = 0,1
+            while idx < n:                                  #     nums.sort(): [1,1,2,3,7,10]
+                if nums[idx] - nums[idx - 1] <= mx:
+                    cnt+= 1                                 #            arr = sorted({1-1,2-1,3-2,7-3,10-7})
+                    idx+= 1                                 #                = sorted({0,1,4,3})
+                idx+= 1                                     #                = [0, 1, 3,4]
+            return cnt                                      #                      |
+                                                            #      arr[bisect_left(arr, p, key = pairCtr)]
+
+        if p == 0: return 0
+
+        n = len(nums)
+        nums.sort()
+        arr = sorted({nums[i] - nums[i - 1] for i in range(1, n)})
+
+        return arr[bisect_left(arr, p, key = pairCtr)]
+
+# Approach 2:
+class Solution:
+    def minimizeMax(self, nums: list[int], p: int) -> int:
+        if p == 0: return 0
+
+        nums.sort()
+        # print(nums)
+        pairs = [(nums[i+1] - nums[i],i) for i in range(len(nums)-1)]
+        # print(pairs)
+        pairs.sort()
+        # print(pairs)
+        m = [0]*len(nums)
+        for i, (d,loc) in enumerate(pairs):
+            l = m[loc-1]
+            r = m[loc+1]
+            m[loc] = m[loc-l] = m[loc+r] = l+r+1
+            p -= (l+r)//2 - (l+1)//2 - (r+1)//2 + 1
+            # print(m)
+            # print(l,r,m[loc])
+            # print (l+r)//2+1, (l+1)//2, (r+1)//2
+            if p == 0: return pairs[i][0]
+
+# Approach 3:
+class Solution:
+    def minimizeMax(self, nums: List[int], p: int) -> int:
+        # Sort the input list of integers
+        nums.sort()
+        n = len(nums)
+        
+        # Define the minimum and maximum possible values for the maximum difference
+        min_max_diff = 0
+        max_max_diff = nums[-1] - nums[0]
+        
+        # Binary search for the smallest maximum difference that satisfies the given condition
+        while min_max_diff < max_max_diff:
+            mid_max_diff = (min_max_diff + max_max_diff) // 2
+            
+            # Count the number of pairs of adjacent integers with a difference less than or equal to mid_max_diff
+            pair_count = 0
+            i = 1
+            while i < n:
+                if nums[i] - nums[i-1] <= mid_max_diff:
+                    pair_count += 1
+                    i += 1
+                i += 1
+            
+            # If the number of such pairs is greater than or equal to p, decrease the maximum possible value of the maximum difference
+            if pair_count >= p:
+                max_max_diff = mid_max_diff
+            # Otherwise, increase the minimum possible value of the maximum difference
+            else:
+                min_max_diff = mid_max_diff + 1
+        
+        # Return the smallest maximum difference that satisfies the given condition
+        return min_max_diff
