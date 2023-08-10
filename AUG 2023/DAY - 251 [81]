@@ -1,0 +1,62 @@
+** 81. Search in Rotated Sorted Array II **
+
+# Approach 1:
+class Solution:
+    def search(self, nums: List[int], target: int) -> bool:
+        # Initilize two pointers
+        begin = 0
+        end = len(nums) - 1 
+        while begin <= end:
+            mid = (begin + end)//2
+            if nums[mid] == target:
+                return True
+            if nums[mid] == nums[end]: # Fail to estimate which side is sorted
+                end -= 1  # In worst case: O(n)
+            elif nums[mid] > nums[end]: # Left side of mid is sorted
+                if  nums[begin] <= target and target < nums[mid]: # Target in the left side
+                    end = mid - 1
+                else: # in right side
+                    begin = mid + 1
+            else: # Right side is sorted
+                if  nums[mid] < target and target <= nums[end]: # Target in the right side
+                    begin = mid + 1
+                else: # in left side
+                    end = mid - 1
+        return False
+
+# Approach 2:
+class Solution:
+    def search(self, nums: List[int], target: int) -> bool:
+        return target in nums
+
+# Approach 3:
+import math
+
+class Solution:
+    def search(self, nums: List[int], target: int) -> bool:
+
+        # No numbers, return false.
+        if len(nums) == 0:
+            return False
+
+        # Get the start, middle, and end values of the array.
+        mid_i = math.floor(len(nums) * 0.5)
+        start = nums[0]
+        end = nums[len(nums) - 1]
+        mid = nums[mid_i]
+
+        # Check if the target equals any of these.
+        if start == target or mid == target or end == target:
+            return True
+        
+        # If the target is between the start and the middle, search the left side.
+        if target > start and target < mid:
+            return self.search(nums[:mid_i], target)
+
+        # If the target is between the middle and the end, search the right side.
+        elif target > mid and target < end:
+            return self.search(nums[(mid_i+1):], target)
+
+        # The target could be in either side, so search both sides.
+        else:
+            return self.search(nums[:mid_i], target) or self.search(nums[(mid_i+1):], target)
