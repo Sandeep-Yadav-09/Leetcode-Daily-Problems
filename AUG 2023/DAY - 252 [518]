@@ -1,0 +1,59 @@
+** 518. Coin Change II **
+
+# Approach 1:
+class Solution:
+    def change(self, amount: int, coins: List[int]) -> int:
+        amount_plus_1 = amount + 1
+        solutions = [0] * amount_plus_1
+        solutions[0] = 1
+        for coin in coins:
+            for j in range(coin, amount_plus_1):
+                solutions[j] += solutions[j - coin]
+        return solutions[-1]
+
+# Approach 2:
+class Solution:
+    def memoized(self, coins, i, target, memo):
+        if target == 0:
+            return 1
+        
+        if i >= len(coins):
+            return 0
+        
+        if memo[i][target] != None:
+            return memo[i][target]
+        
+        coin = coins[i]
+        c1 = 0
+        if (target - coin) >= 0:
+            c1 = self.memoized(coins, i, target - coin, memo)
+        
+        c2 = self.memoized(coins, i + 1, target, memo)
+        
+        memo[i][target] = c1 + c2
+        return memo[i][target]
+
+    def change(self, amount: int, coins: List[int]) -> int:
+        dp = [[None for _ in range(amount+ 1)] for _ in coins]
+    
+        return self.memoized(coins, 0, amount, dp)
+
+# Approach 3:
+class Solution:
+    def change(self, value: int, arr: List[int]) -> int:
+        prev=[0 for i in range(value+1)] 
+        curr=[0 for i in range(value+1)] 
+        for i in range(value+1):
+            if i%arr[0]==0:
+                prev[i]=1 
+            else:
+                prev[i]=0
+        for i in range(1,len(arr)):
+            for j in range(value+1):
+                nottake=prev[j]
+                take=0
+                if j>=arr[i]:
+                    take=curr[j-arr[i]]
+                curr[j]=take+nottake 
+            prev=curr[:]
+        return prev[value] 
