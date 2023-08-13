@@ -1,0 +1,66 @@
+** 2369. Check if There is a Valid Partition For The Array **
+
+# Approach 1:
+class Solution:
+    def validPartition(self, nums: List[int]) -> bool:
+        n=len(nums)
+        @cache
+        def valid(i):
+            if i==n:
+                return True
+            if i+1<n and nums[i]==nums[i+1] and valid(i+2):
+                return True
+            if i+2<n and nums[i]==nums[i+1]==nums[i+2] and valid(i+3):
+                return True
+            if i+2<n and nums[i]==nums[i+1]-1 and nums[i+1]==nums[i+2]-1 and valid(i+3):
+                return True
+        return valid(0)
+
+# Approach 2:
+class Solution:
+    def validPartition(self, A):
+        a = True
+        b = False
+        c = A[0] == A[1]
+        for i in range(2, len(A)):
+            a, b, c = b, c, b and A[i] == A[i - 1] or a and (A[i] == A[i - 1] == A[i - 2] or A[i] == A[i - 1] + 1 == A[i - 2] + 2)
+        return c
+
+# Approach 3:
+class Solution:
+    def validPartition(self, nums: List[int]) -> bool:
+        idxs = defaultdict(list)
+        n = len(nums)
+        
+        #Find all doubles
+        for idx in range(1, n):
+            if nums[idx] == nums[idx - 1]:
+                idxs[idx - 1].append(idx + 1)
+                
+        #Find all triples
+        for idx in range(2, n):
+            if nums[idx] == nums[idx - 1] == nums[idx - 2]:
+                idxs[idx - 2].append(idx + 1)
+                
+        #Find all triple increments
+        for idx in range(2, n):
+            if nums[idx] == nums[idx - 1] + 1 == nums[idx - 2] + 2:
+                idxs[idx - 2].append(idx + 1)
+        
+        #DFS 
+        seen = set()
+        stack = [0]
+
+        while stack:
+            node = stack.pop()
+
+            if node not in seen:
+                if node == n:
+                    return True
+                seen.add(node)
+
+            for adj in idxs[node]:
+                if adj not in seen:
+                    stack.append(adj)
+        
+        return False
