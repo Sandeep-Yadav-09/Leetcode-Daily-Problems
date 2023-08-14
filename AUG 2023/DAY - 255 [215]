@@ -1,0 +1,48 @@
+** 215. Kth Largest Element in an Array **
+
+# Approach 1:
+import heapq
+
+class Solution:
+    def findKthLargest(self, nums: List[int], k: int) -> int:
+        if not nums:
+            return 0
+        heap = []
+        for i in nums:
+            heapq.heappush(heap, i)
+            if len(heap) > k:
+                heapq.heappop(heap)
+        return heapq.heappop(heap)
+
+# Approach 2:
+class Solution:
+    def findKthLargest(self, nums: List[int], k: int) -> int:             
+        return sorted(nums)[-k]
+
+# Approach 3:
+class Solution(object):
+    def findKthLargest(self, nums, k):
+        def partition (nums, start, end):
+            pivot = start
+            while True:
+                while start < end and nums[end] <= nums[pivot]:
+                    end -=1
+                while start < end and nums[start] >= nums[pivot]:
+                    start +=1
+                if start < end:
+                    nums[start], nums[end] = nums[end], nums[start]
+                else:
+                    break
+            nums[end], nums[pivot] = nums[pivot],nums[end]
+            return end
+
+        def quicksort(nums, start, end):
+            p = partition(nums, start, end)
+            if p == k-1: 
+                return nums[p]
+            elif p < k-1:
+                return quicksort(nums, p+1, end)
+            else:
+                return quicksort(nums,start, p-1)                 
+        
+        return quicksort(nums, 0, len(nums)-1) 
