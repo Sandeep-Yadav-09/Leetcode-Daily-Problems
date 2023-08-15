@@ -1,0 +1,62 @@
+** 86. Partition List **
+
+# Approach 1:
+class Solution:
+    def partition(self, head: Optional[ListNode], x: int) -> Optional[ListNode]:
+        h1 = l1 = ListNode(0)
+        h2 = l2 = ListNode(0)
+        
+        while head:
+            if head.val < x:
+                l1.next = head
+                l1 = l1.next
+            else:
+                l2.next = head
+                l2 = l2.next
+            head = head.next
+            
+        l2.next = None
+        l1.next = h2.next
+        
+        return h1.next
+
+# Approach 2:
+class Solution:
+    def partition(self, head: Optional[ListNode], x: int) -> Optional[ListNode]:
+        
+        temp=[]                             # to store the values in temp
+        curr = head
+        while curr:
+            temp.append(curr.val)
+            curr = curr.next
+        
+        # check and replace the values which are < x and mark used values as -1e9
+        curr = head
+        for i in range(len(temp)):
+            if temp[i] < x:
+                curr.val = temp[i]
+                curr = curr.next
+                temp[i] = -1e9
+  
+        # remaining unused values can be replaced in list
+        for e in temp:
+            if e != -1e9:
+                curr.val = e
+                curr = curr.next
+        return head
+
+# Approach 3:
+class Solution:
+    def partition(self, head: ListNode, x: int) -> ListNode:
+        
+        first, second = ListNode(0), ListNode(0)
+        first_begin, second_begin = first, second
+        
+        while head:
+            if head.val < x: first.next = head; first = first.next
+            else: second.next = head; second = second.next
+            head = head.next
+        
+        first.next = second_begin.next
+        second.next = None
+        return first_begin.next
