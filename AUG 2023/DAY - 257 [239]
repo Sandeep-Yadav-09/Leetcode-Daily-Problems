@@ -1,0 +1,52 @@
+** 239. Sliding Window Maximum **
+
+# Approach 1:
+class Solution:
+    def maxSlidingWindow(self, nums: List[int], k: int) -> List[int]:
+        if k == 1: return nums
+        rwindow = [(-val, i) for i, val in enumerate(nums[:k])]
+        heapq.heapify(rwindow)
+        res = [-rwindow[0][0]]
+
+        for i in range(k, len(nums)):
+            while rwindow[0][1] <= i - k: heapq.heappop(rwindow)
+            heapq.heappush(rwindow, (-nums[i], i))
+            res.append(-rwindow[0][0])
+
+        return res
+
+# Approach 2:
+class Solution:
+    def maxSlidingWindow(self, nums: List[int], k: int) -> List[int]:
+        minqueue = deque()
+
+        # initialize the window
+        for i in range(min(k, len(nums))):
+            while minqueue and nums[minqueue[-1]] <= nums[i]: minqueue.pop()
+            minqueue.append(i)
+
+        res = [nums[minqueue[0]]]  # results
+
+        for i in range(k, len(nums)):
+            while minqueue and minqueue[0] <= i - k:  # clean up stale elements
+                minqueue.popleft()
+            while minqueue and nums[minqueue[-1]] <= nums[i]:  # kick out smaller ones
+                minqueue.pop()
+            minqueue.append(i)
+            res.append(nums[minqueue[0]])  # guaranteed to be the max
+
+        return res
+
+# Approach 3:
+class Solution:
+    def maxSlidingWindow(self, nums: List[int], k: int) -> List[int]:
+        deque = collections.deque()
+        res = []
+        for i, num in enumerate(nums):
+            while(deque and nums[deque[-1]] < num):
+                deque.pop()     # 2
+            if(deque and i - deque[0] >= k):
+                deque.popleft() # 3
+            deque.append(i)
+            res.append(nums[deque[0]])
+        return res[k-1:]
