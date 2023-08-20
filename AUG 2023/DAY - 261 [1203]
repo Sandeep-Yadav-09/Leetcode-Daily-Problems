@@ -1,0 +1,90 @@
+** 1203. Sort Items by Groups Respecting Dependencies **
+
+# Approach 1:
+from collections import defaultdict
+
+class Solution:
+    def sortItems(self, n: int, m: int, group: List[int], beforeItems: List[List[int]]) -> List[int]:
+        res = []
+        graph = [[] for _ in range(n + m)]
+        indegree = [0] * (n + m)
+        
+        for i in range(n + m):
+            graph[i] = []
+        
+        for i in range(len(group)):
+            if group[i] == -1:
+                continue
+            graph[n + group[i]].append(i)
+            indegree[i] += 1
+        
+        for i in range(len(beforeItems)):
+            for item in beforeItems[i]:
+                repBeforeItem = item if group[item] == -1 else n + group[item]
+                repCurrentItem = i if group[i] == -1 else n + group[i]
+                
+                if repBeforeItem == repCurrentItem:
+                    graph[item].append(i)
+                    indegree[i] += 1
+                else:
+                    graph[repBeforeItem].append(repCurrentItem)
+                    indegree[repCurrentItem] += 1
+        
+        for i in range(n + m):
+            if indegree[i] == 0:
+                self.dfs(graph, indegree, i, n, res)
+        
+        return res if len(res) == n else []
+
+    def dfs(self, graph, indegree, cur, n, res):
+        if cur < n:
+            res.append(cur)
+        indegree[cur] -= 1
+        
+        for child in graph[cur]:
+            indegree[child] -= 1
+            if indegree[child] == 0:
+                self.dfs(graph, indegree, child, n, res)
+
+# Approach 2:
+class Solution:
+    def sortItems(self, n: int, m: int, group: List[int], beforeItems: List[List[int]]) -> List[int]:
+        for i in range(n): 
+            if group[i] == -1: group[i] = i + m # re-group 
+        
+        graph0 = {} # digraph of groups 
+        indeg0 = [0]*(m+n) # indegree of groups 
+        
+        graph1 = {} # digrpah of items 
+        indeg1 = [0]*n # indegree of items
+        
+        for i, x in enumerate(beforeItems): 
+            for xx in x: 
+                if group[xx] != group[i]: 
+                    graph0.setdefault(group[xx], []).append(group[i])
+                    indeg0[group[i]] += 1
+                graph1.setdefault(xx, []).append(i)
+                indeg1[i] += 1
+        
+        def fn(graph, indeg): 
+            """Return topological sort of graph using Kahn's algo."""
+            ans = []
+            stack = [k for k in range(len(indeg)) if indeg[k] == 0]
+            while stack: 
+                n = stack.pop()
+                ans.append(n)
+                for nn in graph.get(n, []):
+                    indeg[nn] -= 1
+                    if indeg[nn] == 0: stack.append(nn)
+            return ans 
+        
+        tp0 = fn(graph0, indeg0) 
+        if len(tp0) != len(indeg0): return [] 
+        
+        tp1 = fn(graph1, indeg1)
+        if len(tp1) != len(indeg1): return []
+        
+        mp0 = {x: i for i, x in enumerate(tp0)}
+        mp1 = {x: i for i, x in enumerate(tp1)}
+        
+        return sorted(range(n), key=lambda x: (mp0[group[x]], mp1[x]))
