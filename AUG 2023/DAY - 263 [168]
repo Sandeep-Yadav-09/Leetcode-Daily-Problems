@@ -1,0 +1,32 @@
+** 168. Excel Sheet Column Title **
+
+# Approach 1:
+class Solution:
+    def convertToTitle(self, n: int) -> str:
+        abc="ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        ans=""
+        while n:
+            n=n-1
+            ans=abc[n%26]+ans
+            n=n//26
+        return ans
+        
+# Approach 2:
+class Solution:
+    def convertToTitle(self, columnNumber: int) -> str:
+        result = []
+        while columnNumber:
+            columnNumber, remainder = divmod(columnNumber - 1, 26)
+            result.append(chr(65 + remainder))
+        return ''.join(reversed(result))
+        
+# Approach 3:
+class Solution:
+    def convertToTitle(self, n: int) -> str:
+    	s = ''
+    	while n > 0:
+    		r = n%26
+    		if r == 0: r = 26
+    		s = chr(64+r)+s
+    		n = int((n-r)/26)
+    	return(s)
