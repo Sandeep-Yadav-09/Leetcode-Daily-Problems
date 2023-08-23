@@ -1,0 +1,58 @@
+** 767. Reorganize String **
+
+# Approach 1:
+class Solution:
+    def reorganizeString(self, S: str) -> str:
+        cnt = Counter(S)
+        heap = [(-v,k) for k,v in cnt.items()]
+        heapq.heapify(heap)
+        ans = []
+        while(len(heap)>1):
+            x = heapq.heappop(heap)
+            y = heapq.heappop(heap)
+            ans.extend([x[1],y[1]])
+            if x[0]<-1:
+                heapq.heappush(heap,(x[0]+1,x[1]))
+            if y[0]<-1:
+                heapq.heappush(heap,(y[0]+1,y[1]))
+        if heap:
+            if heap[0][0]<-1:
+                return "" # case where last left element count is more than 2
+            ans.append(heap[0][1])
+        return "".join(ans)
+
+# Approach 2:
+class Solution:
+    def reorganizeString(self, s: str) -> str:
+        freq_map = {}
+        for char in s:
+            freq_map[char] = freq_map.get(char, 0) + 1
+            
+        sorted_chars = sorted(freq_map.keys(), key=lambda x: freq_map[x], reverse=True)
+        
+        if freq_map[sorted_chars[0]] > (len(s) + 1) // 2:
+            return ""
+        
+        res = [None] * len(s)
+        
+        i = 0
+        for char in sorted_chars:
+            for _ in range(freq_map[char]):
+                if i >= len(s):
+                    i = 1
+                res[i] = char
+                i += 2
+                
+        return "".join(res)
+
+# Approach 3:
+class Solution:
+    def reorganizeString(self, S: str) -> str:
+        counter = collections.Counter(S)
+        i, res, n = 0, [None] * len(S), len(S)
+        for k in sorted(counter, key = counter.get, reverse = True):
+            if counter[k] > n // 2 + (n % 2): return ""
+            for j in range(counter[k]):
+                if i >= n: i = 1
+                res[i] = k; i += 2
+        return "".join(res)
