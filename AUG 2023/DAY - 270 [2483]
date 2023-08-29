@@ -1,0 +1,44 @@
+** 2483. Minimum Penalty for a Shop **
+
+# Approach 1:
+class Solution:
+    def bestClosingTime(self, customers: str) -> int:
+        max_score = score = 0
+        best_hour = -1
+
+        for i, c in enumerate(customers):
+            score += 1 if c == 'Y' else -1
+            if score > max_score:
+                max_score, best_hour = score, i
+                
+        return best_hour + 1
+
+# Approach 2:
+class Solution(object):
+    def bestClosingTime(self, customers):
+        n = len(customers)
+        penalty = customers.count('Y')
+        if penalty == n: 
+            return n
+        min_, ans = n, 0
+        for index, value in enumerate(customers):
+            if min_ > penalty:
+                min_ = penalty
+                ans = index
+            if value == 'Y':
+                penalty -= 1
+            else:
+                penalty += 1
+        if min_ > penalty: return n
+        return ans
+
+# Approach 3:
+class Solution:
+    def bestClosingTime(self, cust: str) -> int:
+        
+        x = y = z = 0
+        for i, charr in enumerate(cust):     
+            z += (charr == "Y") * 2 - 1       
+            if z > y:                       
+                y, x = z, i+1               
+        return x
