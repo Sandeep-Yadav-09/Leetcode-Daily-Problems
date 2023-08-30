@@ -1,0 +1,49 @@
+** 2366. Minimum Replacements to Sort the Array **
+
+# Approach 1:
+class Solution:
+    def minimumReplacement(self, nums: List[int]) -> int:
+        operations = 0
+        prev_bound = nums[-1]
+
+        for num in reversed(nums[:-1]):
+            no_of_times = (num + prev_bound - 1) // prev_bound
+            operations += no_of_times - 1
+            prev_bound = num // no_of_times
+            
+        return operations
+
+# Approach 2:
+class Solution:
+    def minimumReplacement(self, nums: List[int]) -> int:
+        n = len(nums)  # Get the length of the array
+        operations = 0  
+
+        prev_value = nums[n - 1] 
+
+        for i in range(n - 2, -1, -1):
+            if nums[i] > prev_value:
+                k = (nums[i] + prev_value - 1) // prev_value
+                operations += k - 1
+                prev_value = nums[i] // k
+            else:
+                prev_value = nums[i]
+        
+        return operations 
+
+# Approach 3:
+class Solution:
+    def minimumReplacement(self, nums: List[int]) -> int:
+
+        m = inf
+        ops = 0
+
+        for n in reversed(nums): 
+            if n < m:            
+                m = n
+                continue
+            d = (n-1) // m + 1  
+            ops += d-1           
+            m = n // d           
+        
+        return ops
