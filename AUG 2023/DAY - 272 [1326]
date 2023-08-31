@@ -1,0 +1,56 @@
+** 1326. Minimum Number of Taps to Open to Water a Garden **
+
+# Approach 1:
+class Solution:
+    def minTaps(self, n: int, ranges: List[int]) -> int:
+        dp = [float('inf')] * (n + 1)
+        dp[0] = 0
+        
+        for i, r in enumerate(ranges):
+            start, end = max(0, i - r), min(n, i + r)
+            for j in range(start + 1, end + 1):
+                dp[j] = min(dp[j], dp[start] + 1)
+                
+        return dp[-1] if dp[-1] != float('inf') else -1
+
+# Approach 2:
+class Solution:
+    def minTaps(self, n: int, ranges: List[int]) -> int:
+        min_pos = 0
+        max_pos = 0
+        count = 0  # Initialize variables to keep track of the minimum and maximum reach, and the number of taps used.
+        
+        while max_pos < n:  # Continue looping until we cover the entire range from 0 to n.
+            for i in range(len(ranges)):
+                # Check if tap i can cover the current minimum position (min_pos) and reach the current maximum position (max_pos).
+                if i - ranges[i] <= min_pos and i + ranges[i] >= max_pos:
+                    max_pos = i + ranges[i]  # Update the maximum reach if this tap can cover the current range.
+                    
+            if max_pos == min_pos:
+                return -1  # If max_pos is not updated in this loop, it means we can't extend the reach further. Return -1 as it's not possible.
+            
+            count += 1  # Increment the count of taps used.
+            min_pos = max_pos  # Update the minimum reach to the newly reached maximum position.
+            
+        return count  # Return the count of taps used to cover the entire range.
+
+# Approach 3:
+class Solution:
+    def minTaps(self, n: int, ranges: List[int]) -> int:
+        taps = [0] * len(ranges) 
+        for i,r in enumerate(ranges):
+            left = max(0, i - r)
+            taps[left] = max(taps[left], i + r)
+
+        total = reach = nextReach = 0
+        for i, r in enumerate(taps):
+            nextReach = max(nextReach, r)
+            
+            if i == reach:
+                if nextReach == reach: return -1
+                
+                total += 1
+                reach = nextReach
+                if (nextReach >= n): break
+        
+        return total
