@@ -1,0 +1,39 @@
+** 141. Linked List Cycle **
+
+# Approach 1:
+class Solution:
+    def hasCycle(self, head: Optional[ListNode]) -> bool:
+        slow = head
+        fast = head
+        while fast!=None and fast.next!=None:
+            slow = slow.next
+            fast = fast.next.next
+            if slow==fast:
+                return True
+        return False
+
+# Approach 2:
+class Solution:
+    def hasCycle(self, head: ListNode) -> bool:
+        dictionary = {}
+        while head:
+            if head in dictionary: 
+                return True
+            else: 
+                dictionary[head]= True
+            head = head.next
+        return False
+
+# Approach 3:
+class Solution:
+    def hasCycle(self, head: ListNode) -> bool:
+        if not head:
+            return False
+        slow = head
+        fast = head.next
+        while slow != fast:
+            if not fast or not fast.next:
+                return False
+            slow = slow.next
+            fast = fast.next.next
+        return True
