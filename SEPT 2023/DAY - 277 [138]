@@ -1,0 +1,76 @@
+** 138. Copy List with Random Pointer **
+
+# Approach 1:
+class Solution:
+    def copyRandomList(self, head: 'Optional[Node]') -> 'Optional[Node]':
+        if not head:
+            return None
+        old_to_new = {}
+        
+        curr = head
+        while curr:
+            old_to_new[curr] = Node(curr.val)
+            curr = curr.next
+        
+        curr = head
+        while curr:
+            old_to_new[curr].next = old_to_new.get(curr.next)
+            old_to_new[curr].random = old_to_new.get(curr.random)
+            curr = curr.next
+            
+        return old_to_new[head]
+
+# Approach 2:
+"""
+# Definition for a Node.
+class Node:
+    def __init__(self, val, next, random):
+        self.val = val
+        self.next = next
+        self.random = random
+"""
+class Solution:
+    def copyRandomList(self, head: 'Node') -> 'Node':
+        if head is None: return None
+        mapping = {}
+        cur = head
+        while cur:
+            mapping[cur] = Node(cur.val,None,None)
+            cur = cur.next
+        cur = head
+        while cur:
+            if cur.next:
+                mapping[cur].next = mapping[cur.next]
+            if cur.random:
+                mapping[cur].random = mapping[cur.random]
+            cur = cur.next
+        return mapping[head]
+
+# Approach 3:
+class Solution:
+    def copyRandomList(self, head):
+        #base case
+        if not head:
+            return None
+        
+        #add add new nodes to dictionary using old nodes as values
+        d = {}
+        prev, cur = None, head
+        while cur:
+            d[cur] = copy.copy(cur)
+            
+            #set next pointers
+            if prev:
+                d[prev].next = d[cur]
+            
+            prev, cur =cur, cur.next
+            
+        #set random pointers using dictionary
+        cur = head
+        while cur:
+            if cur.random:
+                d[cur].random = d[cur.random]
+            cur = cur.next
+        
+        #return
+        return d[head]
