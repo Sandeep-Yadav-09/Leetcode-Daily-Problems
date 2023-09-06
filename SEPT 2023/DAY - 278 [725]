@@ -1,0 +1,96 @@
+** 725. Split Linked List in Parts **
+
+# Approach 1:
+class Solution:
+    def splitListToParts(self, head: Optional[ListNode], k: int) -> List[Optional[ListNode]]:
+        length, current, parts = 0, head, []
+        
+        while current:
+            length += 1
+            current = current.next
+        
+        base_size, extra = divmod(length, k)
+        current = head
+        
+        for _ in range(k):
+            dummy = ListNode()
+            part_head = dummy
+            
+            for _ in range(base_size + (extra > 0)):
+                dummy.next, current, dummy = current, current.next, current
+            
+            if extra > 0:
+                extra -= 1
+  
+            dummy.next = None
+            parts.append(part_head.next)
+        
+        return parts
+
+# Approach 2:
+class Solution:
+    def splitListToParts(self, head: ListNode, k: int) -> List[ListNode]:
+        size = self.get_size(head)
+        min_len, one_more = divmod(size, k)
+        res = []
+        current = ListNode()
+        current.next = head
+        for i in range(k):
+            ans = current
+            for _ in range(min_len + int(i < one_more)):
+                current = current.next
+            res.append(ans.next)
+            ans.next = None
+        return res
+
+    def get_size(self, head: ListNode) -> int:
+        size = 0
+        while head is not None:
+            size += 1
+            head = head.next
+        return size
+
+# Approach 3:
+class Solution:
+    def splitListToParts(self, head: Optional[ListNode], k: int) -> List[Optional[ListNode]]:
+        n = 0
+
+        # Finding length of Linked list
+        tmp = head
+        while tmp:
+            n+=1
+            tmp = tmp.next
+        
+        # Size of each chunk, remaining elements
+        # If n>k: then size will be positive else: 0
+        # If n<k: then left will be k and add 1 element to each chunk as size will be 0
+        size,left = n//k,n%k
+        chunkHead = head
+        res = []
+        
+        # Create k chunks
+        for _ in range(k):
+
+            # Create a new chunk or size + 1 if left elements
+            # This is so that max difference bw two chunks is 1
+            # Also left will always be < n
+            nodeSize = size + (1 if left>0 else 0)
+            tmp = chunkHead
+            prev = None
+            for _ in range(nodeSize):
+                prev = tmp
+                tmp = tmp.next
+            
+            # Cutting off the last node
+            if prev:
+                prev.next = None
+            
+            # Appending the chunk to result
+            res.append(chunkHead)
+
+            # Updating chunkHead to point to next chunk
+            chunkHead = tmp
+
+            # Updating left as 1 will always be added to curr chunk
+            left-=1
+        return res
