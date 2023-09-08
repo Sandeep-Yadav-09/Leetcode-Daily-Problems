@@ -1,0 +1,45 @@
+** 118. Pascal's Triangle **
+
+# Approach 1:
+class Solution(object):
+    def generate(self, numRows):
+        res = [[1]]
+        for i in range(numRows - 1):
+            temp = [0] + res[i] + [0]
+            row = []
+            for j in range(len(res[-1])+1):
+                row.append(temp[j] + temp[j+1])
+            res.append(row)
+        return res
+
+# Approach 2:
+class Solution:
+    def generate(self, numRows: int) -> List[List[int]]:
+        l=[0]*numRows
+        for i in range(numRows):
+            l[i]=[0]*(i+1)
+            l[i][0]=1
+            l[i][i]=1
+            for j in range(1,i):
+                l[i][j]=l[i-1][j-1]+l[i-1][j]
+        return l
+
+# Approach 3:
+class Solution:
+    def generate(self, numRows: int) -> List[List[int]]:
+        if numRows == 0:
+            return []
+        
+        triangle = [[1]]
+        
+        for i in range(1, numRows):
+            prev_row = triangle[-1]
+            new_row = [1]
+            
+            for j in range(1, len(prev_row)):
+                new_row.append(prev_row[j-1] + prev_row[j])
+            
+            new_row.append(1)
+            triangle.append(new_row)
+        
+        return triangle
