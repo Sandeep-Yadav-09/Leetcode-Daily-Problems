@@ -1,0 +1,58 @@
+** 135. Candy **
+
+# Approach 1:
+class Solution:
+    def candy(self, ratings: List[int]) -> int:
+        n = len(ratings)
+        candies = [1] * n 
+
+        for i in range(1, n):
+            if ratings[i] > ratings[i-1]:
+                candies[i] = candies[i-1] + 1
+
+        for i in range(n-2, -1, -1):
+            if ratings[i] > ratings[i+1]:
+                candies[i] = max(candies[i], candies[i+1] + 1)
+        
+        return sum(candies)
+
+# Approach 2:
+class Solution:
+    def candy(self, ratings: List[int]) -> int:
+        up,down,rat,peak = 1,0,1,0
+        
+        for i in range(1,len(ratings)):
+            
+            if ratings[i]>ratings[i-1]:
+                up+=1
+                down =  0
+                rat+=up
+                peak = up
+                
+            elif ratings[i]==ratings[i-1]:
+                down = 0
+                peak = 0
+                up = 1
+                rat+=1
+                
+            else:
+                down+=1
+                up = 1
+                rat+=down
+                if peak<=down:
+                    rat+=1
+                    
+        return rat
+
+# Approach 3:
+class Solution:
+    def candy(self, ratings: List[int]) -> int:
+        length = len(ratings)
+        candies = [1] * length
+        for i in range(1, length):
+            if ratings[i] > ratings[i-1] and candies[i] <= candies[i-1]:
+                candies[i] = candies[i-1] + 1
+        for i in range(length - 2, -1, -1):
+            if ratings[i] > ratings[i + 1] and candies[i] <= candies[i+1]:
+                candies[i] = candies[i+1] + 1
+        return sum(candies)
