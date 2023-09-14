@@ -1,0 +1,63 @@
+** 332. Reconstruct Itinerar **
+
+# Approach 1:
+class Solution:
+    def findItinerary(self, tickets: List[List[str]]) -> List[str]:
+        graph = {}
+        for src, dst in tickets:
+            if src in graph:
+                graph[src].append(dst)
+            else:
+                graph[src] = [dst]
+
+        for src in graph.keys():
+            graph[src].sort(reverse=True)
+        stack = []
+        res = []
+        stack.append("JFK")
+        
+        while len(stack) > 0:
+            elem = stack[-1]
+            if elem in graph and len(graph[elem]) > 0: 
+                stack.append(graph[elem].pop())
+            else:
+                res.append(stack.pop())
+        return res[::-1]
+
+# Approach 2:
+
+class Solution:
+    def __init__(self):
+        self.flight_graph = defaultdict(list)
+        self.itinerary = []
+
+    # Depth-First Search to traverse the flight itinerary
+    def dfs(self, airport:str) -> None:
+        destinations = self.flight_graph[airport]
+
+        # Visit destinations in lexical order
+        while destinations:
+            next_destination = destinations.pop()
+            self.dfs(next_destination)
+
+        # Add the current airport to the itinerary after visiting all destinations
+        self.itinerary.append(airport)
+
+    def findItinerary(self, tickets: List[List[str]]) -> List[str]:
+        # Populate the flight graph using ticket information
+        for ticket in tickets:
+            from_airport, to_airport = ticket
+
+            self.flight_graph[from_airport].append(to_airport)
+
+        # Sort destinations in reverse order to visit lexical smaller destinations first
+        for destinations in self.flight_graph.values():
+            destinations.sort(reverse=True)
+
+        # Start the DFS from the JFK airport
+        self.dfs("JFK")
+
+        # Reverse the itinerary to get the correct order
+        self.itinerary.reverse()
+
+        return self.itinerary
