@@ -1,0 +1,112 @@
+** 847. Shortest Path Visiting All Nodes **
+
+# Approach 1:
+from collections import deque, namedtuple
+
+class Solution:
+    def shortestPathLength(self, graph):
+        n = len(graph)
+        all_mask = (1 << n) - 1
+        visited = set()
+        Node = namedtuple('Node', ['node', 'mask', 'cost'])
+
+        q = deque()
+        for i in range(n):
+            mask_value = (1 << i)
+            this_node = Node(i, mask_value, 1)
+            q.append(this_node)
+            visited.add((i, mask_value))
+
+        while q:
+            curr = q.popleft()
+
+            if curr.mask == all_mask:
+                return curr.cost - 1
+
+            for adj in graph[curr.node]:
+                both_visited_mask = curr.mask | (1 << adj)
+                this_node = Node(adj, both_visited_mask, curr.cost + 1)
+
+                if (adj, both_visited_mask) not in visited:
+                    visited.add((adj, both_visited_mask))
+                    q.append(this_node)
+
+        return -1
+
+# Approach 2:
+from collections import deque
+
+class Solution:
+    def shortestPathLength(self, graph: List[List[int]]) -> int:
+        # Calculate the number of vertices in the graph.
+        V = len(graph)
+        
+        # Initialize a deque for BFS, initially visiting all vertices one by one.
+        curr_level = deque([(u, 1 << u) for u in range(V)])  # BFS Queue
+        
+        # Calculate a bitmask where all vertices are visited.
+        all_visited = (1 << V) - 1  # Bitmask for when all vertices are visited
+        
+        # Initialize a 2D array to track visited nodes.
+        visited = [[False for bit_mask in range(0, all_visited + 1)] for _ in range(V)]
+        
+        # Mark the initial states of the BFS by setting corresponding cells in the visited array to True.
+        for u in range(V):
+            visited[u][1 << u] = True
+            
+        # Initialize the shortest path length.
+        path_length = 0
+        
+        # Start a BFS loop.
+        while curr_level:
+            n = len(curr_level)
+            while n:
+                # Dequeue the current node and its bitmask.
+                u, bit_mask = curr_level.popleft()
+                
+                # Check if all nodes are visited in this BFS level.
+                if bit_mask == all_visited:
+                    return path_length 
+                
+                # Iterate through neighbors of the current node.
+                for v in graph[u]:
+                    # Calculate the bitmask after moving from u to v.
+                    next_bit_mask = bit_mask | (1 << v)
+                    
+                    # If v with the next bitmask has already been visited, skip to the next neighbor.
+                    if visited[v][next_bit_mask]:
+                        continue 
+                    
+                    # If all nodes are visited with the next bitmask, return the shortest path length.
+                    if next_bit_mask == all_visited: 
+                        return path_length + 1
+                    
+                    # Enqueue the neighbor v with the next bitmask for further exploration.
+                    curr_level.append((v, next_bit_mask))
+                    
+                    # Mark v as visited with the next bitmask.
+                    visited[v][next_bit_mask] = True 
+                
+                n -= 1
+            
+            # Increment the path length for the next level of BFS.
+            path_length += 1
+        
+        # If no valid path is found, return -1.
+        return -1
+
+# Approach 3:
+class Solution:
+    def shortestPathLength(self, graph: List[List[int]]) -> int:
+        queue = deque([(i, 1<<i) for i in range(len(graph))])
+        seen = set(queue)
+        ans = 0 
+        while queue: 
+            for _ in range(len(queue)): 
+                u, m = queue.popleft()
+                if m == (1<<len(graph)) - 1: return ans 
+                for v in graph[u]: 
+                    if (v, m | 1<<v) not in seen: 
+                        queue.append((v, m | 1<<v))
+                        seen.add((v, m | 1<<v))
+            ans += 1
