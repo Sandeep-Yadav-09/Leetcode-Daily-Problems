@@ -1,0 +1,30 @@
+** 1337. The K Weakest Rows in a Matrix **
+
+# Approach 1:
+class Solution:
+    def kWeakestRows(self, G: List[List[int]], k: int) -> List[int]:
+        S = [[sum(g),i] for i,g in enumerate(G)]
+        R = sorted(S)
+        return [r[1] for r in R[:k]]
+
+# Approach 2:
+class Solution:
+    def kWeakestRows(self, mat: List[List[int]], k: int) -> List[int]:
+        m, n = len(mat), len(mat[0])
+        result = {}
+        for j in range(n):
+            for i in range(m):
+                if mat[i][j] or i in result: continue
+                result[i] = True
+                k -= 1
+                if not k: return result.keys()
+        for i in range(m):
+            if i not in result:
+                result[i] = True
+                k -= 1
+                if not k: return result.keys()
+
+# Approach 3:
+class Solution:
+    def kWeakestRows(self, G: List[List[int]], k: int) -> List[int]:
+        return [r[1] for r in heapq.nsmallest(k,[[sum(g),i] for i,g in enumerate(G)])]
