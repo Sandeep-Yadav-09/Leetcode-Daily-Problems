@@ -1,0 +1,61 @@
+** 4. Median of Two Sorted Array **
+
+# Approach 1:
+class Solution:
+    def findMedianSortedArrays(self, nums1: List[int], nums2: List[int]) -> float:
+        res = nums1+nums2
+        res.sort()
+        if len(res)%2==0:
+            a = len(res)//2
+            b = a - 1
+            med = (res[a]+res[b])/2
+            return med
+        else:
+            return res[((len(res)-1)//2)]
+
+# Approach 2:
+class Solution:
+    def findMedianSortedArrays(self, nums1: List[int], nums2: List[int]) -> float:
+        merged = []
+        i, j = 0, 0
+        
+        while i < len(nums1) and j < len(nums2):
+            if nums1[i] < nums2[j]:
+                merged.append(nums1[i])
+                i += 1
+            else:
+                merged.append(nums2[j])
+                j += 1
+                
+        while i < len(nums1):
+            merged.append(nums1[i])
+            i += 1
+            
+        while j < len(nums2):
+            merged.append(nums2[j])
+            j += 1
+        
+        mid = len(merged) // 2
+        if len(merged) % 2 == 0:
+            return (merged[mid-1] + merged[mid]) / 2
+        else:
+            return merged[mid]
+
+# Approach 3:
+class Solution:
+    def findMedianSortedArrays(self, nums1: List[int], nums2: List[int]) -> float:
+        m, n = len(nums1), len(nums2)
+        mid = (m + n) // 2 + 1
+        prev2 = prev1 = None
+        i = j = 0
+
+        for _ in range(mid):
+            prev2 = prev1
+            if j == n or (i != m and nums1[i] <= nums2[j]):
+                prev1 = nums1[i]
+                i += 1
+            else:
+                prev1 = nums2[j]
+                j += 1
+        
+        return prev1 if (m + n) % 2 else (prev1 + prev2) / 2
