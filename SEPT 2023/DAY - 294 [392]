@@ -1,0 +1,47 @@
+** 392. Is Subsequence **
+
+# Approach 1:
+class Solution:
+    def isSubsequence(self, s: str, t: str) -> bool:
+        i = 0
+        j = len(t)
+        for k in s:
+            while i < j and t[i] != k:
+                i += 1
+            if i >= j:
+                return False
+            i += 1
+        return True
+
+# Approach 2:
+class Solution(object):
+    def isSubsequence(self, s, t):
+        # Base case
+        if not s:
+            return True
+        i = 0
+        # Traverse elements of t string
+        for j in t:
+            # If this index matches to the index of s string, increment i pointer...
+            if j == s[i]:
+                i += 1
+            # If the pointer is equal to the size of s...
+            if i == len(s):
+                break
+        return i == len(s)
+
+# Approach 3:
+class Solution:
+    def isSubsequence(self, s: str, t: str) -> bool:
+        sl, tl = 0, 0
+        
+        while sl<len(s) and tl<len(t):
+            if s[sl] == t[tl]:
+                sl+=1
+                tl+=1
+            else:
+                tl+=1
+        if sl==len(s):
+            return True
+        else:
+            return False
