@@ -1,0 +1,42 @@
+** 1048. Longest String Chain **
+
+# Approach 1:
+class Solution:
+    def longestStrChain(self, words: List[str]) -> int:
+        dp = {}
+        for w in sorted(words, key=len):
+            dp[w] = max(dp.get(w[:i] + w[i + 1:], 0) + 1 for i in range(len(w)))
+        return max(dp.values())
+
+# Approach 2:
+class Solution:
+    def longestStrChain(self, words: List[str]) -> int:
+        n = len(words)
+        words.sort(key=lambda w: len(w))
+        graph = defaultdict(set)
+        for i in range(n):
+            word = words[i]
+            for j in range(len(word)):
+                graph[word[:j]+word[j+1:]].add(i)
+        dists = [1] * n
+        ans = 1
+        for u in range(n):
+            for v in graph[words[u]]:
+                dists[v] = max(dists[v], dists[u]+1)
+                ans = max(ans, dists[v])
+        return ans
+
+# Approach 3:
+class Solution:
+    def longestStrChain(self, words: List[str]) -> int:
+        words.sort(key=len)
+        dp = {}
+        max_chain = 0
+        for word in words:
+            dp[word] = 1
+            for i in range(len(word)):
+                prev_word = word[:i] + word[i+1:]
+                if prev_word in dp:
+                    dp[word] = max(dp[word], dp[prev_word] + 1)
+            max_chain = max(max_chain, dp[word])
+        return max_chain
