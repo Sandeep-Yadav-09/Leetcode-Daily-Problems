@@ -1,0 +1,22 @@
+** 389. Find the Difference **
+
+# Approach 1:
+class Solution:
+    def findTheDifference(self, s: str, t: str) -> str:
+        c = 0
+        for cs in s: c ^= ord(cs) #ord is ASCII value
+        for ct in t: c ^= ord(ct)
+        return chr(c) #chr = convert ASCII into character
+
+# Approach 2:
+class Solution:
+    def findTheDifference(self, s: str, t: str) -> str:
+        return chr(sum(ord(char) for char in t) - sum(ord(char) for char in s))
+
+# Approach 3:
+class Solution:
+    def findTheDifference(self, s: str, t: str) -> str:
+    	s, t = sorted(s), sorted(t)
+    	for i in range(len(t))
+    		if t[i] not in s[i]:
+				return t[i]
