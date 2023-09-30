@@ -1,0 +1,42 @@
+** 456. 132 Pattern **
+
+# Approach 1:
+class Solution:
+    def find132pattern(self, nums: List[int]) -> bool:
+        stack, third = [], float('-inf')
+        
+        for num in reversed(nums):
+            if num < third:
+                return True
+            while stack and stack[-1] < num:
+                third = stack.pop()
+            stack.append(num)
+        return False
+
+# Approach 2:
+import sortedcontainers
+class Solution:
+    def find132pattern(self, nums: List[int]) -> bool:
+        # GREEDY OBSERVATION: we always take the minimum as i
+        # then current as j
+        # then k = lowerbound(j) (largest element less than cur)
+        mins =[math.inf] + nums[:]
+        for i in range(1, len(mins)):
+            mins[i] = min(mins[i-1], mins[i])
+            
+        # now at any index j know the optimal value of `i`
+        # GREEDY choice of `k` -> LARGEST value smaller than me on my RIGHT SIDE
+        # so lets check if the GREEDY choice of `k` will satisfy i<k
+        suffix = sortedcontainers.SortedList()
+        for j in range(len(nums)-1, -1, -1):
+            
+            k = suffix.bisect_left(nums[j]) - 1
+            if 0<=k<len(nums):
+                i_val, k_val = mins[j], suffix[k]
+                # check if it is better than `i`
+                if i_val  < k_val < nums[j]:
+                    return True
+            
+            suffix.add(nums[j])
+            
+        return False
