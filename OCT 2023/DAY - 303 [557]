@@ -1,0 +1,29 @@
+** 557. Reverse Words in a String III **
+
+# Approach 1:
+class Solution:
+    def reverseWords(self, s: str) -> str:
+        split_list = s.split(" ")
+        split_list = [i[::-1] for i in split_list]
+        return " ".join(split_list)
+
+# Approach 2:
+class Solution:
+    def reverseWords_manual(s):  # O(n) both
+        res = ''
+        l, r = 0, 0
+        while r < len(s):
+            if s[r] != ' ':
+                r += 1
+            elif s[r] == ' ':
+                res += s[l:r + 1][::-1]
+                r += 1
+                l = r
+        res += ' '
+        res += s[l:r + 2][::-1]
+        return res[1:]
+
+# Approach 3:
+ class Solution:
+    def reverseWords(self, s: str) -> str:
+        return ' '.join([w[::-1] for w in s.split(' ')])
