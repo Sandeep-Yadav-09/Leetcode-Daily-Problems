@@ -1,0 +1,60 @@
+** 1512. Number of Good Pairs **
+
+# Approach 1:
+class Solution:
+    
+    # search for duplicate numbers
+    def numIdenticalPairs(self, nums: List[int]) -> int:
+        
+        # number of good pairs
+        repeat = {}
+        num = 0
+        
+        # for every element in nums
+        for v in nums:
+            
+            # number of repeated digits
+            if v in repeat:
+                
+                # count number of pairs based on duplicate values
+                if repeat[v] == 1:
+                    num += 1
+                else:
+                    num += repeat[v]
+                
+                # increment the number of counts
+                repeat[v] += 1
+            # number has not been seen before
+            else:
+                repeat[v] = 1
+        # return
+        return num
+
+# Approach 2:
+class Solution:
+    def numIdenticalPairs(self, nums: List[int]) -> int:
+        hashMap = {}
+        res = 0
+        for number in nums:            
+            if number in hashMap:
+                res += hashMap[number]
+                hashMap[number] += 1
+            else:
+                hashMap[number] = 1
+        return res
+
+# Approach 3:
+class Solution:
+    def numIdenticalPairs(self, nums: List[int]) -> int:
+        pairs = 0
+        d = {}
+        for i in nums:
+            if i in d:
+                d[i] += 1
+            else:
+                d[i] = 1
+        for num in d:
+            val = d[num]
+            for i in range(val):
+                pairs += i
+        return pairs
