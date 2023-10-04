@@ -1,0 +1,114 @@
+** 706. Design HashMap **
+
+# Approach 1:
+class MyHashMap:
+
+    def __init__(self):
+        # better to be a prime number, less collision
+        # store (key, value) in the bucket
+        self.size = 2069
+        self.buckets = [[] for _ in range(self.size)]
+
+    def put(self, key: int, value: int) -> None:
+        bucket, index = self.getIndex(key)
+        if index < 0:
+            bucket.append((key,value))
+        else:
+            bucket[index] = (key, value)
+
+    def get(self, key: int) -> int:
+        bucket, index = self.getIndex(key)
+        if index < 0:
+            return -1
+        else:
+            return bucket[index][1]
+
+    def remove(self, key: int) -> None:
+        bucket, index = self.getIndex(key)
+        if index < 0:
+            return
+        else:
+            bucket.remove(bucket[index])
+    
+    def hashKey(self, key):
+        return key % self.size
+
+    def getIndex(self, key):
+        hashResult = self.hashKey(key)
+        bucket = self.buckets[hashResult]
+        
+        for i, (k, v) in enumerate(bucket):
+            if k == key:
+                return bucket, i
+        
+        return bucket, -1
+
+# Approach 2:
+class MyHashMap:
+
+    def __init__(self):
+        self.k = [False] * (10**6 +1)
+        self.v = [None] * (10**6 +1)
+    def put(self, key: int, value: int) -> None:
+        self.k[key] = True 
+        self.v[key] = value 
+    def get(self, key: int) -> int:
+        if self.k[key]: return self.v[key]
+        return -1 
+    def remove(self, key: int) -> None:
+        self.k[key] = False 
+        self.v[key] = None
+
+# Approach 3:
+class LL_Node:
+    def __init__(self, key, val, nxt=None):
+        self.key = key
+        self.val = val
+        self.next = nxt
+
+class MyHashMap:
+
+    def __init__(self):
+        self.hashmap = [None] * 10000
+
+    def put(self, key: int, value: int) -> None:
+        keyy = key % 10000
+        if self.hashmap[keyy] is None:
+            self.hashmap[keyy] = LL_Node(key, value)
+        else:
+            node = self.hashmap[keyy]
+            while node:
+                if node.key == key:
+                    node.val = value
+                    return
+                node = node.next
+            node = self.hashmap[keyy]
+            self.hashmap[keyy] = LL_Node(key, value, node)
+            
+    def get(self, key: int) -> int:
+        keyy = key % 10000
+        if self.hashmap[keyy] is None:
+            return -1
+        else:
+            node = self.hashmap[keyy]
+            while node:
+                if node.key == key:
+                    return node.val
+                node = node.next
+            return -1
+
+    def remove(self, key: int) -> None:
+        keyy = key % 10000
+        if self.hashmap[keyy]:
+            node = self.hashmap[keyy]
+            if node.key == key:
+                self.hashmap[keyy] = node.next
+                return 
+            prev = node
+            node = node.next
+            while node:
+                if node.key == key:
+                    prev.next = node.next
+                    return 
+                prev = prev.next
+                node = node.next
