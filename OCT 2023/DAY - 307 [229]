@@ -1,0 +1,46 @@
+** 229. Majority Element II **
+
+# Approach 1:
+class Solution:
+    def majorityElement(self, nums: list[int]) -> list[int]:
+        # Create a Counter to store the count of each element
+        element_count = Counter(nums)
+        
+        majority_elements = []
+        threshold = len(nums) // 3
+        
+        # Iterate through the element count to identify majority elements
+        for element, count in element_count.items():
+            # Check if the element count is greater than the threshold
+            if count > threshold:
+                majority_elements.append(element)
+        
+        return majority_elements
+
+# Approach 2:
+class Solution:
+    def majorityElement(self, nums: List[int]) -> List[int]:
+        if not nums:
+            return []
+        
+        candidate1, candidate2, count1, count2 = 0, 1, 0, 0
+        
+        for num in nums:
+            if num == candidate1:
+                count1 += 1
+            elif num == candidate2:
+                count2 += 1
+            elif count1 == 0:
+                candidate1, count1 = num, 1
+            elif count2 == 0:
+                candidate2, count2 = num, 1
+            else:
+                count1 -= 1
+                count2 -= 1
+        
+        return [num for num in (candidate1, candidate2) if nums.count(num) > len(nums) // 3]
+
+# Approach 3:
+class Solution:
+    def majorityElement(self, nums):
+        return [num for num, count in Counter(nums).items() if count > len(nums) // 3]
