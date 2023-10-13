@@ -1,0 +1,37 @@
+** 746. Min Cost Climbing Stairs **
+
+# Approach 1:
+class Solution:
+	def minCostClimbingStairs(self, cost: List[int]) -> int:
+		for i in range(len(cost) - 3, -1, -1):
+			cost[i] += min(cost[i+1], cost[i+2])
+		return min(cost[0], cost[1])
+
+# Approach 2:
+class Solution:
+    def minCostClimbingStairs(self, cost: List[int]) -> int:
+
+        if not cost:
+            return 0
+
+        dp = [0] * len(cost)   
+
+        dp[0] = cost[0]
+
+        dp[1] = cost[1]
+
+        for i in range(2, len(cost)):
+            dp[i] = cost[i] + min(dp[i-1], dp[i-2])
+
+        return min(dp[-1], dp[-2])
+
+# Approach 3:
+class Solution:
+    def minCostClimbingStairs(self, cost: List[int]) -> int:
+        # Loop through every cost after the first two steps
+        for i in range(2, len(cost)):
+            # Update the cheapest cost to step here
+            cost[i] += min(cost[i-2], cost[i-1])
+        
+        # Cheapest cost of the last two steps is the answer
+        return min(cost[len(cost)-2], cost[len(cost)-1])
