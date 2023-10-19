@@ -1,0 +1,54 @@
+** 844. Backspace String Compare **
+
+# Approach 1:
+class Solution:
+    def backspaceCompare(self, S: str, T: str) -> bool:
+    	a, A = [[],[],0,0], [S,T]
+    	for i in range(2):
+    		for j in A[i][::-1]:
+    			if j != '#':
+    				if a[i+2] == 0: a[i].append(j)
+    				else: a[i+2] -= 1
+    			else: a[i+2] += 1
+    	return a[0] == a[1]
+
+# Approach 2:
+class Solution:
+    def backspaceCompare(self, S: str, T: str) -> bool:
+    	a, A = [collections.deque(), collections.deque()], [S,T]
+    	for i in range(2):
+	    	for j in A[i]:
+   		 		if j != '#': a[i].append(j)
+   		 		elif a[i]: a[i].pop()
+    	return a[0] == a[1]
+	
+# Approach 3:
+class Solution:
+    def backspaceCompare(self, s: str, t: str) -> bool:
+        
+        def process_string(string):
+            k = 0
+            for i in range(len(string)):
+                if string[i] != '#':
+                    string[k] = string[i]
+                    k += 1
+                else:
+                    k = max(k-1, 0)
+            return k
+        
+        # Convert strings to lists for in-place modifications
+        s, t = list(s), list(t)
+        
+        k = process_string(s)
+        p = process_string(t)
+        
+        # If effective lengths are different, return False
+        if k != p:
+            return False
+        
+        # Compare the effective characters
+        for i in range(k):
+            if s[i] != t[i]:
+                return False
+        
+        return True
