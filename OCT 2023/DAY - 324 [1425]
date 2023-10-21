@@ -1,0 +1,51 @@
+** 1425. Constrained Subsequence Sum **
+
+# Approach 1:
+class Solution:
+    def constrainedSubsetSum(self, nums: List[int], k: int) -> int:
+        dq = deque()
+        for i in range(len(nums)):
+            nums[i] += nums[dq[0]] if dq else 0
+            
+            while dq and (i - dq[0] >= k or nums[i] >= nums[dq[-1]]):
+                dq.pop() if nums[i] >= nums[dq[-1]] else dq.popleft()
+                
+            if nums[i] > 0:
+                dq.append(i)
+                
+        return max(nums)
+
+# Approach 2:
+class Solution:
+    def constrainedSubsetSum(self, nums: List[int], k: int) -> int:
+        dp = copy.deepcopy(nums)
+        q = deque()
+        q.append(0)
+        for i in range(1,len(nums)):
+            while(q[-1] < i-k ):
+                q.pop()
+            dp[i] = max(dp[i],dp[q[-1]]+nums[i])
+            while( len(q)>0 and dp[q[0]] <= dp[i] ):
+                q.popleft()
+            q.appendleft(i)
+        return max(dp)
+
+# Approach 3:
+class Solution:
+    def constrainedSubsetSum(self, nums: List[int], k: int) -> int:
+        dp = [0] * len(nums)
+        dq = collections.deque()
+
+        for i, num in enumerate(nums):
+            if dq:
+                dp[i] = max(dq[0], 0) + num
+            else:
+                dp[i] = num
+            while dq and dq[-1] < dp[i]:
+                dq.pop()
+            dq.append(dp[i])
+            if i >= k and dp[i - k] == dq[0]:
+                dq.popleft()
+
+        return max(dp)
+        
