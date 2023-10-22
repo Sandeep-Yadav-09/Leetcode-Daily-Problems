@@ -1,0 +1,78 @@
+** 1793. Maximum Score of a Good Subarray **
+
+# Approach 1:
+class Solution:
+    def maximumScore(self, nums: List[int], k: int) -> int:
+        left, right = k, k
+        min_val = nums[k]
+        max_score = min_val
+        
+        while left > 0 or right < len(nums) - 1:
+            if left == 0 or (right < len(nums) - 1 and nums[right + 1] > nums[left - 1]):
+                right += 1
+            else:
+                left -= 1
+            min_val = min(min_val, nums[left], nums[right])
+            max_score = max(max_score, min_val * (right - left + 1))
+        
+        return max_score
+
+# Approach 2:
+class Solution:
+    def maximumScore(self, nums: List[int], k: int) -> int:
+
+        left = right = k  ;  ans = mn = nums[k]
+        n = len(nums)
+
+        while left > 0 or right < n - 1:
+            while left  >     0 and nums[left  - 1] >= mn: left  -= 1
+            while right < n - 1 and nums[right + 1] >= mn: right += 1
+
+            ans = max(ans, (right - left + 1) * mn)
+
+            beg = nums[left  - 1] if left  >     0 else -1
+            end = nums[right + 1] if right < n - 1 else -1
+
+            mn = max(beg, end)
+
+        return ans
+
+# Approach 3:
+class Solution:
+    def maximumScore(self, nums: List[int], k: int) -> int:
+        n = len(nums)
+
+        leftBoundary = [-1] * n  # Store the next lower element from the left.
+        rightBoundary = [n] * n  # Store the next lower element from the right.
+
+        leftStack = []  # Monotonic Stack to help calculate left array.
+        rightStack = []  # Monotonic Stack to help calculate right array.
+
+        # Calculate next lower element from the left.
+        for i in range(n - 1, -1, -1):
+            while leftStack and nums[leftStack[-1]] > nums[i]:
+                # If the current element is smaller than elements in the stack,
+                # set the left boundary for those elements to the current element's index.
+                leftBoundary[leftStack[-1]] = i
+                leftStack.pop()
+            leftStack.append(i)
+
+        # Calculate next lower element from the right.
+        for i in range(n):
+            while rightStack and nums[rightStack[-1]] > nums[i]:
+                # If the current element is smaller than elements in the stack,
+                # set the right boundary for those elements to the current element's index.
+                rightBoundary[rightStack[-1]] = i
+                rightStack.pop()
+            rightStack.append(i)
+
+        maxScore = 0  # Initialize the maximum score to 0.
+
+        # Calculate the maximum score for good subarrays.
+        for i in range(n):
+            if leftBoundary[i] < k and rightBoundary[i] > k:
+                # Calculate the score for the subarray that contains element 'k'.
+                subarrayScore = nums[i] * (rightBoundary[i] - leftBoundary[i] - 1)
+                maxScore = max(maxScore, subarrayScore)  # Update the maximum score.
+
+        return maxScore  # Return the maximum score for a good subarray.
