@@ -1,0 +1,36 @@
+** 342. Power of Four **
+
+# Approach 1:
+class Solution:
+    def isPowerOfFour(self, n: int) -> bool:
+        return n>0 and log(n,4).is_integer()
+
+# Approach 2:
+class Solution:
+    def isPowerOfFour(self, n):
+        # Iterate through powers of 4 from 4^0 to 4^15
+        for i in range(16):
+            power_of_four = 4 ** i
+            
+            # If we find a power of four equal to 'n', return True
+            if power_of_four == n:
+                return True
+            
+            # If the current power of four is greater than 'n', there's no need to continue
+            if power_of_four > n:
+                return False
+        
+        # 'n' is not a power of four
+        return False
+
+# Approach 3:
+import math
+
+class Solution:
+    def isPowerOfFour(self, num: int) -> bool:
+        if num <= 0:
+            return False
+        
+        limit = math.log(num,4)
+        return limit.is_integer()
+	
