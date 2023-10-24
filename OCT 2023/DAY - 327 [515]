@@ -1,0 +1,63 @@
+** 515. Find Largest Value in Each Tree Row **
+
+# Approach 1:
+class Solution:
+    def largestValues(self, root: Optional[TreeNode]) -> List[int]:
+        if not root:
+            return []
+        
+        result = []
+        queue = deque([root])
+        
+        while queue:
+            curr_level_size = len(queue)
+            max_val = float('-inf')
+            
+            for _ in range(curr_level_size):
+                node = queue.popleft()
+                max_val = max(max_val, node.val)
+                
+                for child in [node.left, node.right]:
+                    if child:
+                        queue.append(child)
+            
+            result.append(max_val)
+        
+        return result
+
+# Approach 2:
+class Solution:
+    def largestValues(self, root: TreeNode) -> List[int]:
+        res = []
+        def dfs(node=root, level=0):
+            if not node:
+                return
+            if len(res)-1 < level:
+                res.append(node.val)
+            else:
+                res[level] = max(node.val, res[level])
+            dfs(node.left, level+1)
+            dfs(node.right, level+1)
+        dfs()
+        return res
+
+# Approach 3:
+class Solution:
+    def largestValues(self, root: Optional[TreeNode]) -> List[int]:
+        levelMap = {}
+        def dfs(node, level):
+            if not node:
+                return 
+            if level not in levelMap:
+                levelMap[level] = node.val
+            else:
+                if node.val >=  levelMap[level]:
+                    levelMap[level] = node.val
+            
+            dfs(node.left, level + 1)
+            dfs(node.right, level + 1)
+        dfs(root, 1)
+        res = []
+        for i, v in levelMap.items():
+            res.append(v)
+        return(res)
