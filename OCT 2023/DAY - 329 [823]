@@ -1,0 +1,50 @@
+** 823. Binary Trees With Factors **
+
+# Approach 1:
+MOD = 10**9 + 7
+
+class Solution:
+    def numFactoredBinaryTrees(self, arr: List[int]) -> int:
+        arr.sort()
+        s = set(arr)
+        dp = {x: 1 for x in arr}
+        
+        for i in arr:
+            for j in arr:
+                if j > i**0.5:
+                    break
+                if i % j == 0 and i // j in s:
+                    if i // j == j:
+                        dp[i] += dp[j] * dp[j]
+                    else:
+                        dp[i] += dp[j] * dp[i // j] * 2
+                    dp[i] %= MOD
+        
+        return sum(dp.values()) % MOD
+
+# Approach 2:
+class Solution:
+    def numFactoredBinaryTrees(self, arr: List[int]) -> int:
+        arr.sort()
+        dp = {}
+        for i in range(len(arr)):
+            dp[arr[i]] = 1
+            for j in range(i):
+                if arr[i] % arr[j] == 0 and arr[i] // arr[j] in dp:
+                    dp[arr[i]] += dp[arr[j]] * dp[arr[i] // arr[j]]
+        return sum(dp.values()) % (10**9 + 7)
+
+# Approach 3:
+class Solution:
+    def numFactoredBinaryTrees(self, A: List[int]) -> int:
+        As = set(A) # set for O(1) lookup 
+        pq = [] # min heap 
+        for x, y in product(A, A): 
+            if x*y in As: heappush(pq, (x*y, x, y))
+        
+        cnt = {x: 1 for x in A}
+        while pq: 
+            z, x, y = heappop(pq)
+            cnt[z] += cnt[x] * cnt[y]
+        
+        return sum(cnt.values()) % 1_000_000_007
