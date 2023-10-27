@@ -1,0 +1,59 @@
+** 5. Longest Palindromic Substring **
+
+# Approach 1:
+class Solution:
+    def longestPalindrome(self, s):
+            longest_palindrom = ''
+            dp = [[0]*len(s) for _ in range(len(s))]
+            #filling out the diagonal by 1
+            for i in range(len(s)):
+                dp[i][i] = True
+                longest_palindrom = s[i]
+                
+            # filling the dp table
+            for i in range(len(s)-1,-1,-1):
+                    # j starts from the i location : to only work on the upper side of the diagonal 
+                for j in range(i+1,len(s)):  
+                    if s[i] == s[j]:  #if the chars mathces
+                        # if len slicied sub_string is just one letter if the characters are equal, we can say they are palindomr dp[i][j] =True 
+                        #if the slicied sub_string is longer than 1, then we should check if the inner string is also palindrom (check dp[i+1][j-1] is True)
+                        if j-i ==1 or dp[i+1][j-1] is True:
+                            dp[i][j] = True
+                            # we also need to keep track of the maximum palindrom sequence 
+                            if len(longest_palindrom) < len(s[i:j+1]):
+                                longest_palindrom = s[i:j+1]
+                    
+            return longest_palindrom
+
+# Approach 2:
+class Solution:
+    def longestPalindrome(self, s: str) -> str:
+        n=len(s)
+        def expand_center(i,j):            
+            while 0<=i<=j<n and s[i]==s[j]:
+                i-=1
+                j+=1                
+            
+            return (i+1, j)                
+        
+        res=max([expand_center(i,i+offset) for i in range(n) for offset in range(2)], key=lambda x: x[1]-x[0]+1)
+        
+        return s[res[0]:res[1]]
+
+# Approach 3:
+class Solution:
+    def longestPalindrome(self, s: str) -> str:
+        n=len(s)
+        def expand_pallindrome(i,j):            
+            while 0<=i<=j<n and s[i]==s[j]:
+                i-=1
+                j+=1                            
+            return (i+1, j)
+        
+        res=(0,0)
+        for i in range(n):
+            b1 = expand_pallindrome(i,i)
+            b2 = expand_pallindrome(i,i+1)            
+            res=max(res, b1, b2,key=lambda x: x[1]-x[0]+1) # find max based on the length of the pallindrome strings.
+                    
+        return s[res[0]:res[1]]    
