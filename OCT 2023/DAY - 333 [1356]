@@ -1,0 +1,59 @@
+** 1356. Sort Integers by The Number of 1 Bits**
+
+# Approach 1:
+class Solution:
+	def sortByBits(self, array: List[int]) -> List[int]:
+
+		array = sorted(array)
+
+		d = {}
+
+		for i in array:
+
+			total_one = bin(i)[2:].count('1')
+
+			if total_one not in d:
+				d[total_one] = [i]
+			else:
+				d[total_one].append(i)
+
+		d = dict(sorted(d.items() , key = lambda x:x[0]))
+
+		result = []
+
+		for key in d:
+			result = result + d[key]
+
+		return result
+
+# Approach 2:
+class Solution:
+    def sortByBits(self, A):
+        return sorted(A, key=lambda a: [bin(a).count('1'), a])
+
+# Approach 3:
+class Solution:
+    def sortByBits(self, arr: List[int]) -> List[int]:
+        # Function to calculate number of ones
+        def countOnes(n):
+            cnt = 0
+            while n:
+                n = n & n-1
+                cnt += 1
+
+            return cnt
+
+        # Calculate number of ones and add them to tmp list as tuple of (number of ones, num)
+        tmp = []        
+        for n in arr:
+            ones = countOnes(n)
+            tmp.append((ones, n))
+
+        hq.heapify(tmp) # Heapify
+        res = []
+
+        # Extract result
+        while tmp:
+            res.append(hq.heappop(tmp)[1])
+
+        return res
