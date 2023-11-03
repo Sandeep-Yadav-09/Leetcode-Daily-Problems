@@ -1,0 +1,40 @@
+** 1441. Build an Array With Stack Operations **
+
+# Approach 1:
+class Solution:
+    def buildArray(self, target: List[int], n: int) -> List[str]:
+        initialValue = 1
+        output = []
+        for number in target:
+            output.extend(["Push","Pop"]*(number - initialValue) + ["Push"])
+            initialValue = number + 1
+        return output
+
+# Approach 2:
+class Solution:
+    def buildArray(self, target: List[int], n: int) -> List[str]:
+        stack=[]
+        for i in range(1,n+1):
+            if(i in target):
+                stack.append("Push")
+            else:
+                stack.append("Push")
+                stack.append("Pop")
+            if(i==(target[-1])):
+                break
+        return stack
+
+# Approach 3:
+class Solution:
+    def buildArray(self, target: List[int], n: int) -> List[str]:
+        target_set = set(target)
+        result = []
+        
+        for i in range(1, target[-1] + 1):
+            if i in target_set:
+                result.append("Push")
+            else:
+                result.append("Push")
+                result.append("Pop")
+                
+        return result
