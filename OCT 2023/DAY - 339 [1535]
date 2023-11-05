@@ -1,0 +1,70 @@
+** 1535. Find the Winner of an Array Game **
+
+# Approach 1:
+class Solution:
+    def getWinner(self, arr: List[int], k: int) -> int:
+        if k == 1:
+            return max(arr[0], arr[1])
+        if k >= len(arr):
+            return max(arr)
+        
+        current_winner = arr[0]
+        consecutive_wins = 0
+        
+        for i in range(1, len(arr)):
+            if current_winner > arr[i]:
+                consecutive_wins += 1
+            else:
+                current_winner = arr[i]
+                consecutive_wins = 1
+            
+            if consecutive_wins == k:
+                return current_winner
+        
+        return current_winner
+
+# Approach 2:
+class Solution:
+    def getWinner(self, arr: List[int], k: int) -> int:
+        win = cnt = 0 #winner & count 
+        for i, x in enumerate(arr): 
+            if win < x: win, cnt = x, 0 #new winner in town 
+            if i: cnt += 1 #when initializing (i.e. i == 0) count is 0
+            if cnt == k: break #early break 
+        return win 
+
+# Approach 3:
+class SLLNode:
+    def __init__(self, val):
+        self.val = val
+        self.next = None
+class Solution:
+    def getWinner(self, arr: List[int], k: int) -> int:
+        N = len(arr)
+        head = SLLNode(arr[0])
+        tail = head
+        for i in range(1, N):
+            node = SLLNode(arr[i])
+            tail.next = node
+            tail = node
+        currWins, ele = 0, -1
+        k = min(k, N - 1)
+        while 1:
+            l, s = max(head.val, head.next.val), min(head.val, head.next.val)
+            head.val = l
+            if l == ele:
+                currWins += 1
+            else:
+                currWins = 1
+                ele = l
+            if currWins >= k:
+                print(k, currWins)
+                return ele
+            
+            temp = head.next
+            head.next = head.next.next
+            tail.next = temp
+            temp.next = None
+            tail = temp
+            temp.val = s
+        return -1
