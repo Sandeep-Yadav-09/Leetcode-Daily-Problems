@@ -1,0 +1,33 @@
+** 1921. Eliminate Maximum Number of Monsters **
+
+# Approach 1:
+class Solution:
+    def eliminateMaximum(self, dist: List[int], speed: List[int]) -> int:
+        time_to_city = [dist[i] / speed[i] for i in range(len(dist))]
+        time_to_city.sort()
+        
+        for i in range(len(time_to_city)):
+
+            if time_to_city[i] <= i:
+                return i
+
+        return len(dist)
+
+# Approach 2:
+class Solution:
+    def eliminateMaximum(self, dist: List[int], speed: List[int]) -> int:
+        res, t = 0, []
+        for s, v in zip(dist, speed):
+            t.append(s/v)
+        t.sort()
+        for i in range(len(dist)):
+            if t[i] > i:
+                res += 1
+            else:
+                break
+        return res
+
+# Approach 3:
+class Solution:
+    def eliminateMaximum(self, dist: List[int], speed: List[int]) -> int:
+        return next((t for t, arrival in enumerate(sorted([d/s for d, s in zip(dist, speed)])) if arrival <= t), len(dist))
