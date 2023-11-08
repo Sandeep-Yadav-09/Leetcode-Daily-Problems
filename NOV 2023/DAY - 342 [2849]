@@ -1,0 +1,27 @@
+** 2849. Determine if a Cell Is Reachable at a Given Time **
+
+# Approach 1:
+class Solution:
+    def isReachableAtTime(self, sx: int, sy: int, fx: int, fy: int, t: int) -> bool:
+        x_dist = abs(sx - fx)
+        y_dist = abs(sy - fy)
+
+        if x_dist == 0 and y_dist == 0:
+            return t != 1
+
+        return x_dist <= t and y_dist <= t        
+
+# Approach 2:
+class Solution:
+    def isReachableAtTime(self, sx: int, sy: int, fx: int, fy: int, t: int) -> bool:
+        if sx == fx and sy == fy:
+            if t == 1:
+                return False
+            else:
+                return True
+        return abs(sx - fx) <= t and abs(sy - fy) <= t
+
+# Approach 3:
+class Solution:
+    def isReachableAtTime(self, sx: int, sy: int, fx: int, fy: int, t: int) -> bool:
+        return False if t == 1 and sx == fx and sy == fy else max((abs(sx - fx)), (abs(sy - fy))) <= t
