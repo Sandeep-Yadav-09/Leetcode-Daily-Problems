@@ -1,0 +1,28 @@
+** 1759. Count Number of Homogenous Substrings **
+
+# Approach 1:
+class Solution:
+    def countHomogenous(self, s: str) -> int:
+        mod=10**9+7
+        prev='X'
+        count=0
+        ans=0
+        for c in s:
+            if c!=prev:
+                ans=(ans+count*(count+1)//2)% mod
+                count=1
+            else:
+                count+=1
+            prev=c
+        ans=(ans+count*(count+1)//2)% mod
+        return ans
+
+# Approach 2:
+class Solution:
+    def countHomogenous(self, s: str) -> int:
+        return sum((l:=sum(1 for _ in grp))*(l + 1)//2 for _, grp in groupby(s))%(10**9 + 7)
+
+# Approach 3:
+class Solution:
+    def countHomogenous(self, s: str) -> int:
+        return sum((l:=len(m.group()))*(l + 1)//2 for m in re.finditer(r'(.)\1*', s))%(10**9 + 7)
