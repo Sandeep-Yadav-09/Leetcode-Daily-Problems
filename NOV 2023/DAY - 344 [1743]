@@ -1,0 +1,83 @@
+** 1743. Restore the Array From Adjacent Pairs **
+
+# Approach 1:
+class Solution:
+    def restoreArray(self, adjacentPairs: List[List[int]]) -> List[int]:
+        graph = {}
+        for u, v in adjacentPairs: 
+            graph.setdefault(u, []).append(v)
+            graph.setdefault(v, []).append(u)
+        
+        ans = []
+        seen = set()
+        stack = [next(x for x in graph if len(graph[x]) == 1)]
+        while stack: 
+            n = stack.pop()
+            ans.append(n)
+            seen.add(n)
+            for nn in graph[n]: 
+                if nn not in seen: stack.append(nn)
+        return ans 
+
+# Approach 2:
+class Solution:
+    def restoreArray(self, adjacentPairs: List[List[int]]) -> List[int]:
+		# create the map 
+        adj = collections.defaultdict(list)
+        for a, b in adjacentPairs:
+            adj[a].append(b)
+            adj[b].append(a)
+
+		# find the start num
+        start = adjacentPairs[0][0]
+        for k, v in adj.items():
+            if len(v) ==1:
+                start = k
+                break
+				
+		# dfs to connect the graph
+        nums=[]
+        seen = set()
+        def dfs(num):
+            seen.add(num)
+            for next_num in adj[num]:
+                if next_num in seen: continue
+                dfs(next_num)
+            nums.append(num) 
+        dfs(start)
+        return nums
+
+# Approach 3:
+class Solution:
+    def restoreArray(self, adjacentPairs: List[List[int]]) -> List[int]:
+        
+        # make the connections
+        conns = collections.defaultdict(set)
+        
+        # connect the connections
+        for a, b in adjacentPairs:
+            conns[a].add(b)
+            conns[b].add(a)
+            
+        # find the start value
+        for node, conn in conns.items():
+            if len(conn) == 1:
+                break
+        
+        # remove the first node from the first connection
+        result = [node]
+        while conns[node]:
+            
+            # get the next element
+            # (there can only be one, as we always remove one)
+            new = conns[node].pop()
+            
+            # append the new element to the list
+            result.append(new)
+            
+            # delete node from the next connections
+            conns[new].remove(node)
+            
+            # set the new element
+            node = new
+        return result
