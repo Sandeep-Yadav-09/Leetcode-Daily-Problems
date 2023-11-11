@@ -1,0 +1,87 @@
+** 2642. Design Graph With Shortest Path Calculator **
+
+# Approach 1:
+class Graph:
+    def __init__(self, n: int, edges: List[List[int]]):
+        self.adj_list = [[] for _ in range(n)]
+        for a, b, cost in edges:
+            self.adj_list[a].append((b, cost))
+
+    def addEdge(self, edge: List[int]) -> None:
+        a, b, cost = edge
+        self.adj_list[a].append((b, cost))
+
+    def shortestPath(self, node1: int, node2: int) -> int:
+        n, pq = len(self.adj_list), [(0, node1)]
+        dist = [inf] * (n)
+        dist[node1] = 0
+
+        while pq:
+            d, node = heappop(pq)
+            if node == node2: return d
+            if d > dist[node]: continue
+            for neighbor, cost in self.adj_list[node]:
+                new_dist = d + cost
+                if new_dist < dist[neighbor]:
+                    dist[neighbor] = new_dist
+                    heappush(pq, (new_dist, neighbor))
+        return -1
+
+# Approach 2:
+import heapq
+
+class Graph:
+
+    def __init__(self, n: int, edges: List[List[int]]):
+        self.adj_list = {i: [] for i in range(n)}
+        for edge in edges:
+            self.adj_list[edge[0]].append((edge[1], edge[2]))
+        
+    def addEdge(self, edge: List[int]) -> None:
+        self.adj_list[edge[0]].append((edge[1], edge[2]))
+
+    def shortestPath(self, node1: int, node2: int) -> int:
+        heap = [(0, node1)]
+        dist = {i: float('inf') for i in range(len(self.adj_list))}
+        dist[node1] = 0
+        
+        while heap:
+            (d, node) = heapq.heappop(heap)
+            if node == node2:
+                return d
+            if d > dist[node]:
+                continue
+            for neighbor, weight in self.adj_list[node]:
+                new_dist = d + weight
+                if new_dist < dist[neighbor]:
+                    dist[neighbor] = new_dist
+                    heapq.heappush(heap, (new_dist, neighbor))
+                    
+        return -1
+
+# Approach 3:
+class Graph:
+    def __init__(self, n: int, edges: list[list[int]]):
+
+        self.graph = defaultdict(list)
+        for edge in edges: self.addEdge(edge)
+
+
+    def addEdge(self, edge: list[int]) -> None:
+
+        frm, to, edgeCost = edge
+        self.graph[frm].append((to, edgeCost))
+
+
+    def shortestPath(self, s: int, t: int) -> int:
+        
+        d, queue = defaultdict(lambda:-1, {s:0}), [(0,s)]
+ 
+        while queue:
+            a,b = heappop(queue)
+            if d[b] == a:
+                for to, edgeCost in self.graph[b]:
+                    if d[to] > a + edgeCost or d[to] < 0:
+                        d[to] = a + edgeCost
+                        heappush(queue, (d[to], to))
+        return d[t]
