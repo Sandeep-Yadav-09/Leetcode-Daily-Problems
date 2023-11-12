@@ -1,0 +1,92 @@
+** 815. Bus Routes**
+
+# Approach 1:
+class Solution:
+    def numBusesToDestination(self, routes: List[List[int]], source: int, target: int) -> int:
+        m = defaultdict(set)
+        for i, route in enumerate(routes):
+            for node in route:
+                m[node].add(i)
+        ans = -1
+        vis = set()
+        queue = deque()
+        queue.append(source)
+        while queue:
+            l = len(queue)
+            ans += 1
+            for _ in range(l):
+                cur = queue.popleft()
+                if cur == target:
+                    return ans
+                for bus in m[cur]:
+                    if bus not in vis:
+                        vis.add(bus)
+                        queue.extend(routes[bus])
+        return -1
+
+# Approach 2:
+class Solution:
+    def numBusesToDestination(self, routes: List[List[int]], source: int, target: int) -> int:
+        if source==target:
+            return 0
+        graph=defaultdict(set)
+        for routes_id,stops in enumerate(routes):
+            for stop in stops:
+                graph[stop].add(routes_id)
+                
+        queue=deque([(source,0)])
+        seen_stops=set([source])
+        seen_routes=set()
+        while queue:
+            stop,new_changes=queue.popleft()
+            
+            if stop==target:
+                return new_changes
+            
+            for routes_id in graph[stop]:
+                if routes_id not in seen_routes:
+                    seen_routes.add(routes_id)
+                    
+                    for stop in routes[routes_id]:
+                        if stop not in seen_stops:
+                            seen_stops.add(stop)
+                            queue.append((stop,new_changes+1))
+                            
+        return -1                   
+
+# Approach 3:
+class Solution:
+    def numBusesToDestination(self, routes: List[List[int]], source: int, target: int) -> int:
+        G = defaultdict(list)
+        dp = defaultdict(lambda: float('inf'))
+        rtidx = defaultdict(list)
+        h = []
+        
+        if source == target:
+            return 0
+        
+        for i in range(len(routes)):            
+            for j in range(i, len(routes)):                
+                if i != j and len(set(routes[i]) & set(routes[j])) > 0:
+                    G[i].append(j)
+                    G[j].append(i)
+                
+        for i,r in enumerate(routes):
+            for j in r:
+                rtidx[j].append(i)
+                
+        for i in rtidx[source]:
+            h.append((1, i))
+        
+        while h:
+            busses, node = heapq.heappop(h)
+            
+            if node in rtidx[target]:
+                return busses
+            
+            for nxt in G[node]:                
+                if busses + 1 < dp[nxt]:
+                    dp[nxt] = busses+1
+                    heapq.heappush(h, (dp[nxt], nxt))
+                    
+        return -1
