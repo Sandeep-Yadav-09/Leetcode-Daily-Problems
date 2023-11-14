@@ -1,0 +1,51 @@
+** 1930. Unique Length-3 Palindromic Subsequences **
+
+# Approach 1:
+class Solution:
+    def countPalindromicSubsequence(self, s: str) -> int:
+        d=defaultdict(list)
+        for i,c in enumerate(s):
+            d[c].append(i)
+        ans=0
+        for el in d:
+            if len(d[el])<2:
+                continue
+            a=d[el][0]
+            b=d[el][-1]
+            ans+=len(set(s[a+1:b]))
+        return(ans)
+
+# Approach 2:
+class Solution:
+    def countPalindromicSubsequence(self, s: str) -> int:
+        if len(s) < 3:
+            return 0
+
+        elif len(s) == 3:
+            return 1 if s[0]==s[2] else 0
+                
+        else:
+            num_of_palindromes = 0
+            unique = list(set(s))
+            for char in unique:
+                count = s.count(char)
+                if count > 1:
+                    # find first and last index of char in s
+                    a_index = s.index(char)
+                    c_index = s.rindex(char)
+                    # find num of unique chars between the two indeces 
+                    between = s[a_index+1:c_index]
+                    num_of_palindromes += len(list(set(between)))
+                
+            return num_of_palindromes
+
+# Approach 3:
+class Solution:
+    def countPalindromicSubsequence(self, s: str) -> int:
+        res = 0
+        characters = {chr(x) for x in range(97,123,1)}
+        for k in characters:
+            first,last = s.find(k),s.rfind(k)
+            if first!=-1:
+                res+=len(set(s[first+1:last]))
+        return res
