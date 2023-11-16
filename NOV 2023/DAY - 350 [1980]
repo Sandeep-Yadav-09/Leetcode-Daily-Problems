@@ -1,0 +1,45 @@
+** 1980. Find Unique Binary String **
+
+# Approach 1:
+class Solution:
+    def findDifferentBinaryString(self, nums: List[str]) -> str:
+        res = []
+        for i in range(len(nums)):
+            if nums[i][i] == '1':
+                res.append('0')
+            else:
+                res.append('1')
+        return "".join(res)
+
+# Approach 2:
+class Solution:
+    def findDifferentBinaryString(self, nums: List[str]) -> str:
+        n=len(nums)
+        s=set(int(x,2) for x in nums)
+        def pod(x,n):
+            n1=len(x)
+            return ("0"*(n-n1))+x
+        for x in range(1<<n):
+            if x not in s:
+                return pod(bin(x)[2:],n)
+        return "0"*n            
+
+# Approach 3:
+class Solution:
+    def findDifferentBinaryString(self, nums: List[str]) -> str:
+        self.ans, n  = '', len(nums[0])
+        
+        def dfs(cur_str: str):
+            if self.ans:
+                return
+            
+            if len(cur_str) == n:
+                if cur_str not in nums:
+                    self.ans = cur_str
+                return
+            
+            for idx in range(2):
+                dfs(cur_str + str(idx))
+                
+        dfs('')
+        return self.ans
