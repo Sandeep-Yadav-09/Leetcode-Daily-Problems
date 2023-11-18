@@ -1,0 +1,56 @@
+** 1838. Frequency of the Most Frequent Element **
+
+# Approach 1:
+class Solution:
+    def maxFrequency(self, nums: List[int], k: int) -> int:
+        nums.sort()
+        
+        prefix = [0]
+        for x in nums: prefix.append(prefix[-1] + x)
+        
+        ans = 0 
+        for i in reversed(range(len(nums))): 
+            lo, hi = 0, i
+            while lo < hi: 
+                mid = lo + hi >> 1
+                if nums[i] * (i - mid) + prefix[mid] - prefix[i] <= k: hi = mid
+                else: lo = mid + 1
+            ans = max(ans, i - lo + 1)
+        return ans 
+
+# Approach 2:
+class Solution:
+    def maxFrequency(self, nums: List[int], k: int) -> int:
+        nums.sort()
+        n = len(nums)
+        sum_s_w = nums[0]
+        fin = 1
+        i=0
+        for j in range(1,n):
+            sum_s_w+=nums[j]
+            mx = nums[j]
+            while sum_s_w+k<mx*(j-i+1):
+                sum_s_w -= nums[i]
+                i += 1
+            fin = max(fin,j-i+1)
+        return fin
+
+# Approach 3:
+class Solution:
+    def maxFrequency(self, nums: List[int], k: int) -> int:
+        nums.sort()
+        pre_sum = [0]
+        for num in nums:
+            pre_sum.append(pre_sum[-1] + num)
+        
+        l = 0
+        ans = 1
+
+        for r in range(1, len(nums)):
+            if nums[r-1] != nums[r]:
+                gap = nums[r] * (r-l) - (pre_sum[r] - pre_sum[l])
+                while gap > k and l < r:
+                    l += 1
+                    gap = nums[r] * (r-l) - (pre_sum[r] - pre_sum[l])
+            ans = max(ans, r - l + 1)
+        return ans
