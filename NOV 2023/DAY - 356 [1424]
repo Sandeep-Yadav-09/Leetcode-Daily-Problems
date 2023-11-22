@@ -1,0 +1,32 @@
+** 1424. Diagonal Traverse II **
+
+# Approach 1:
+class Solution:
+    def findDiagonalOrder(self, nums: List[List[int]]) -> List[int]:
+        d = defaultdict(list)
+        for i in range(len(nums)):
+            for j in range(len(nums[i])):
+                d[i+j].append(nums[i][j])
+        return [v for k in d.keys() for v in reversed(d[k])]
+
+# Approach 2:
+class Solution:
+    def findDiagonalOrder(self, nums: List[List[int]]) -> List[int]:
+        res = defaultdict(deque)
+        for i, row in enumerate(nums):
+            for j, x in enumerate(row):
+                res[i + j].appendleft(x)
+        return chain(*res.values())
+
+# Approach 3:
+class Solution:
+    def findDiagonalOrder(self, matrix: List[List[int]]) -> List[int]:
+        result = [ ]
+        dd = collections.defaultdict(list)
+        if not matrix: return result
+        for i in range(0, len(matrix)):
+            for j in range(0, len(matrix[i])):
+                    dd[i+j+1].append(matrix[i][j])
+        for _, value in dd.items():
+            result += (value[::-1])
+        return result
