@@ -1,0 +1,62 @@
+** 1630. Arithmetic Subarrays **
+
+# Approach 1:
+class Solution:
+    def checkArithmeticSubarrays(self, nums: List[int], l: List[int], r: List[int]) -> List[bool]:
+        return[all(arr[i+1]-arr[i]==arr[1]-arr[0]for i in range(len(arr)-1))for arr in[sorted(nums[a:b+1])for a,b in zip(l,r)]] 
+
+# Approach 2:
+class Solution:
+    def checkArithmeticSubarrays(self, nums: List[int], l: List[int], r: List[int]) -> List[bool]:
+        out=[]
+        for i, j in zip(l, r):
+            out.append(self.canMakeArithmeticProgression(nums[i:j+1]))
+        return out
+        
+    def canMakeArithmeticProgression(self, arr: List[int]) -> bool:
+        minArr = min(arr)
+        maxArr = max(arr)
+		
+		# if difference between minArr and maxArr cannot be divided into equal differences, then return false
+        if (maxArr-minArr)%(len(arr)-1)!=0:
+            return False
+			
+		# consecutive difference in arithmetic progression
+        diff = int((maxArr-minArr)/(len(arr)-1))
+        if diff == 0:
+            if arr != [arr[0]]*len(arr):
+                return False
+            return True
+		
+		# array to check all numbers in A.P. are present in input array.
+		# A.P.[minArr, minArr+d, minArr+2d, . . . . . . . maxArr]
+        check = [1]*len(arr)
+        for num in arr:
+            if (num-minArr)%diff != 0:
+                return False
+            check[(num-minArr)//diff]=0
+		
+		# if 1 is still in check array it means at least one number from A.P. is missing from input array.
+        if 1 in check:
+            return False
+        return True
+
+# Approach 3:
+class Solution:
+    def checkArithmeticSubarrays(self, nums: List[int], l: List[int], r: List[int]) -> List[bool]:
+        main=[]
+        for i in range(len(l)):
+            l1=(nums[l[i]:r[i]+1])
+            mi = min(l1)
+            ma=max(l1)
+            check=(ma-mi)//(len(l1)-1)
+            x=mi
+            while(x<ma):
+                if x not in l1:
+                    main.append(False)
+                    break
+                l1.remove(x)    
+                x+=check
+            if(x==ma):    
+                main.append(True)
+        return main    
