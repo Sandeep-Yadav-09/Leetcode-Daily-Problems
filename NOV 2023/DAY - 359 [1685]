@@ -1,0 +1,44 @@
+** 1685. Sum of Absolute Differences in a Sorted Array **
+
+# Approach 1:
+class Solution:
+    def getSumAbsoluteDifferences(self, nums: List[int]) -> List[int]:
+        pr=[None]*len(nums)
+        pr[0]=nums[0]
+        for i in range(1,len(nums)):pr[i]=pr[i-1]+nums[i]
+        su=[None]*len(nums)
+        su[len(nums)-1]=nums[len(nums)-1]
+        for i in range(len(nums)-2,-1,-1):su[i]=su[i+1]+nums[i]
+        return [(nums[i]*(i+1)-pr[i])+su[i]-nums[i]*(len(nums)-i) for i in range(len(nums))]
+
+# Approach 2:
+class Solution:
+    def getSumAbsoluteDifferences(self, nums: List[int]) -> List[int]:
+        n=len(nums)
+        ans=[]
+        total=0
+        for num in nums:
+            total+=abs(num-nums[0])
+        ans.append(total)
+        for idx in range(1,n):
+            res=nums[idx]-nums[idx-1]
+            total+=res*idx
+            total-=res*(n-idx)
+            ans.append(total)
+        return ans        
+
+# Approach 3:
+class Solution:
+    def getSumAbsoluteDifferences(self, nums: List[int]) -> List[int]:
+
+        n=len(nums)
+        total=sum(nums)
+        s1=0
+        s2=total
+        arr=[]
+        for i in range(n):
+            arr.append(abs(s1-(nums[i]*i))+abs((s2-(nums[i])*(n-i))) )
+            s1=s1+nums[i]
+            s2=total-s1
+
+        return arr
