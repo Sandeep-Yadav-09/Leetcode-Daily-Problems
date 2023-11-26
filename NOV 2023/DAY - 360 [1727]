@@ -1,0 +1,69 @@
+** 1727. Largest Submatrix With Rearrangements **
+
+# Approach 1:
+class Solution:
+    def largestSubmatrix(self, matrix: List[List[int]]) -> int:
+        m, n, ans = len(matrix), len(matrix[0]), 0
+        
+        for j in range(n):
+            for i in range(1, m):
+                matrix[i][j] += matrix[i-1][j] if matrix[i][j] else 0
+                
+        for i in range(m): 
+            matrix[i].sort(reverse=1)
+            for j in range(n):
+                ans = max(ans, (j+1)*matrix[i][j])
+        return ans
+
+# Approach 2:
+from typing import List
+import numpy as np 
+
+class Solution:
+    def largestSubmatrix(self, matrix: List[List[int]]) -> int:
+        
+        m = len(matrix)
+        n = len(matrix[0])
+
+        for j in range(n):
+            for i in range(m):
+                if i > 0:
+                    if matrix[i][j] != 0:
+                        matrix[i][j] += matrix[i-1][j]
+        maxArea = 0
+        for row in matrix:
+            row.sort()
+            index = len(row) - 1
+            while index >= 0:
+                value = row[index]
+                while index-1 >= 0 and row[index-1] == value:
+                    index -= 1
+                area = value * (len(row)-index)
+                if area > maxArea:
+                    maxArea = area
+                index -= 1
+        return maxArea
+
+# Approach 3:
+class Solution:
+    def largestSubmatrix(self, matrix: List[List[int]]) -> int:
+        rows, cols = len(matrix), len(matrix[0])
+        
+        # Update the matrix to store consecutive heights of 1s above a cell
+        for col in range(cols):
+            consecutive_ones = 0
+            for row in range(rows):
+                if matrix[row][col] == 1:
+                    consecutive_ones += 1
+                    matrix[row][col] = consecutive_ones
+                else:
+                    consecutive_ones = 0
+        
+        max_area = 0
+        # Calculate the maximum area of the submatrix containing consecutive heights
+        for row in matrix:
+            row.sort(reverse=True)  # Sort the row to consider maximum heights first
+            for i, height in enumerate(row):
+                max_area = max(max_area, height * (i + 1))  # Update the maximum area
+        
+        return max_area
