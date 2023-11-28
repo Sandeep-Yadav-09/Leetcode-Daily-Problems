@@ -1,0 +1,43 @@
+** 2147. Number of Ways to Divide a Long Corridor **
+
+# Approach 1:
+class Solution:
+    def numberOfWays(self, corridor: str) -> int:
+        return prod(len(m.group(1))+1 for m in re.finditer(r'S(P*)S', corridor[corridor.find('S')+1:]))%(10**9+7) if (s:=corridor.count('S')) and s%2 == 0 else 0
+
+# Approach 2:
+class Solution:
+    def numberOfWays(self, c: str) -> int:
+        MOD = 10**9 + 7
+
+        seatsTotal = c.count('S')
+        if not (seatsTotal and seatsTotal%2 == 0):
+            return 0
+
+        result = 1
+        for m in re.finditer(r'S(P*)S', c[c.find('S')+1:]):
+            result *= len(m.group(1)) + 1
+            result %= MOD
+
+        return result
+
+# Approach 3:
+class Solution:
+    def numberOfWays(self, corridor: str) -> int:
+        seatsToLeft = 0        
+        consecutivePlants = 0
+        ans = 1
+            
+        for c in corridor:
+            if c == "P":
+                if seatsToLeft and seatsToLeft % 2 == 0:
+                    consecutivePlants += 1
+            else:
+                seatsToLeft += 1
+            
+                if seatsToLeft % 2 == 1 and consecutivePlants != 0:
+                    ans *= (consecutivePlants+1)
+                    consecutivePlants = 0
+                
+        return ans%(10**9+7) if (seatsToLeft and seatsToLeft%2 == 0) else 0
+                
