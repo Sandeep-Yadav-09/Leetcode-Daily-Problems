@@ -1,0 +1,11 @@
+** 1662. Check If Two String Arrays are Equivalent**
+
+# Approach 1:
+class Solution:
+    def arrayStringsAreEqual(self, word1: List[str], word2: List[str]) -> bool:
+        return "".join(word1) == "".join(word2)
+
+# Approach 2:
+class Solution:
+    def arrayStringsAreEqual(self, word1: list[str], word2: list[str]) -> bool:
+        return all(starmap(eq, zip_longest(chain.from_iterable(word1), chain.from_iterable(word2))))
