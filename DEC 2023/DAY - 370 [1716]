@@ -1,0 +1,43 @@
+** 1716. Calculate Money in Leetcode Bank **
+
+# Approach 1:
+class Solution:
+    def totalMoney(self, n: int) -> int:
+        w = n // 7
+        money = w * 28
+        money += (7 * w *( w - 1))//2
+
+        if (n % 7):
+            extra_days = n % 7
+            money_to_add = w + 1
+            for i in range(extra_days):
+                money += money_to_add
+                money_to_add += 1
+
+        return money
+
+# Approach 2:
+class Solution:
+    def totalMoney(self, n: int) -> int:
+        total_money, weeks_count, daily_sum = 0, 0, 0
+
+        for day in range(1, n + 1):
+            if day % 7 == 1:
+                weeks_count += 1
+                daily_sum = weeks_count
+            else:
+                daily_sum += 1
+
+            total_money += daily_sum
+
+        return total_money
+
+# Approach 3:
+class Solution:
+    def totalMoney(self, n: int) -> int:
+        res,k=0,0
+        for i in range(n):
+            if i%7==0:
+                k+=1
+            res+=k+(i%7)
+        return res
