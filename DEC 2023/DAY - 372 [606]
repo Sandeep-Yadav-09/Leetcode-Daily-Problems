@@ -1,0 +1,72 @@
+** 606. Construct String from Binary Tree **
+
+# Approach 1:
+class Solution:
+    def tree2str(self, root: Optional[TreeNode]) -> str:
+        # handle case 1
+        if root is None:
+            return ''
+        # we convert root.val to string here, then append results from different cases
+        s = str(root.val)
+        # handle case 2
+        # this line is obviously not necessary
+        if root.left is None and root.right is None:
+            s += ''
+        # handle case 3
+        if root.left:
+            s += '({})'.format(self.tree2str(root.left))
+        # handle case 4
+        # alternatively, you can use `elif root.right: s += '()'`
+        if root.left is None and root.right:
+            s += '()'
+        # handle case 5
+        if root.right:
+            s += '({})'.format(self.tree2str(root.right))
+        return s  
+
+# Approach 2:
+class Solution:
+    def tree2str(self, t: TreeNode) -> str:
+        sb = [] # init string builder
+        
+        # helper function to create result
+        def helper(node: TreeNode) -> None: 
+            if not node:
+                return
+            
+            sb.append(str(node.val))
+            
+            if not node.left and not node.right:
+                # leaf node, stop processing
+                return
+            
+            sb.append('(')          # always wrap left node with parenthesis when right node exist
+            helper(node.left)       # process left node recursively 
+            sb.append(')')                         
+
+            if node.right:          # adding parenthesis for the right node only if it is not empty
+                sb.append('(')
+                helper(node.right)
+                sb.append(')') 
+        
+        helper(t)
+
+        return ''.join(sb)
+
+# Approach 3:
+class Solution:
+    def tree2str(self, root: Optional[TreeNode]) -> str:
+        
+        def t(node,s):
+            if node is None:
+                return ''
+            elif node.left is None and node.right is None:
+                return str(node.val)
+            elif node.right is None:
+                s+=str(node.val)+'('+t(node.left,s)+')'
+            
+            else:
+                s+=str(node.val)+'('+t(node.left,s)+')('+t(node.right,s)+')'
+            return s
+        
+        return t(root,"")
