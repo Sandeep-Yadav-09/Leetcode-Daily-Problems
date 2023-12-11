@@ -1,0 +1,32 @@
+** 1287. Element Appearing More Than 25% In Sorted Array **
+
+# Approach 1:
+class Solution:
+    def findSpecialInteger(self, A: List[int]) -> int:
+        return collections.Counter(A).most_common(1)[0][0]
+		
+
+from statistics import mode
+
+class Solution:
+    def findSpecialInteger(self, A: List[int]) -> int:
+        return mode(A)
+
+
+class Solution:
+    def findSpecialInteger(self, A: List[int]) -> int:
+        return max(set(A), key = A.count)
+		
+		
+class Solution:
+    def findSpecialInteger(self, A: List[int]) -> int:
+        return (lambda C: max(C.keys(), key = lambda x: C[x]))(collections.Counter(A))
+
+# Approach 2:
+class Solution:
+    def findSpecialInteger(self, arr: List[int]) -> int:
+        n = len(arr)
+        
+        for i in [n//4, n//2, 3*n//4, n]:
+            if bisect.bisect_right(arr, arr[i]) - bisect.bisect_left(arr, arr[i]) > n//4:
+                return arr[i]
