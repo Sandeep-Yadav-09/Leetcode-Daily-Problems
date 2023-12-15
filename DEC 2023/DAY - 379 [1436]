@@ -1,0 +1,38 @@
+** 1436. Destination City **
+
+# Approach 1:
+class Solution:
+    def destCity(self, paths: List[List[str]]) -> str:
+        source = set()
+        dest = set()
+        for l in paths:
+            source.add(l[0])
+            dest.add(l[1])
+        return list(dest - source)[0]
+
+# Approach 2:
+class Solution:
+    def destCity(self, paths):
+        # Collecting the departure cities
+        departure = set()
+        for cities in paths:
+            departure.add(cities[0])
+         
+        # If we encounter city that is not in the departure list, then it should be the desitnation
+        for cities in paths:
+            if cities[1] in departure:
+                continue 
+            else:
+                return cities[1]
+
+# Approach 3:
+class Solution:
+    def destCity(self, paths: List[List[str]]) -> str:
+        lst=[]
+        arr=[]
+        for i in paths:
+            lst.append(i[0])
+            arr.append(i[1])
+        ptr=set(lst)
+        ptr2=set(arr)
+        return list(ptr2-ptr)[0]
