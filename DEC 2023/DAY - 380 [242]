@@ -1,0 +1,23 @@
+** 242. Valid Anagram **
+
+# Approach 1:
+class Solution:
+    def isAnagram(self, s: str, t: str) -> bool:
+        t = list(t)
+        if len(t)!=len(s):
+            return False
+        else:
+            for i in s:
+                if i not in t:
+                    return False
+                else:
+                    t.remove(i)
+            return True
+
+# Approach 2:
+class Solution:
+    def isAnagram(self, s: str, t: str) -> bool:
+        if sorted(s)==sorted(t):
+            return True
+        else:
+            return False
