@@ -1,0 +1,27 @@
+** 661. Image Smoother **
+
+# Approach 1:
+class Solution:
+    def imageSmoother(self, M: List[List[int]]) -> List[List[int]]:
+        row, col = len(M), len(M[0])
+        res = [[0]*col for i in range(row)]
+        dirs = [[0,0],[0,1],[0,-1],[1,0],[-1,0],[1,1],[-1,-1],[-1,1],[1,-1]]
+        for i in range(row):
+            for j in range(col):
+                temp = [M[i+m][j+n] for m,n in dirs if 0<=i+m<row and 0<=j+n<col]
+                res[i][j] = sum(temp)//len(temp)
+        return res
+
+# Approach 2:
+from itertools import product
+
+class Solution:
+    def imageSmoother(self, M: List[List[int]]) -> List[List[int]]:
+    	m, n = len(M), len(M[0])
+    	A = [[0]*n for i in range(m)]
+    	for i,j in product(range(m), range(n)):
+    		s = []
+    		for I,J in product(range(max(0,i-1),min(i+2,m)),range(max(0,j-1),min(j+2,n))): s.append(M[I][J])
+    		A[i][j] = int(sum(s)/len(s))
+    	return A
+
