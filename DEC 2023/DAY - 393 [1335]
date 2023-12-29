@@ -1,0 +1,37 @@
+** 1335. Minimum Difficulty of a Job Schedule **
+
+# Approach 1:
+class Solution:
+    def minDifficulty(self, jobDifficulty: List[int], d: int) -> int:
+        
+        @lru_cache(None)
+        def dp(idx,d,curr):
+		
+            if idx == len(jobDifficulty) and d == 0: return curr
+            if idx >= len(jobDifficulty) or  d <= 0: return inf
+            
+            return min(dp(idx+1,d,max(curr,jobDifficulty[idx])),
+                       max(curr,jobDifficulty[idx])+dp(idx+1,d-1,0))
+       
+        ans = dp(0,d,0)
+
+        return ans if ans != inf else -1
+
+# Approach 2:
+class Solution:
+    def minDifficulty(self, jD: List[int], d: int) -> int:
+        if len(jD)<d:return -1
+        def solve(i,d):
+            if i==len(jD):return 100000000
+            if d==1:return max(jD[i:])
+            if dp[i][d]!=-1:return dp[i][d]
+            ans=100000000
+            mx=-1
+            for j in range(i,len(jD)):
+                mx=max(mx,jD[j])
+                temp=mx+solve(j+1,d-1)
+                ans=min(ans,temp)
+            dp[i][d]=ans
+            return dp[i][d]
+        dp=[[-1 for i in range(d+1)] for i in range(len(jD))]
+        return solve(0,d)
