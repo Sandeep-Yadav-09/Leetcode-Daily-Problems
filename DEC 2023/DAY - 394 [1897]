@@ -1,0 +1,31 @@
+** 1897. Redistribute Characters to Make All Strings Equal **
+
+# Approach 1:
+class Solution:
+    def makeEqual(self, words: List[str]) -> bool:
+        map_ = {}
+        for word in words:
+            for i in word:
+                if i not in map_:
+                    map_[i] = 1
+                else:
+                    map_[i] += 1
+        n = len(words)
+        for k,v in map_.items():
+            if (v%n) != 0:
+                return False
+        return True
+
+# Approach 2:
+class Solution:
+    def makeEqual(self, words: List[str]) -> bool:
+        n=len(words)
+        if n==1: return True
+        freq=[0]*26
+        for s in words:
+            for c in s:
+                freq[ord(c)-ord('a')]+=1
+        
+        for f in freq:
+            if f%n!=0: return False
+        return True
