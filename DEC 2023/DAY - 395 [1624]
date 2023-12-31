@@ -1,0 +1,16 @@
+** 1624. Largest Substring Between Two Equal Characters **
+
+# Approach 1:
+class Solution:
+    def maxLengthBetweenEqualCharacters(self, s: str) -> int:
+        return max(s.rfind(ch) - s.find(ch) - 1 for ch in set(s))
+
+# Approach 2:
+class Solution:
+    def maxLengthBetweenEqualCharacters(self, s: str) -> int:
+        ans = -1
+        seen = {}
+        for i, c in enumerate(s): 
+            if c in seen: ans = max(ans, i - seen[c] - 1)
+            seen.setdefault(c, i)
+        return ans 
