@@ -1,0 +1,23 @@
+** 2125. Number of Laser Beams in a Bank **
+
+# Approach 1:
+class Solution:
+    def numberOfBeams(self, bank: List[str]) -> int:
+        a, s = [x.count("1") for x in bank if x.count("1")], 0
+
+        for c in range(len(a)-1):
+            s += (a[c]*a[c+1])
+
+        return s
+
+# Approach 2:
+class Solution:
+    def numberOfBeams(self, bank: List[str]) -> int:
+        ans=0
+        prev=0
+        for i in bank:
+            res=i.count('1')
+            if res:
+                ans+=prev*res
+                prev=res
+        return ans        
