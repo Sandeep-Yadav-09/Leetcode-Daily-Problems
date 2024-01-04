@@ -1,0 +1,25 @@
+** 2870. Minimum Number of Operations to Make Array Empty **
+
+# Approach 1:
+class Solution:
+    def minOperations(self, nums: List[int]) -> int:
+        cnt = Counter(nums)
+        if min(cnt.values()) == 1:
+            return -1
+        return sum(c // 3 + (c % 3 > 0) for c in cnt.values())     
+
+# Approach 2:
+class Solution:
+    def minOperations(self, nums: List[int]) -> int:
+        mp=defaultdict(int)
+        for i in nums:
+            mp[i]+=1
+        ans=0
+        for i in mp.values():
+            if i==1:
+                return -1
+            ans+=(i+2)//3
+            
+        return ans                
+
+           
