@@ -1,0 +1,35 @@
+** 938. Range Sum of BST **
+
+# Approach 1:
+class Solution:
+    def rangeSumBST(self, root: Optional[TreeNode], low: int, high: int) -> int:
+        self.sum = 0
+        def inorder(root):
+            if root:
+                if root.val>low:
+                    inorder(root.left)
+                if low<=root.val<=high:
+                    self.sum+=root.val
+                if root.val<high:
+                    inorder(root.right)
+        inorder(root)
+        return self.sum
+
+# Approach 2:
+class Solution:
+    def rangeSumBST(self, root: TreeNode, low: int, high: int) -> int:
+        s=0
+        def h(node):
+            nonlocal s
+            if not node:
+                return
+            if(low<=node.val<=high):
+                s+=node.val
+            if(node.val<low):
+                return h(node.right)
+            if(node.val>high):
+                return h(node.left)
+            h(node.left)
+            h(node.right)
+            return s
+        return h(root)
