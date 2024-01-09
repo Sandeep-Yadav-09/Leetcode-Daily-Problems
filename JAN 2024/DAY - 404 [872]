@@ -1,0 +1,37 @@
+** 872. Leaf-Similar Trees **
+
+# Approach 1:
+class Solution:
+    def leafSimilar(self, root1: Optional[TreeNode], root2: Optional[TreeNode]) -> bool:
+        l,r = [],[]
+        def get(root,l):
+            if not root:
+                return
+            if not root.left and not root.right:
+                l.append(root.val)
+                return
+            get(root.left,l)
+            get(root.right,l)
+        print(get(root1,l))
+        print(get(root2,r))
+        return l==r
+
+# Approach 2:
+class Solution:
+    def leafSimilar(self, root1, root2):
+            return self.iterative(root1,[]) == self.iterative(root2,[])
+            
+    def iterative(self,root,s):
+        if root is not None:
+            stack = []
+            stack.append(root)
+            while stack:
+                x = stack.pop(-1)
+                if x.left is None and x.right is None:
+                    s.append(x.val)
+                    continue
+                if x.right is not None:
+                    stack.append(x.right)
+                if x.left is not None:
+                    stack.append(x.left)
+        return s
