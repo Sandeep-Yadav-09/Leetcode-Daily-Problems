@@ -1,0 +1,16 @@
+** 1347. Minimum Number of Steps to Make Two Strings Anagram **
+
+# Approach 1:
+class Solution:
+    def minSteps(self, s: str, t: str) -> int:
+        for ch in s:
+		    # Find and replace only one occurence of this character in t
+            t = t.replace(ch, '', 1)
+            
+        return len(t)
+
+# Approach 2:
+class Solution:
+    def minSteps(self, S: str, T: str) -> int:
+        D = collections.Counter(S) - collections.Counter(T)
+        return sum(max(0, D[s]) for s in set(S))
