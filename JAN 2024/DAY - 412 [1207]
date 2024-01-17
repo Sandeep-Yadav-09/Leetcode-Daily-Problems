@@ -1,0 +1,25 @@
+** 1207. Unique Number of Occurrences **
+
+# Approach 1:
+from collections import Counter
+
+class Solution:
+    def uniqueOccurrences(self, arr: List[int]) -> bool:
+        
+        cnt = Counter(arr)     
+        x = cnt.values()
+        y = set(x)
+        return len(x) == len(y)
+
+# Approach 2:
+class Solution:
+    def uniqueOccurrences(self, arr: List[int]) -> bool:
+
+       # Get the occurrences of each number. (also remove duplicated numbers)
+        Number_Occurrences = Counter(arr)
+
+        # Remove duplicated occurences using a set
+        Unique_Occurrences = set(Number_Occurrences.values())
+        
+        # return Truen if each unique number has a unique occurrence
+        return len(Number_Occurrences.keys()) == len(Unique_Occurrences)
