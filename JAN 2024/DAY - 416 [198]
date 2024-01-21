@@ -1,0 +1,29 @@
+** 198. House Robber **
+
+# Approach 1:
+class Solution:
+    def rob(self, nums: List[int]) -> int:
+        rob1, rob2 = 0, 0
+        for i in nums:
+            temp = max(i+rob1, rob2)
+            rob1 = rob2
+            rob2 = temp
+        return rob2
+
+# Approach 2:
+from itertools import islice
+class Solution:
+    def rob(self, nums: List[int]) -> int:     
+
+        if not nums:
+            return 0
+        
+        if len(nums) == 1:
+            return nums[0]
+        
+        nums.append(0)
+        nums.reverse()
+        for idx, num in enumerate(islice(nums, 3, None), 3):
+            nums[idx] = max(num + nums[idx - 2], num + nums[idx - 3])
+            
+        return max(nums[-1], nums[-2])
