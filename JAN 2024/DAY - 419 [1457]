@@ -1,0 +1,31 @@
+** 1457. Pseudo-Palindromic Paths in a Binary Tree **
+
+# Approach 1:
+class Solution:
+    def pseudoPalindromicPaths (self, root: Optional[TreeNode], cnt = 0) -> int:
+        if not root: return 0
+        cnt ^= 1 << (root.val - 1)
+        if root.left is None and root.right is None:
+            return 1 if cnt & (cnt - 1) == 0 else 0
+        return self.pseudoPalindromicPaths(root.left, cnt) + self.pseudoPalindromicPaths(root.right, cnt)
+
+# Approach 2:
+class Solution:
+    def pseudoPalindromicPaths (self, root: Optional[TreeNode]) -> int:
+        def traverse(node, pairs):
+            if not node:
+                return 0
+            
+            if node.val in pairs:
+                pairs.remove(node.val)
+            else:
+                pairs.add(node.val)
+            
+            if not node.left and not node.right:
+                return 1 if len(pairs) <= 1 else 0
+            
+            left = traverse(node.left, set(pairs))
+            right = traverse(node.right, set(pairs))
+            return left + right
+        
+        return traverse(root, set())
