@@ -1,0 +1,41 @@
+** 1074. Number of Submatrices That Sum to Target **
+
+# Approach 1:
+class Solution:
+    def numSubmatrixSumTarget(self, matrix: List[List[int]], target: int) -> int:
+        rows, cols = len(matrix), len(matrix[0])
+        # Compute prefix sum
+        for r in range(rows):
+            for c in range(1, cols):
+                matrix[r][c] += matrix[r][c-1]
+
+        count = 0
+        # Iterate over all pairs of columns
+        for col1 in range(cols):
+            for col2 in range(col1, cols):
+                sums = {0: 1}
+                cur_sum = 0
+                # Iterate over rows to find submatrices with target sum
+                for row in range(rows):
+                    cur_sum += matrix[row][col2] - (matrix[row][col1-1] if col1 > 0 else 0)
+                    count += sums.get(cur_sum - target, 0)
+                    sums[cur_sum] = sums.get(cur_sum, 0) + 1
+        return count
+
+# Approach 2:
+class Solution:
+    def numSubmatrixSumTarget(self, matrix: List[List[int]], target: int) -> int:
+        m, n = len(matrix), len(matrix[0]) # dimensions 
+        
+        ans = 0 
+        freq = defaultdict(int)
+        prefix = [[0]*(n+1) for _ in range(m+1)]
+        for i in range(m): 
+            for j in range(n): 
+                prefix[i+1][j+1] = matrix[i][j] + prefix[i+1][j] + prefix[i][j+1] - prefix[i][j]
+                for jj in range(-1, j): 
+                    diff = prefix[i+1][j+1] - prefix[i+1][jj+1] 
+                    ans += freq[jj, j, diff - target]
+                    if diff == target: ans += 1
+                    freq[jj, j, diff] += 1
+        return ans 
