@@ -1,0 +1,34 @@
+** 1291. Sequential Digits **
+
+# Approach 1:
+class Solution:
+    def sequentialDigits(self, low: int, high: int) -> List[int]:
+        s='123456789'
+        ans=[]
+        for i in range(len(s)):
+            for j in range(i+1,len(s)):
+                st=int(s[i:j+1])
+                if(st>=low and st<=high):
+                    ans.append(st)
+        ans.sort()            
+        return ans       
+
+# Approach 2:
+from collections import deque
+
+class Solution:
+    def sequentialDigits(self, low: int, high: int) -> List[int]:
+        queue = deque(range(1, 10))
+        res = []
+        while queue:
+            u = queue.popleft()
+            if low <= u <= high:
+                res.append(u)
+            elif high < u:
+                continue
+                
+            last_num = u % 10
+            if last_num != 9:
+                queue.append(u * 10 + last_num + 1)
+                
+        return res
