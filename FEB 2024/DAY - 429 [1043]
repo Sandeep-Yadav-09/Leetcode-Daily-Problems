@@ -1,0 +1,39 @@
+** 1043. Partition Array for Maximum Sum **
+
+# Approach 1:
+class Solution:
+    def maxSumAfterPartitioning(self, arr: List[int], k: int) -> int:
+        n = len(arr)
+        dp = [0]*n
+        
+        # handle the first k indexes differently
+        for j in range(k): dp[j]=max(arr[:j+1])*(j+1)
+        
+        # we can get rid of index i by running i times
+        for j in range(k,n):
+            curr = []
+            for m in range(k):
+                curr.append(dp[j-m-1] + max(arr[(j-m):(j+1)]) * (m+1))
+            dp[j] = max(curr)
+
+        return dp[-1]
+
+# Approach 2:
+class Solution:
+    def maxSumAfterPartitioning(self, arr: List[int], k: int) -> int:
+        n = len(arr)
+        dp = [0]*(n+1)
+
+        for i in range(n-1,-1,-1):
+            max_elm = -1
+            max_score = -1
+            segment_len = 0
+
+            for j in range(i,min(i+k,n)):
+                segment_len += 1
+                max_elm = max(max_elm,arr[j])
+                score = segment_len*max_elm + dp[j+1]
+                max_score = max(max_score,score)
+            dp[i] = max_score
+
+        return dp[0]
