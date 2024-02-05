@@ -1,0 +1,28 @@
+** 387. First Unique Character in a String **
+
+# Approach 1:
+class Solution:
+    def firstUniqChar(self, s: str) -> int:
+        # s = list(s)
+        res = []
+        for i in s:
+            if (s.find(i, (s.find(i)+1))) == -1:
+ 
+                return s.index(i)
+        return -1
+
+# Approach 2:
+class Solution:
+    def firstUniqChar(self, s: str) -> int:
+        flag  = 0
+        for i in s:
+            if s.count(i) == 1:
+                a = s.index(i)
+                flag = 1
+                break
+            else:
+                flag = 0
+        if flag == 1:
+            return a
+        else:    
+            return -1
