@@ -1,0 +1,40 @@
+** 1642. Furthest Building You Can Reach **
+
+# Approach 1:
+class Solution:
+    def furthestBuilding(self, heights: List[int], bricks: int, ladders: int) -> int:        
+        min_heap = []
+        n = len(heights)
+        
+        for i in range(n-1):
+            climb = heights[i+1] - heights[i]
+            
+            if climb <= 0:
+                continue
+            
+            if climb > 0:
+                heapq.heappush(min_heap, climb)
+            
+            if len(min_heap) > ladders:
+                brick_need = heapq.heappop(min_heap)
+                bricks -= brick_need
+            
+            if bricks < 0:
+                return i
+        
+        return n-1
+
+# Approach 2:
+class Solution:
+    def furthestBuilding(
+        self, heights: List[int], bricks: int, ladders: int
+    ) -> int:
+        jumps = []
+        for i, (h0, h1) in enumerate(pairwise(heights)):
+            if (d := h1 - h0) > 0:
+                heapq.heappush(jumps, d)
+            if len(jumps) > ladders:
+                bricks -= heapq.heappop(jumps)
+            if bricks < 0:
+                return i
+        return len(heights) - 1
