@@ -1,0 +1,11 @@
+** 231. Power of Two **
+
+# Approach 1:
+class Solution:
+    def isPowerOfTwo(self, n: int) -> bool:
+        return n>0 and n&(n-1)==0
+
+# Approach 2:
+class Solution:
+    def isPowerOfTwo(self, n: int) -> bool:
+        return n>0 and sum(list(map(int,bin(n)[2:])))==1
