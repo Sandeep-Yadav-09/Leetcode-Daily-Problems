@@ -1,0 +1,58 @@
+** 787. Cheapest Flights Within K Stops **
+
+# Approach 1:
+class Solution:
+    def findCheapestPrice(self, n: int, flights: List[List[int]], src: int, dst: int, k: int) -> int:
+        graph, dis = defaultdict(list), [-1 for _ in range(n)]
+        for f, to, price in flights:
+            graph[f].append([to, price])
+
+        dis[src], q, step = 0, deque([src]), 0
+
+        while q and step <= k:
+            sz = len(q)
+            new_dis = list(dis)
+            for _ in range(sz):
+                cur = q.popleft()
+                for neighbor in graph[cur]:
+                    if new_dis[neighbor[0]] == -1 or new_dis[neighbor[0]] > dis[cur]+neighbor[1]:
+                        new_dis[neighbor[0]] = dis[cur] + neighbor[1]
+                        q.append(neighbor[0])
+            step += 1
+            dis = new_dis
+
+        return dis[dst]
+
+# Approach 2:
+class Solution:
+    def findCheapestPrice(self, n: int, flights: List[List[int]], src: int, dst: int, K: int) -> int:
+        
+        price_table = [ float('inf') for _ in range(n) ]
+        
+        # price of source must be 0
+        price_table[ src ] = 0
+		
+        # initialization with 0 transfer
+        for source, destination, ticket_price in flights:
+            if source == src:
+                price_table[destination] = ticket_price
+        
+        
+        # tranfer k times to update price table
+        for trasfer in range(0, K):
+            
+            current_price = [*price_table]
+            
+            for source, destination, ticket_price in flights:
+                
+                current_price[destination] = min(current_price[destination], price_table[source] + ticket_price )
+            
+            # update current price back to price table    
+            price_table = current_price
+        
+        
+        if price_table[dst] == float('inf'):
+            return -1
+        else:
+            return price_table[dst]
+        
