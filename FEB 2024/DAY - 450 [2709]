@@ -1,0 +1,60 @@
+** 2709. Greatest Common Divisor Traversal **
+
+# Approach 1:
+class Solution:
+    def canTraverseAllPairs(self, nums: List[int]) -> bool:
+        if len(nums)==1:return True
+        nums = set(nums)
+        if 1 in nums:return False
+        if len(nums)==1:return True
+        
+        nums = sorted(nums,reverse=True)
+
+        for i in range(len(nums)-1):
+            for j in range(i+1,len(nums)):
+                if gcd(nums[i],nums[j])-1:
+                    nums[j]*=nums[i]
+                    break
+            else:
+                return False
+        return True
+
+# Approach 2:
+class Solution:
+    def canTraverseAllPairs(self, nums):
+        n, dict1 = len(nums), defaultdict(int)
+        
+        def find(x):
+            if x not in dict1:
+                return x
+            else:
+                if x != dict1[x]:
+                    dict1[x] = find(dict1[x])
+                return dict1[x]
+            
+        def union(x,y):
+            a,b = find(x),find(y)
+            
+            if a != b:
+                dict1[b] = a
+
+        res = [-1]*(max(nums)+1)
+        
+        for i,x in enumerate(nums):
+            for p in range(2,x):
+                if p*p > x: break
+                if x%p != 0: continue
+                if res[p] != -1: union(res[p],i)
+                else: res[p] = i
+                while x%p == 0: x = x//p
+
+            if x > 1:
+                if res[x] != -1: union(res[x],i)
+                else: res[x] = i
+                
+        dict2 = defaultdict(list)
+        
+        for i in range(n):
+            dict2[find(i)].append(i)
+            
+        return len(dict2) == 1
