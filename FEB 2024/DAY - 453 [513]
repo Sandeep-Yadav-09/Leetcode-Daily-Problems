@@ -1,0 +1,16 @@
+** 513. Find Bottom Left Tree Value **
+
+# Approach 1:
+class Solution:
+    def findBottomLeftValue(self, r: Optional[TreeNode]) -> int:
+        def f(n, p): 
+            if n:
+                q = max((0, 3, n.val), f(n.left, 2), f(n.right, 1))
+                return (q[0]+1, p, q[2]) 
+            return (0, 0, 0)
+        return f(r, 0)[2]
+
+# Approach 2:
+class Solution:
+    def findBottomLeftValue(self, r: Optional[TreeNode]) -> int:
+        return reduce(lambda _,n:q.extend(filter(None,(n.right,n.left))) or n.val,q:=[r],0)
