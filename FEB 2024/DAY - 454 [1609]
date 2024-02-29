@@ -1,0 +1,46 @@
+** 1609. Even Odd Tree **
+
+# Approach 1:
+class Solution:
+    def isEvenOddTree(self, root: Optional[TreeNode]) -> bool:
+        level = 0
+        curLevel = [root]
+        nextLevel = []
+        while curLevel: 
+            for i in range(len(curLevel)): 
+                cur = curLevel[i]
+                if cur.left: 
+                    nextLevel.append(cur.left)
+                if cur.right: 
+                    nextLevel.append(cur.right)
+                if cur.val % 2 == level % 2: 
+                    return False
+                if i > 0 and level%2 == 0 and cur.val <= curLevel[i-1].val: 
+                    return False
+                if i > 0 and level%2 != 0 and cur.val >= curLevel[i-1].val: 
+                    return False
+            curLevel = nextLevel
+            nextLevel = []
+            level += 1
+        return True
+
+# Approach 2:
+class Solution:
+    def isEvenOddTree(self, root: Optional[TreeNode]) -> bool:
+        even=True
+        q=deque([root])
+        while q:
+            prev=float("-inf") if even else float("inf")
+            for _ in range(len(q)):
+                n = q.popleft()
+                if even and (n.val%2==0 or n.val<=prev):
+                    return False
+                if not even and (n.val%2==1 or n.val>=prev):
+                    return False
+                if n.left:
+                    q.append(n.left)
+                if n.right:
+                    q.append(n.right)
+                prev=n.val
+            even=not even
+        return True
