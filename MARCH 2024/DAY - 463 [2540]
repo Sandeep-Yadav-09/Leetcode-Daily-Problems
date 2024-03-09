@@ -1,0 +1,14 @@
+** 2540. Minimum Common Value **
+
+# Approach 1:
+class Solution:
+    def getCommon(self, nums1: List[int], nums2: List[int]) -> int:
+        try:
+            return min(set(nums1) & set(nums2))
+        except:
+            return -1
+
+# Approach 2:
+class Solution:
+    def getCommon(self, nums1: List[int], nums2: List[int]) -> int:
+        return min(set(nums1) & set(nums2), default=-1)
