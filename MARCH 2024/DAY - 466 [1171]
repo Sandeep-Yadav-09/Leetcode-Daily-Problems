@@ -1,0 +1,52 @@
+** 1171. Remove Zero Sum Consecutive Nodes from Linked List **
+
+# Approach 1:
+class Solution:  
+    def removeZeroSumSublists(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        fake = ListNode(0, head)
+        
+        seen = {0: fake}        
+        prev = 0
+        
+        while head:
+            prev += head.val            
+            seen[prev] = head
+            
+            head = head.next
+            
+        head = fake
+        prev = 0
+        
+        while head:
+            prev += head.val
+            head.next = seen[prev].next
+            
+            head = head.next
+            
+        return fake.next
+
+# Approach 2:
+class Solution:
+    def removeZeroSumSublists(self, head):
+        def yielder(n):
+            while n:
+                yield n
+                n = n.next
+        A, S = [], [] 
+        d    = {0:-1} 
+        t    = 0     
+        for n in yielder(head):
+            t += n.val
+            if t in d:
+                for _ in range(d[t]+1,len(A)):
+                    A.pop()
+                    d.pop(S.pop())
+                t = S[-1] if S else 0
+            else:
+                A.append(n)
+                S.append(t)
+                d[t] = len(A) - 1
+        A.append(None)
+        for i,x in enumerate(A[:-1]):
+            x.next = A[i+1]
+        return A[0]
