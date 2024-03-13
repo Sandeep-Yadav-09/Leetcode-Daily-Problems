@@ -1,0 +1,36 @@
+** 2485. Find the Pivot Integer **
+
+# Approach 1:
+class Solution(object):
+    def pivotInteger(self, n):
+        l = list(range(1,n+1))
+        l1 = l[::-1]
+        piv = 0
+        flag = 0
+
+        for i in range(1,n+1):
+            a = n-i+1
+            if sum(l[:i]) == sum(l1[:a]):
+                piv = i
+                flag = 1
+                break
+            else:
+                flag = 0
+        if flag == 0:
+            return -1
+        else:
+            return piv
+
+# Approach 2:
+class Solution:
+    def pivotInteger(self, n: int) -> int:
+        l = list(range(1,n+1))
+        res = sum(l)
+        left = 0
+        
+        for k,v in enumerate(l):
+            left = left + v
+            if left == res - left+v:
+                return k+1
+        return -1
+        
