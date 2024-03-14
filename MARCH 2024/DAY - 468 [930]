@@ -1,0 +1,32 @@
+** 930. Binary Subarrays With Sum **
+
+# Approach 1:
+class Solution:
+    def numSubarraysWithSum(self, nums: List[int], goal: int) -> int:
+        ans, prefix = 0, 0
+        count = collections.Counter({0: 1})
+
+        for num in nums:
+            prefix += num
+            ans += count[prefix - goal]
+            count[prefix] += 1
+        return ans
+
+# Approach 2:
+class Solution:
+    def numSubarraysWithSum(self, nums: List[int], goal: int) -> int:
+        return self.countSubarrays(nums,goal)-self.countSubarrays(nums,goal-1)
+        
+    def countSubarrays(self,nums,target):
+        l=0
+        count=0
+        preSum=0
+        if target<0:
+            return 0
+        for r in range(len(nums)):
+            preSum+=nums[r]
+            while preSum>target:
+                preSum-=nums[l]
+                l+=1
+            count+=(r-l+1)
+        return count
