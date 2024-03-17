@@ -1,0 +1,49 @@
+** 57. Insert Interval **
+
+# Approach 1:
+class Solution:
+    def insert(self, intervals: List[List[int]], newInterval: List[int]) -> List[List[int]]:
+        if len(intervals) == 0:
+            return [newInterval]
+			
+        if intervals[-1][1] < newInterval[0]:
+            return intervals + [newInterval]
+			
+        if newInterval[1] < intervals[0][0]:
+            return [newInterval] + intervals
+			
+        res = []
+        i = 0
+        for curr_interval in intervals:
+            if curr_interval[1] < newInterval[0]:
+                res.append(curr_interval)
+            else:
+                first = min(curr_interval[0], newInterval[0])
+                last = newInterval[1]
+                i = intervals.index(curr_interval)
+				
+                while i < len(intervals) and last >= intervals[i][0]:
+                    last = max(intervals[i][1], newInterval[1])
+                    i+=1
+                res.append([first, last])
+                break
+
+        res += intervals[i:]
+        return res
+
+# Approach 2:
+class Solution:
+    def insert(self, intervals: List[List[int]], newInterval: List[int]) -> List[List[int]]:
+        res = []
+
+        for i in range(len(intervals)):
+            if newInterval[1] < intervals[i][0]:
+                res.append(newInterval)
+                return res + intervals[i:]
+            elif newInterval[0] > intervals[i][1]:
+                res.append(intervals[i])
+            else:
+                newInterval = [min(newInterval[0], intervals[i][0]), max(newInterval[1], intervals[i][1])]
+
+        res.append(newInterval)
+        return res
