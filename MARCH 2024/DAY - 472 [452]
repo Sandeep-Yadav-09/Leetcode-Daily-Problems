@@ -1,0 +1,31 @@
+** 452. Minimum Number of Arrows to Burst Balloons **
+
+# Approach 1:
+class Solution:
+    def findMinArrowShots(self, points: List[List[int]]) -> int:
+        n=len(points)
+        points = sorted(points, key = lambda x: x[1])
+        maxa=-float('inf')
+ 
+        ans=0
+
+        for i in range(0,n):
+            if maxa<points[i][0]:
+                ans+=1
+                maxa=points[i][1]
+
+        return ans
+
+# Approach 2:
+class Solution:
+    def findMinArrowShots(self, points: list[list[int]]) -> int:
+
+        points.sort(key = lambda x: x[1])     
+                                               
+        tally, bow = 1, points[0][1]
+                                            
+        for start, end in points:              
+            if bow < start:                  
+                bow = end                     
+                tally += 1                    
+        return tally                          
