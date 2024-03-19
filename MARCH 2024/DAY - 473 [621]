@@ -1,0 +1,30 @@
+** 621. Task Scheduler **
+
+# Approach 1:
+class Solution:
+    def leastInterval(self, tasks: List[str], n: int) -> int:
+        cnt = [0] * 26
+        for i in tasks: cnt[ord(i) - ord('A')] += 1
+        mx, mxcnt = max(cnt), 0
+        for i in cnt: 
+            if i == mx: mxcnt += 1
+        return max((mx - 1) * (n + 1) + mxcnt, len(tasks))
+
+# Approach 2:
+class Solution:
+    def leastInterval(self, tasks: List[str], n: int) -> int:
+        todo = Counter(tasks)
+        units = 0                   
+        n += 1                      
+        while todo:
+            ready = todo.most_common(n)
+            n_ready = len(ready)
+            units += n_ready
+            for k, _ in ready:
+                if todo[k] > 1:
+                    todo[k] -= 1
+                else:
+                    del todo[k]     
+            if todo:
+                units += n - n_ready
+        return units
