@@ -1,0 +1,42 @@
+** 1669. Merge In Between Linked Lists **
+
+# Approach 1:
+class Solution:
+    def mergeInBetween(self, list1: ListNode, a: int, b: int, list2: ListNode) -> ListNode:
+        ptr1 = list1
+        ptr2 = list1
+        i, j = 0, 0
+
+        while i!=a-1:
+            ptr1 = ptr1.next
+            i += 1 
+            
+        while j!=b:
+            ptr2 = ptr2.next
+            j += 1
+            
+        ptr1.next = list2
+
+        while list2.next!=None:
+            list2 = list2.next
+
+        list2.next = ptr2.next
+
+        return list1
+
+# Approach 2:
+class Solution:
+    def mergeInBetween(self, list1: ListNode, a: int, b: int, list2: ListNode) -> ListNode:
+        prea = postb = None
+        dummy = cur = ListNode(next=list1)
+        for i in range(b+1):
+            if i == a: prea = cur
+            cur = cur.next
+        postb = cur.next
+
+        prea.next = list2
+        while list2.next:
+            list2 = list2.next
+
+        list2.next = postb
+        return dummy.next
