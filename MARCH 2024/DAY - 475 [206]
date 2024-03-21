@@ -1,0 +1,23 @@
+** 206. Reverse Linked List **
+
+# Approach 1:
+class Solution:
+    def reverseList(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        cur = head
+        prev = None
+        while cur:
+            temp = cur.next
+            cur.next = prev
+            prev = cur
+            cur = temp
+        return prev
+
+# Approach 2:
+class Solution:
+    def reverseList(self, head: ListNode) -> ListNode:
+        if not head or not head.next:
+            return head
+        p = self.reverseList(head.next)
+        head.next.next = head
+        head.next = None
+        return p
