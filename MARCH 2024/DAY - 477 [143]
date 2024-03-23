@@ -1,0 +1,50 @@
+** 143. Reorder List **
+
+# Approach 1:
+class Solution:
+    def reorderList(self, head: ListNode) -> None:
+        if not head:
+            return
+        stack=[]
+        node=head
+        while node:
+            stack.append(node)
+            node=node.next
+        node=head
+        for i in range(len(stack)//2):
+            n=stack.pop()
+            t=node.next
+            node.next=n
+            n.next=t
+            node=t
+        node.next=None    
+
+# Approach 2:
+class Solution:
+    def reorderList(self, head: ListNode) -> None:
+        arr = []
+        
+        cur, length = head, 0
+		
+        while cur:
+            arr.append( cur )
+            cur, length = cur.next, length + 1
+
+        left, right = 0, length-1
+        last = head
+        
+        while left < right:
+            arr[left].next = arr[right]
+            left += 1
+            
+            if left == right: 
+                last = arr[right]
+                break
+                
+            arr[right].next = arr[left]
+            right -= 1
+            
+            last = arr[left]
+        
+        if last:
+            last.next= None
