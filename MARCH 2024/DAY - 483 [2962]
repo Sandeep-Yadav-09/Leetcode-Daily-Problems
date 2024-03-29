@@ -1,0 +1,28 @@
+** 2962. Count Subarrays Where Max Element Appears at Least K Times **
+
+# Approach 1:
+class Solution:
+    def countSubarrays(self, nums: List[int], k: int) -> int:
+        mx,ans,l,r,n=max(nums),0,0,0,len(nums)
+        while r<n:
+            k-= nums[r]==mx
+            r+=1
+            while k==0:
+                k+=nums[l]==mx
+                l+=1
+            ans+=l
+        return ans
+
+# Approach 2:
+class Solution:
+    def countSubarrays(self, nums: List[int], k: int) -> int:
+        max_element = max(nums)
+        if nums.count(max_element)<k: return 0
+        c , f , l = 0 , 0 , []
+        for i in range(len(nums)):
+            if nums[i]==max_element:
+                f+=1
+                l.append(i)
+            if f >= k:
+                c+=l[f-k]+1
+        return c
