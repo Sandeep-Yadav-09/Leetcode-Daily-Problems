@@ -1,0 +1,63 @@
+** 992. Subarrays with K Different Integers **
+
+# Approach 1:
+from collections import defaultdict
+  
+class Solution:
+    def atmostk(self,n,k,nums):
+        l=0
+        r=0
+        map=defaultdict(int)
+        ans=0
+        while r<n:
+            map[nums[r]]+=1
+            while len(map)>k:
+                map[nums[l]]-=1
+                if map[nums[l]]==0:
+                    del map[nums[l]]
+                l+=1
+            
+            ans+=r-l+1
+            r+=1
+        return ans
+    def subarraysWithKDistinct(self, nums: List[int], k: int) -> int:
+        return self.atmostk(len(nums),k,nums)-self.atmostk(len(nums),k-1,nums)
+          
+# Approach 2:
+import collections
+
+class Solution:
+    def subarraysWithKDistinct(self, A: List[int], K: int) -> int:
+        c1 = collections.Counter()
+        d1 = 0 
+        c2 = collections.Counter()
+        d2 = 0
+        
+        ans = 0
+        left1 = left2 = 0
+            
+        for idx, num in enumerate(A):
+            c1[num]+=1
+            c2[num]+=1
+            if c1[num]==1:
+                d1+=1
+            if c2[num]==1:
+                d2+=1
+                
+            while d1>K:
+                n = A[left1]
+                c1[n]-=1
+                if c1[n]==0:
+                    d1-=1
+                left1+=1
+                
+            while d2>=K:
+                n = A[left2]
+                c2[n]-=1
+                if c2[n]==0:
+                    d2-=1
+                left2+=1
+            
+            ans += left2 - left1
+        
+        return ans
