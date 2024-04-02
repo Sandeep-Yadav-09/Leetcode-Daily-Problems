@@ -1,0 +1,19 @@
+** 205. Isomorphic Strings **
+
+# Approach 1:
+class Solution:
+    def isIsomorphic(self, s: str, t: str) -> bool:
+        x,y=[],[]
+        for i in s:
+            x.append(s.index(i))
+        for i in t:
+            y.append(t.index(i))
+        if x==y:
+            return True
+        return False
+
+# Approach 2:
+class Solution:
+    def isIsomorphic(self, s: str, t: str) -> bool:
+        zipped_set = set(zip(s, t))
+        return len(zipped_set) == len(set(s)) == len(set(t))
