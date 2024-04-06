@@ -1,0 +1,36 @@
+** 1249. Minimum Remove to Make Valid Parentheses **
+
+# Approach 1:
+class Solution:
+    def minRemoveToMakeValid(self, s: str) -> str:
+        open = 0
+        s = list(s)
+        
+        for i, c in enumerate(s):
+            if c == '(': open += 1
+            elif c == ')':
+                if not open: s[i] = ""
+                else: open -= 1
+        
+        for i in range(len(s)-1, -1, -1):
+            if not open: break
+            if s[i] == '(': s[i] = ""; open -= 1
+        
+        return "".join(s)
+
+# Approach 2:
+class Solution:
+    def minRemoveToMakeValid(self, s: str) -> str:
+        s = list(s)
+        stack = []
+        for i, char in enumerate(s):
+            if char == '(':
+                stack.append(i)
+            elif char == ')':
+                if stack:
+                    stack.pop()
+                else:
+                    s[i] = ''
+        while stack:
+            s[stack.pop()] = ''
+        return ''.join(s)
