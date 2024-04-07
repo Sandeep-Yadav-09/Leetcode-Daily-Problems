@@ -1,0 +1,43 @@
+** 678. Valid Parenthesis String **
+
+# Approach 1:
+class Solution:
+    def checkValidString(self, s: str) -> bool:     
+        stk, star = [], []     
+        
+        for idx, char in enumerate(s):
+            if char == '(':
+                stk.append( idx )
+            elif char == ')':
+                if stk:
+                    stk.pop()
+                elif star:
+                    star.pop()
+                else:
+                    return False
+            else:
+                star.append( idx )
+        
+        while stk and star:
+            if stk[-1] > star[-1]:
+                return False
+            stk.pop()
+            star.pop()
+        return len(stk) == 0
+
+# Approach 2:
+class Solution:
+    def checkValidString(self, s: str) -> bool:
+        leftMin, leftMax = 0, 0
+        for c in s:
+            if c == "(":
+                leftMin, leftMax = leftMin + 1, leftMax + 1
+            elif c == ")":
+                leftMin, leftMax = leftMin - 1, leftMax - 1
+            else:
+                leftMin, leftMax = leftMin - 1, leftMax + 1
+            if leftMax < 0:
+                return False
+            if leftMin < 0:
+                leftMin = 0
+        return leftMin == 0
