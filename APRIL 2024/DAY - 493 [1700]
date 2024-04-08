@@ -1,0 +1,21 @@
+** 1700. Number of Students Unable to Eat Lunch **
+
+# Approach 1:
+class Solution:
+    def countStudents(self, students: List[int], sandwiches: List[int]) -> int:
+        count = 0
+        while len(students) > count:
+            if students[0] == sandwiches[0]:
+                sandwiches.pop(0)
+                count = 0
+            else:
+                students.append(students[0])
+                count+=1
+
+            students.pop(0)
+        return len(students)
+        
+# Approach 2:
+class Solution:
+    def countStudents(self, st: List[int], sw: List[int]) -> int:
+        return next((len(st) for q in sw if q not in st or st.remove(q)),0)
