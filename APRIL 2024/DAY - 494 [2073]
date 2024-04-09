@@ -1,0 +1,27 @@
+** 2073. Time Needed to Buy Tickets **
+
+# Approach 1:
+class Solution:
+    def timeRequiredToBuy(self, tickets: List[int], k: int) -> int:
+        total = 0
+        for i, x in enumerate(tickets):
+            if i <= k:
+                total += min(tickets[i], tickets[k])
+            else:
+                total += min(tickets[i], tickets[k] - 1)
+        return total
+
+# Approach 2:
+class Solution:
+    def timeRequiredToBuy(self, tickets: List[int], k: int) -> int:
+        time = 0
+        i = 0 
+        length = len(tickets)
+        while tickets[k] != 0 :
+            if i == length :
+                i = 0 
+            if tickets[i] != 0 :
+                time += 1
+                tickets[i] -= 1
+            i += 1
+        return time
