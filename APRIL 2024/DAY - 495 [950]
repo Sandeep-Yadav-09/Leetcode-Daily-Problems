@@ -1,0 +1,35 @@
+** 950. Reveal Cards In Increasing Order **
+
+# Approach 1:
+from typing import List
+from collections import deque
+
+class Solution:
+    def deckRevealedIncreasing(self, deck: List[int]) -> List[int]:
+        deck.sort(reverse=True)
+        dq = deque()
+        n = len(deck)
+        dq.appendleft(deck[0])
+        for i in range(1, n):
+            x = dq.pop()
+            dq.appendleft(x)
+            dq.appendleft(deck[i])
+
+        ans = []
+        while dq:
+            ans.append(dq.popleft())
+        return ans
+
+# Approach 2:
+class Solution:
+    def deckRevealedIncreasing(self, deck: List[int]) -> List[int]:
+        # Sort the deck in decreasing order so we can place the highest cards correctly.
+        deck_sorted_desc = sorted(deck, reverse=True)
+        ordered_deck = deque()
+
+        for card in deck_sorted_desc:
+            if len(ordered_deck) > 1:
+                ordered_deck.rotate(1)
+            ordered_deck.appendleft(card)
+
+        return list(ordered_deck)
