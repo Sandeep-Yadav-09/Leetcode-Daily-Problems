@@ -1,0 +1,39 @@
+** 402. Remove K Digits **
+
+# Approach 1:
+class Solution:
+    def removeKdigits(self, num: str, k: int) -> str:
+        st = list()
+        for n in num:
+            while st and k and st[-1] > n:
+                st.pop()
+                k -= 1
+            
+            if st or n is not '0': # prevent leading zeros
+                st.append(n)
+                
+        if k: # not fully spent
+            st = st[0:-k]
+            
+        return ''.join(st) or '0'
+
+# Approach 2:
+class Solution:
+    def removeKdigits(self, num: str, k: int) -> str:
+        n=len(num)
+        if n==k: return "0"
+        st=[]
+        for c in num:
+            while st and c<st[-1] and k>0:
+                k-=1
+                st.pop()
+            st.append(c)
+        while k>0:
+            st.pop()
+            k-=1
+        j=0
+        m=len(st)
+        while st[j]=='0' and j<m-1:
+            j+=1
+        if j==n-1 or st==None: return "0"
+        return ''.join(st[j:])
