@@ -1,0 +1,34 @@
+** 463. Island Perimeter **
+
+# Approach 1:
+class Solution:
+    def islandPerimeter(self, grid: List[List[int]]) -> int:
+        m = len(grid)
+        n = len(grid[0])
+
+        islands = 0
+        neighbors = 0
+
+        for i in range(m):
+            for j in range(n):
+                if grid[i][j] == 1:
+                    islands += 1
+                  if i + 1 < m and grid[i + 1][j] == 1:
+                      neighbors += 1
+                  if j + 1 < n and grid[i][j + 1] == 1:
+                      neighbors += 1
+
+        return islands * 4 - neighbors * 2
+
+# Approach 2:
+class Solution:
+    def islandPerimeter(self, grid: List[List[int]]) -> int: 
+    	M, N, p = len(grid), len(grid[0]), 0
+    	for m in range(M):
+    		for n in range(N):
+    			if grid[m][n] == 1:
+    				if m == 0   or grid[m-1][n] == 0: p += 1
+    				if n == 0   or grid[m][n-1] == 0: p += 1
+    				if n == N-1 or grid[m][n+1] == 0: p += 1
+    				if m == M-1 or grid[m+1][n] == 0: p += 1
+    	return p
