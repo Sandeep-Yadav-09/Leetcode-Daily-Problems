@@ -1,0 +1,42 @@
+** 1992. Find All Groups of Farmland **
+
+# Approach 1:
+class Solution:
+    def findFarmland(self, grid: List[List[int]]) -> List[List[int]]:
+        self.ans=[]
+        row=len(grid)
+        col=len(grid[0])
+        
+        def helper(i,j,grid):
+            if i<0 or j<0 or j>=len(grid[0]) or i>=len(grid) or grid[i][j]==0:return (0,0)
+            (nx,ny)=(i,j)
+            grid[i][j]=0
+            for x,y in [(1,0),(0,1)]:
+                (nx,ny)=max((nx,ny),helper(i+x,j+y,grid))
+            return (nx,ny)
+                  
+        for i in range(row):
+            for j in range(col):
+                if grid[i][j]==1:
+                    (x,y)=helper(i,j,grid)
+                    self.ans.append([i,j,x,y])
+        return self.ans
+
+# Approach 2:
+class Solution:
+    def findFarmland(self, land: List[List[int]]) -> List[List[int]]:
+        rows, cols = len(land), len(land[0])
+        farmlands = []
+        
+        for i in range(rows):
+            for j in range(cols):
+                if land[i][j] == 1 and (i == 0 or land[i - 1][j] == 0) and (j == 0 or land[i][j - 1] == 0):
+                    bottom_row = i
+                    right_col = j
+                    while bottom_row + 1 < rows and land[bottom_row + 1][j] == 1:
+                        bottom_row += 1
+                    while right_col + 1 < cols and land[i][right_col + 1] == 1:
+                        right_col += 1
+                    farmlands.append([i, j, bottom_row, right_col])
+                    
+        return farmlands
