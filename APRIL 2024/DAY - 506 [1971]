@@ -1,0 +1,50 @@
+** 1971. Find if Path Exists in Graph**
+
+# Approach 1:
+class Solution:
+    def validPath(self, n: int, edges: List[List[int]], start: int, end: int) -> bool:
+        graph = defaultdict(list)
+        visited = [False]*n
+        
+        for u,v in edges:
+            graph[u].append(v)
+            graph[v].append(u)
+            
+        queue = deque([start])
+        
+        while queue:
+            for _ in range(len(queue)):
+                u = queue.popleft()
+                if u == end:
+                    return True
+                visited[u] = True
+                queue.extend([v for v in graph[u] if not visited[v]])
+				
+        return False
+
+# Approach 2:
+class Solution:
+    def validPath(self, n: int, edges: List[List[int]], source: int, destination: int) -> bool:
+        graph = {}
+
+        for i in edges:
+            if i[0] in graph:
+                graph[i[0]].append(i[1])
+            else:
+                graph[i[0]] = [i[1]]
+
+            if i[1] in graph:
+                graph[i[1]].append(i[0])
+            else:
+                graph[i[1]] = [i[0]]
+        
+        visited = [False]*n
+        queue= [source]
+        while queue:
+            cur = queue.pop(0)
+            if cur == destination:
+                return True
+            elif cur in graph and not visited[cur]:
+                queue.extend(graph[cur])
+            visited[cur] = True
+        return False
