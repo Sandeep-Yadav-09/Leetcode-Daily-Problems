@@ -1,0 +1,51 @@
+** 752. Open the Lock **
+
+# Approach 1:
+class Solution:
+    def openLock(self, deadends: List[str], target: str) -> int:
+        deadends=set(deadends)
+        if "0000" in deadends:
+            return -1
+        q=deque([("0000",0)])
+        visited=set()
+        while q:
+            cand,steps=q.popleft()
+            if cand==target:
+                return steps
+            for i in range(4):
+                for digit in [((int(cand[i])+1)%10),((int(cand[i])-1)%10)]:
+                    nx=cand[:i]+str(digit)+cand[1+i:]
+                    if nx not in deadends and nx not in visited:
+                        visited.add(nx)
+                        q.append((nx,steps+1))
+        return -1                       
+
+# Approach 2:
+class Solution:
+    def openLock(self, deadends: List[str], target: str) -> int:
+        visited = set(deadends)
+        q = deque([(0,'0000')])
+
+        def getChildren(lock):
+            res = []
+            for i in range(4):
+                lock1 = lock[:i]+str((int(lock[i])+1)%10)+lock[i+1:]
+                lock2 = lock[:i]+str((int(lock[i])-1+10)%10)+lock[i+1:]
+                res+=[lock1,lock2]
+            return res
+
+        while q:
+            turns,code = q.popleft()
+            if code==target:
+                return turns
+
+            if code in visited:
+                continue
+
+            visited.add(code)
+
+            for child in getChildren(code):
+                if child not in visited:
+                    q.append((turns+1,child))
+
+        return -1
