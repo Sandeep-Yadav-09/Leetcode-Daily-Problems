@@ -1,0 +1,61 @@
+** 310. Minimum Height Trees **
+
+# Approach 1:
+class Solution:
+    def findMinHeightTrees(self, n: int, edges: List[List[int]]) -> List[int]:
+        graph = [set() for _ in range(n)]
+        
+        for u, v in edges:
+            graph[u].add(v)
+            graph[v].add(u)
+
+        leaves = [x for x in range(n) if len(graph[x]) <= 1]
+        prev_leaves = leaves
+        while leaves:
+            new_leaves = []
+            for leaf in leaves:
+                if not graph[leaf]:
+                    return leaves
+                neighbor = graph[leaf].pop()
+                graph[neighbor].remove(leaf)
+                if len(graph[neighbor]) == 1:
+                    new_leaves.append(neighbor)
+            prev_leaves, leaves = leaves, new_leaves
+
+        return prev_leaves
+
+# Approach 2:
+class Solution:
+    def findMinHeightTrees(self, n: int, edges: List[List[int]]) -> List[int]:
+        def make_graph(edges):
+            graph=defaultdict(list)
+            for src,dest in edges:
+                graph[src].append(dest)
+                graph[dest].append(src)
+                
+            not_traversed  = set(range(n))-set(graph.keys())
+            for v in not_traversed:
+                graph[v]=[]
+            return graph
+        
+        def find_leaves(graph):
+            return set([ node for node in graph  if len(graph[node])==1])
+        
+        def prune_graph(graph,leaves):
+            new_graph=defaultdict(list)
+            for node in graph:
+                if node not in leaves:
+                    new_graph[node] = [n for n in graph[node] if n not in leaves]
+            return new_graph
+        
+        graph = make_graph(edges)
+    
+        while(True):
+            if len(graph.keys()) in [1,2]:
+                roots = graph.keys()
+                break
+    
+            graph = prune_graph(graph,find_leaves(graph))
+        return roots
+            
+        
