@@ -1,0 +1,17 @@
+** 2370. Longest Ideal Subsequence **
+
+# Approach 1:
+class Solution:
+    def longestIdealString(self, s: str, k: int) -> int:
+        d, maxLen = [0]*123, 0
+        for c in s:
+            z = ord(c)
+            d[z] = 1 + max(d[z-k:z+k+1])
+            maxLen = max(maxLen, d[z])
+
+        return maxLen
+
+# Approach 2:
+class Solution:
+    def longestIdealString(self, s: str, k: int) -> int:
+        return (d:=[0]*123) and max(setitem(d,z:=ord(c),1+max(d[z-k:z+k+1])) or d[z] for c in s)
