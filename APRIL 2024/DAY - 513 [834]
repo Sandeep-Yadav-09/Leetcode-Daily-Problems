@@ -1,0 +1,63 @@
+** 834. Sum of Distances in Tree **
+
+# Approach 1:
+from collections import defaultdict
+class Solution:
+    def sumOfDistancesInTree(self, N: int, edges: List[List[int]]) -> List[int]:
+
+        graph = collections.defaultdict(list)
+        for i, j in edges:
+            graph[i].append(j)
+            graph[j].append(i)
+    
+        size, up, down = [1] * N, [0] * N, [0] * N
+        def post(parent, i): 
+            for kid in graph[i]:
+                if kid != parent:
+                    post(i, kid)
+                    size[i] += size[kid]         
+                    up[i] += up[kid] + size[kid] 
+
+        def pre(parent, i):
+            if parent!=-1:
+            
+                down[i] = down[parent] + (up[parent] - up[i] - size[i]) + (N-size[i])
+
+            for kid in graph[i]:     
+                if kid != parent:
+                    pre(i, kid)
+
+        post(-1, 0)            
+        pre(-1, 0)            
+        return [up[i]+down[i] for i in range(N)] 
+
+# Approach 2:
+class Solution:
+    def sumOfDistancesInTree(self, n: int, edges: List[List[int]]) -> List[int]:
+        g = collections.defaultdict(list)
+        for u, v in edges:
+            g[u].append(v)
+            g[v].append(u)
+        
+        d = {i:[1, 0] for i in range(n)}
+        
+        def dfs(root, prev):
+            for nei in g[root]:
+                if nei != prev:
+                    dfs(nei, root)
+                    d[root][0] += d[nei][0]
+                    d[root][1] += (d[nei][0] + d[nei][1])
+        
+        def dfs2(root, prev):
+            for nei in g[root]:
+                if nei != prev:
+                    d[nei][1] = d[root][1] - d[nei][0] + (n-d[nei][0])
+                    dfs2(nei, root)
+        
+        dfs(0, -1)
+        dfs2(0, -1)
+        res = []
+        for key in d:
+            res.append(d[key][1])
+        return res
+
