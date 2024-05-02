@@ -1,0 +1,19 @@
+** 2441. Largest Positive Integer That Exists With Its Negative **
+
+# Approach 1:
+class Solution:
+    def findMaxK(self, nums: List[int]) -> int:
+        nums = set(nums)
+        return max(({x for x in nums if -x in nums}), default=-1)
+
+# Approach 2:
+class Solution:
+    def findMaxK(self, nums: List[int]) -> int:
+        pos, neg= set(), set()
+        for digit in nums:
+            pos.add(digit) if digit > 0 else neg.add(digit)
+            
+        for digit in sorted(pos,reverse = True):
+            if (digit*-1) in neg:
+                return digit
+        return -1
