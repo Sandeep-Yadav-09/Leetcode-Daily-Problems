@@ -1,0 +1,28 @@
+** 881. Boats to Save People **
+
+# Approach 1:
+class Solution:
+    def numRescueBoats(self, people: List[int], limit: int) -> int:
+        people.sort()
+        
+        boatCount, left, right = 0, 0, len(people) - 1
+        while left <= right:
+            if people[left] + people[right] <= limit:
+                left += 1
+                right -= 1
+            else:
+                right -= 1
+            boatCount += 1
+        return boatCount
+
+# Approach 2:
+class Solution:
+    def numRescueBoats(self, people: list[int], limit: int) -> int:
+        ps = sorted(people)
+        boats = 0
+        i, j = 0, len(ps) - 1
+        while i <= j:
+            i = i + 1 if ps[i] + ps[j] <= limit else i
+            j -= 1
+            boats += 1
+        return boats
