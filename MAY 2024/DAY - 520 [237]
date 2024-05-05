@@ -1,0 +1,13 @@
+** 237. Delete Node in a Linked List **
+
+# Approach 1:
+class Solution:
+    def deleteNode(self, node:ListNode):
+        node.val  = node.next.val
+        node.next = node.next.next
+        return
+
+# Approach 2:
+class Solution:
+    def deleteNode(self, node:ListNode):
+       node.val, node.next=node.next.val, node.next.next
