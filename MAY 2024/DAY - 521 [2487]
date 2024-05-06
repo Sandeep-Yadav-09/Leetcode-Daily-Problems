@@ -1,0 +1,52 @@
+** 2487. Remove Nodes From Linked List **
+
+# Approach 1:
+class Solution:
+    def removeNodes(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        if head is None or head.next is None:
+            return head
+        
+        nextNode = self.removeNodes(head.next)
+        
+        if nextNode.val > head.val:
+            return nextNode
+        
+        head.next = nextNode
+        return head
+
+# Approach 2:
+class Solution:
+    def reverseLinkedList(self, head):
+        prev_node = None
+        current_node = head
+        next_node = None
+
+        while current_node:
+            next_node = current_node.next
+            current_node.next = prev_node
+            prev_node = current_node
+            current_node = next_node
+        
+        return prev_node
+
+    def removeNodes(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        head = self.reverseLinkedList(head)
+
+        max_value = 0
+        prev_node = None
+        current_node = head
+
+        while current_node:
+            max_value = max(max_value, current_node.val)
+
+            if current_node.val < max_value:
+                prev_node.next = current_node.next
+                deleted_node = current_node
+                current_node = current_node.next
+                deleted_node.next = None
+
+            else:
+                prev_node = current_node
+                current_node = current_node.next
+        
+        return self.reverseLinkedList(head)
