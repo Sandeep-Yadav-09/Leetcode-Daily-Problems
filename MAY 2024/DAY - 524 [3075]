@@ -1,0 +1,18 @@
+** 3075. Maximize Happiness of Selected Children **
+
+# Approach 1:
+class Solution:
+    def maximumHappinessSum(self, happiness: List[int], k: int) -> int:
+        happiness.sort(reverse = True)   
+        arr = list(enumerate(happiness[:k]))
+        return sum(map(lambda x: max(x[1]-x[0], 0), arr))
+
+# Approach 2:
+class Solution:
+    def maximumHappinessSum(self, happiness: List[int], k: int) -> int:
+        happiness.sort(reverse=True)
+        ans = 0
+        for i in range(k):
+            ans += max(0, happiness[i] - i)
+
+        return ans
