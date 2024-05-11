@@ -1,0 +1,36 @@
+** 857. Minimum Cost to Hire K Workers **
+
+# Approach 1:
+class Solution:
+    def mincostToHireWorkers(self, quality: List[int], wage: List[int], k: int) -> float:
+        ans=inf
+        rsm=0
+        stack=[]
+        for q,w in sorted(zip(quality,wage),key=lambda x:x[1]/x[0]):
+            rsm+=q
+            heappush(stack,-q)
+            if len(stack)>k:
+                rsm+=heappop(stack)
+            if len(stack)==k:
+                ans=min(ans,rsm*w/q)
+        return ans            
+
+# Approach 2:
+class Solution:    
+    def mincostToHireWorkers(self, quality: List[int], wage: List[int], k: int) -> float:
+
+        workers = [(w/q, q) for w, q in zip(wage, quality)]
+        workers.sort()
+
+        paid_group = [-1*q for r, q in workers[:k]]
+        heapq.heapify(paid_group)
+        sum_q = -1 * sum(paid_group)
+
+        cost = sum_q * workers[k-1][0]
+
+        for ratio, q in workers[k:]:
+            sum_q += q + heapq.heappushpop(paid_group, -q)
+            temp = ratio * sum_q
+            cost = min(cost, temp)
+
+        return cost
