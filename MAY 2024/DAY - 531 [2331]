@@ -1,0 +1,23 @@
+** 2331. Evaluate Boolean Binary Tree **
+
+# Approach 1:
+class Solution:
+    def evaluateTree(self, root: Optional[TreeNode]) -> bool:
+            if root.val==0 or root.val==1:
+                return root.val
+            if root.val==2:
+                return self.evaluateTree(root.left) or self.evaluateTree(root.right)
+            if root.val==3:
+                return self.evaluateTree(root.left) and self.evaluateTree(root.right)
+
+# Approach 2:
+class Solution:
+    def evaluateTree(self, root: TreeNode) -> bool:
+
+        if root.val < 2: return root.val
+
+        l, r,v = (self.evaluateTree(root.left),
+                  self.evaluateTree(root.right),
+                  root.val^1)
+        
+        return l&r or l&v or r&v
