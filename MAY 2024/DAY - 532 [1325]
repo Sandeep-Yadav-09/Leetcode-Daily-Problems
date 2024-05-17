@@ -1,0 +1,17 @@
+** 1325. Delete Leaves With a Given Value **
+
+# Approach 1:
+class Solution:
+    def removeLeafNodes(self, r: Optional[TreeNode], t: int) -> Optional[TreeNode]:
+        def f(n):
+            if n:
+                n.left, n.right = f(n.left), f(n.right)
+
+                return (n, None)[n.left == n.right == None and n.val == t]
+        
+        return f(r)
+
+# Approach 2:
+class Solution:
+    def removeLeafNodes(self, r: Optional[TreeNode], t: int) -> Optional[TreeNode]:
+        return (f:=lambda n:n and (setattr(n,'left',f(n.left)),setattr(n,'right',f(n.right))) and (n,None)[n.left==n.right==None and n.val==t])(r)
