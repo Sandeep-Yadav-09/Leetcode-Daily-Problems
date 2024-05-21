@@ -1,0 +1,31 @@
+** 78. Subsets **
+
+# Approach 1:
+class Solution:
+    def subsets(self, nums: List[int]) -> List[List[int]]:
+        def explore(chosen, remaining, res):
+            if not remaining:
+                res.append(chosen[:])
+                return
+            d = remaining.pop(0)
+            #choose
+            chosen.append(d)
+            #explore
+            explore(chosen, remaining, res)
+            chosen.pop()
+            explore(chosen, remaining, res)
+            #unchoose
+            remaining.insert(0, d)
+        
+        res = []
+        chosen = []
+        explore(chosen, nums, res)
+        return res
+
+# Approach 2:
+class Solution:
+    def subsets(self, nums: List[int]) -> List[List[int]]:
+        subsets = [[]]
+        for n in nums:
+            subsets += [s + [n] for s in subsets]        
+        return subsets
