@@ -1,0 +1,26 @@
+** 1255. Maximum Score Words Formed by Letters **
+
+# Approach 1:
+class Solution:
+    def maxScoreWords(self, words: List[str], letters: List[str], score: List[int]) -> int:
+
+        f, ans = lambda x : sum(score[ord(c) - 97] for c in x), 0
+
+        def dfs(words,letters, tally):
+            nonlocal ans
+            
+            for i in range(len(words)):
+                cWord = Counter(words[i])
+				
+                if all(letters[c] >= cWord[c] for c in cWord):
+                    dfs(words[i+1:], letters - cWord, tally + f(words[i]))
+
+            ans = max(ans,tally)
+            return ans
+
+        return dfs(words, Counter(letters), 0)
+
+# Approach 2:
+class Solution:
+    def maxScoreWords(self, w: List[str], l: List[str], s: List[int]) -> int:
+        return (f:=lambda i,l:w[i:] and max(f(i+1,l),(q:=Counter(w[i]))<=l and sum(s[ord(c)-97]*q[c] for c in q)+f(i+1,l-q)) or 0)(0,Counter(l))
