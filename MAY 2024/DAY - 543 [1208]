@@ -1,0 +1,40 @@
+** 1208. Get Equal Substrings Within Budget **
+
+# Approach 1:
+class Solution:
+    def equalSubstring(self, s: str, t: str, maxCost: int) -> int:
+        n = len(s)
+        start = 0
+        current_cost = 0
+        max_length = 0
+
+        for end in range(n):
+            current_cost += abs(ord(s[end]) - ord(t[end]))
+
+            while current_cost > maxCost:
+                current_cost -= abs(ord(s[start]) - ord(t[start]))
+                start += 1
+
+            max_length = max(max_length, end - start + 1)
+        
+        return max_length
+
+# Approach 2:
+class Solution:
+    def equalSubstring(self, s: str, t: str, maxCost: int) -> int:
+        left, right = 0, 0
+        costWindow = 0
+        ans = 0
+
+        while right < len(s):
+            costWindow += abs(ord(s[right]) - ord(t[right]))
+            right += 1
+
+            while left < right and costWindow > maxCost:
+                costWindow -= abs(ord(s[left]) - ord(t[left]))
+                left += 1
+
+            ans = max(ans, right - left)
+
+        return ans
+            
