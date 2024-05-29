@@ -1,0 +1,30 @@
+** 1404. Number of Steps to Reduce a Number in Binary Representation to One **
+
+# Approach 1:
+class Solution:
+    def numSteps(self, s: str) -> int:
+        x = int(s,2)
+        steps = 0
+
+        while x!=1:
+            if x%2:
+                x+=1
+            else:
+                x = x//2
+            steps+=1
+
+        return steps
+
+# Approach 2:
+class Solution:
+    def numSteps(self, s: str) -> int:
+        last, cnt, ans = s[-1], 1, 0
+        for i in range(len(s) - 2, -1, -1):
+            if last == s[i]:
+                cnt += 1
+            else:
+                ans += cnt + (s[i] == '0')
+                cnt = 1
+                last = '1'
+        return ans + (cnt + 1 if cnt > 1 else 0)
+        
