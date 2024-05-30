@@ -1,0 +1,32 @@
+** 1442. Count Triplets That Can Form Two Arrays of Equal XOR **
+
+# Approach 1:
+from typing import List
+
+class Solution:
+    def countTriplets(self, arr: List[int]) -> int:
+        n = len(arr)
+        prefix = [0] * (n + 1)
+        
+        for i in range(n):
+            prefix[i + 1] = prefix[i] ^ arr[i]
+        
+        count = 0
+        for i in range(n):
+            for j in range(i + 1, n):
+                if prefix[i] == prefix[j + 1]:
+                    count += j - i
+        return count
+
+# Approach 2:
+class Solution:
+    def countTriplets(self, arr) -> int:
+        count = 0
+        len_arr = len(arr)
+        for start in range(len_arr - 1):
+            res = arr[start]
+            for end in range(start + 1, len_arr):
+                res ^= arr[end]
+                if not res:
+                    count += end - start
+        return count
