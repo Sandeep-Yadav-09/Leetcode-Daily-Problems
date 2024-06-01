@@ -1,0 +1,14 @@
+** 3110. Score of a String **
+
+# Approach 1:
+class Solution:
+    def scoreOfString(self, s: str) -> int:
+        a = []
+        for i in range(len(s)-1):
+            a.append(abs(ord(s[i])-ord(s[i+1])))
+        return sum(a)
+
+# Approach 2:
+class Solution:
+    def scoreOfString(self, s: str) -> int:
+        return sum(abs(ord(s[i]) - ord(s[i + 1])) for i in range(len(s) - 1))
