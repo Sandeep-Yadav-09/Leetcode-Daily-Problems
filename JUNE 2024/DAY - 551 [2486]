@@ -1,4 +1,5 @@
-****
+** 2486. Append Characters to String to Make Subsequence **
+
 # Approach 1:
 class Solution:
     def appendCharacters(self, s: str, t: str) -> int:
@@ -14,3 +15,12 @@ class Solution:
         return m-j
 
 # Approach 2:
+class Solution:
+    def appendCharacters(self, s: str, t: str) -> int:
+        t = list(t)
+        for i in s:
+            if len(t)==0:
+                return 0
+            if(i==t[0]):
+                t.pop(0)
+        return len(t)
