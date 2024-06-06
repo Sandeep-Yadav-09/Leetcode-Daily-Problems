@@ -1,0 +1,45 @@
+** 846. Hand of Straights **
+
+# Approach 1:
+class Solution:
+    def isNStraightHand(self, hand: List[int], groupSize: int) -> bool:
+        if len(hand) % groupSize != 0:
+            return False
+
+        hand.sort()
+        count = Counter(hand)
+        
+        for card in hand:
+            if count[card] == 0:
+                continue
+            for i in range(groupSize):
+                if count[card + i] > 0:
+                    count[card + i] -= 1
+                else:
+                    return False
+        return True
+
+# Approach 2:
+        if len(hand) % groupSize:
+            return False
+        
+        freq = collections.defaultdict(int)
+        
+        for num in hand:
+            freq[num] += 1
+            
+        min_heap = list(freq.keys())
+        heapq.heapify(min_heap)
+        
+        while min_heap:
+            smallest = min_heap[0]
+            for num in range(smallest, smallest + groupSize):
+                if num not in freq:
+                    return False
+                freq[num] -= 1
+                
+                if freq[num] == 0:
+                    if num != min_heap[0]:
+                        return False
+                    heapq.heappop(min_heap)        
+        return True
