@@ -1,0 +1,52 @@
+** 648. Replace Words **
+
+# Approach 1:
+class Solution:
+    def replaceWords(self, dict: List[str], sentence: str) -> str:
+        roots = set(dict)
+        words = sentence.split()
+        result = []
+
+        for word in words:
+            for i in range(len(word) + 1):
+                prefix = word[:i]
+                if prefix in roots:
+                    result.append(prefix)
+                    break
+            else:
+                result.append(word)
+
+        return ' '.join(result)
+
+# Approach 2:
+class Trie:
+    def __init__(self):
+        self.root = {}
+        
+    def insert(self, word):
+        p = self.root
+        for char in word:
+            if char not in p:
+                p[char] = {}
+            p = p[char]
+        p['#'] = True
+    
+    def search(self, word):
+        p = self.root
+        res = ''
+        for char in word:
+            if char in p:
+                res += char
+                p = p[char]
+                if '#' in p:
+                    break
+            else:
+                break
+        return res if '#' in p else word
+        
+class Solution:
+    def replaceWords(self, roots: List[str], sentence: str) -> str:
+        t = Trie()
+        for root in roots:
+            t.insert(root)
+        return ' '.join(map(t.search, sentence.split()))
