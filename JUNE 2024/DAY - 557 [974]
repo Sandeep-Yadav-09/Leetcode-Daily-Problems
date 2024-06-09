@@ -1,0 +1,28 @@
+** 974. Subarray Sums Divisible by K **
+
+# Approach 1:
+class Solution:
+    def subarraysDivByK(self, A: List[int], K: int) -> int:
+        hmap,total,result = {},0,0
+        for num in A:
+            hmap[total] = hmap.get(total,0) + 1
+            total += num
+            total %= K
+            if hmap.get(total):
+                result += hmap[total]
+        return result
+
+# Approach 2:
+class Solution:
+    def subarraysDivByK(self, nums: List[int], k: int) -> int:
+        mod_k=[0]*k
+        mod_k[0]=1
+        prefix=0
+        for x in nums:
+            prefix=(prefix+x)%k
+            if prefix<0: prefix+=k
+            mod_k[prefix]+=1
+        ans=0
+        for n in mod_k:
+            ans+=n*(n-1)//2
+        return ans
