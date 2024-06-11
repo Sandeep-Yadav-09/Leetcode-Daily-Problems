@@ -1,0 +1,34 @@
+** 1122. Relative Sort Array **
+
+# Approach 1:
+class Solution:
+    def relativeSortArray(self, arr1: List[int], arr2: List[int]) -> List[int]:
+        sorted_lst = []
+
+        for x in arr2:
+            while x in arr1:
+                sorted_lst.append(x)
+                arr1.remove(x)
+
+        return(sorted_lst+sorted(arr1))
+
+# Approach 2:
+class Solution:
+    def relativeSortArray(self, arr1, arr2):
+        dict={}
+        nums,ans = [], []
+        
+        for val in arr2:
+            dict[val] = 0
+        
+        for val in arr1:
+            if val not in dict:
+                nums.append(val)
+            else: 
+                dict[val] += 1
+                
+        for key, val in dict.items():
+            ans.extend([key for _ in range(val)])
+        
+        ans.extend(sorted(nums))
+        return ans
