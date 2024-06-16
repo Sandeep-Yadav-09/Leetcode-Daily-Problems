@@ -1,0 +1,37 @@
+** 330. Patching Array **
+
+# Approach 1:
+class Solution:
+    def minPatches(self, nums: List[int], n: int) -> int:
+        ans = 0
+        sum_val = 1
+        m = len(nums)
+        i = 0
+
+        while sum_val <= n:
+            if i < m and nums[i] <= sum_val:
+                sum_val += nums[i]
+                i += 1
+            else:
+                sum_val += sum_val
+                ans += 1
+        
+        return ans
+
+# Approach 2:
+class Solution:
+    def minPatches(self, nums: List[int], ssum: int) -> int:
+        n=len(nums)
+        limit,cnt=0,0
+        for i in range(n):
+            if nums[i]>limit+1:
+                while nums[i]>limit+1:
+                    limit+=limit+1
+                    cnt+=1
+                    if limit>=ssum: break
+            limit+=nums[i]
+            if limit>=ssum: break
+        while limit<ssum:
+            limit+=limit+1
+            cnt+=1
+        return cnt
