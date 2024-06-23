@@ -1,0 +1,42 @@
+** 1438. Longest Continuous Subarray With Absolute Diff Less Than or Equal to Limit **
+
+# Approach 1:
+class Solution:
+    def longestSubarray(self, nums: List[int], limit: int) -> int:
+        n=len(nums)
+        i=0
+        ans=[]
+        for j in range(n):
+            bisect.insort(ans,nums[j])
+            if ans[-1]-ans[0]>limit:
+                ans.pop(bisect.bisect(ans,nums[i])-1)
+                i+=1
+        return j-i+1        
+
+# Approach 2:
+from collections import deque
+
+class Solution:
+    def longestSubarray(self, nums: List[int], limit: int) -> int:
+        max_queue = deque()  
+        min_queue = deque()  
+
+        left = 0
+
+        for n in nums:
+            while max_queue and n > max_queue[-1]:
+                max_queue.pop()
+            max_queue.append(n)
+
+            while min_queue and n < min_queue[-1]:
+                min_queue.pop()
+            min_queue.append(n)
+
+            if max_queue[0] - min_queue[0] > limit:
+                if max_queue[0] == nums[left]:
+                    max_queue.popleft()
+                if min_queue[0] == nums[left]:
+                    min_queue.popleft()
+                left += 1
+
+        return len(nums) - left
