@@ -1,0 +1,40 @@
+** 995. Minimum Number of K Consecutive Bit Flips **
+
+# Approach 1:
+class Solution:
+    def minKBitFlips(self, nums: List[int], k: int) -> int:
+        flips = [False] * (len(nums) + 1)
+
+        result = 0
+        current_flips = False
+        for i in range(len(nums) - k + 1):
+            current_flips ^= flips[i]
+            if nums[i] == current_flips:
+                result += 1
+                current_flips ^= 1
+                flips[i + k] = 1
+
+        for i in range(len(nums) - k + 1, len(nums)):
+            current_flips ^= flips[i]
+            if nums[i] == current_flips:
+                return -1
+
+        return result
+
+# Approach 2:
+class Solution:
+    def minKBitFlips(self, nums: List[int], k: int) -> int:
+        cur=0
+        ans=0
+        n =len(nums)
+        for i in range(n):
+            if i >=k and nums[i-k] > 1:
+                nums[i-k]-= 2
+                cur-=1
+            if cur & 1 ^ nums[i]==0:
+                if i+k>n:
+                    return -1
+                nums[i]+=2
+                cur+=1
+                ans+=1
+        return ans
