@@ -1,0 +1,29 @@
+** 1038. Binary Search Tree to Greater Sum Tree **
+
+# Approach 1:
+class Solution:
+    def bstToGst(self, root: TreeNode) -> TreeNode:
+        ans=0
+        def helper(node):
+            nonlocal ans
+            if node==None:
+                return
+            helper(node.right)
+            ans+=node.val
+            node.val=ans
+            helper(node.left)
+        helper(root)  
+        return root  
+
+# Approach 2:
+class Solution:
+    def bstToGst(self, root: TreeNode) -> TreeNode:
+        s = [0]
+        def inorder(root):
+            if root: 
+                inorder(root.right)
+                root.val += s[0]
+                s[0] = root.val
+                inorder(root.left)
+        inorder(root)
+        return root
