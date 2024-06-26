@@ -1,0 +1,64 @@
+** 1382. Balance a Binary Search Tree **
+
+# Approach 1:
+class Solution:
+    def inorder(self,root,lst):
+        if root!=None:
+            self.inorder(root.left,lst)
+            lst.append(root.val)
+            self.inorder(root.right,lst)
+    def buildTree(self,lst,low,high):
+        if low > high:
+            return None
+        mid = (low+high)//2
+        root = TreeNode(lst[mid])
+        root.left = self.buildTree(lst,low,mid-1)
+        root.right = self.buildTree(lst,mid+1,high)
+        return root
+
+    def balanceBST(self, root: TreeNode) -> TreeNode:
+        lst = []
+        self.inorder(root,lst)
+        low = 0
+        high = len(lst)-1
+        root = self.buildTree(lst,low,high)
+        return root
+
+# Approach 2:
+class Solution:
+    def balanceBST(self, root: TreeNode) -> TreeNode:   
+        nodes = []
+        stack = [('GO_LEFT', root)]
+
+        # Put the nodes in the list in order.
+        while stack:
+            direction, node = stack.pop()
+
+            if not node:
+                continue
+
+            match direction:
+                case 'GO_LEFT':
+                    stack.append(('GO_RIGHT', node))
+                    stack.append(('GO_LEFT', node.left))
+                case 'GO_RIGHT':
+                    stack.append(('GO_LEFT', node.right))
+                    node.left  = None
+                    node.right = None
+                    nodes.append(node)
+
+        stack.append((0, len(nodes) - 1))
+
+        # Reassemble the tree.
+        while stack:
+            lo, hi = stack.pop()
+            mid  = (lo + hi) // 2
+            node = nodes[mid]
+            if lo < mid:
+                node.left = nodes[(lo + mid - 1) // 2]
+                stack.append((lo, mid - 1))
+            if mid < hi:
+                node.right = nodes[(mid + 1 + hi) // 2]
+                stack.append((mid + 1, hi))
+
+        return nodes[(len(nodes) - 1) // 2]
