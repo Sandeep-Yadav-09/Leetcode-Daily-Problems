@@ -1,0 +1,13 @@
+** 1791. Find Center of Star Graph **
+
+# Approach 1:
+class Solution:
+    def findCenter(self, edges: List[List[int]]) -> int:
+    	return (set(edges[0]) & set(edges[1])).pop()
+
+# Approach 2:
+class Solution:
+    def findCenter(self, e: List[List[int]]) -> int:
+        if e[0][0]==e[1][0] or e[0][0]==e[1][1]:
+            return e[0][0]
+        return e[0][1]
