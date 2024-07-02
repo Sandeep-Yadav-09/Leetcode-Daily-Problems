@@ -1,0 +1,36 @@
+** 350. Intersection of Two Arrays II **
+
+# Approach 1:
+class Solution:
+    def intersect(self, nums1: List[int], nums2: List[int]) -> List[int]:
+        a = []
+        if len(nums1)>len(nums2):
+            for i in nums1:
+                if i in nums2:
+                    a.append(i)
+                    nums2.remove(i)
+        else:
+            for i in nums2:
+                if i in nums1:
+                    a.append(i)
+                    nums1.remove(i)
+        return a
+
+# Approach 2:
+class Solution:
+    def intersect(self, nums1: List[int], nums2: List[int]) -> List[int]:
+        sortedArr1 = sorted(nums1)
+        sortedArr2 = sorted(nums2)
+        i = 0
+        j = 0
+        output = []
+        while i < len(sortedArr1) and j < len(sortedArr2):
+            if sortedArr1[i] < sortedArr2[j]:
+                i += 1
+            elif sortedArr2[j] < sortedArr1[i]:
+                j += 1
+            else:
+                output.append(sortedArr1[i])
+                i += 1
+                j += 1
+        return output
