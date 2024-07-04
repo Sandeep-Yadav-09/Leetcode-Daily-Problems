@@ -1,0 +1,26 @@
+** 2181. Merge Nodes in Between Zeros **
+
+# Approach 1:
+class Solution:
+    def mergeNodes(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        cur, sm, prev = head.next, 0, head
+        while cur:
+            sm += cur.val
+            if cur.val == 0:
+                cur.val, sm = sm, 0
+                prev.next = prev = cur
+            cur = cur.next
+
+        return head.next
+
+# Approach 2:
+class Solution:
+    def mergeNodes(self, h: Optional[ListNode]) -> Optional[ListNode]:
+        def f(w, n):
+            if n:
+                if n.val:
+                    return f(w+n.val, n.next)
+
+                return ListNode(w, f(0, n.next))
+
+        return f(0, h.next)
