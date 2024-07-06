@@ -1,0 +1,24 @@
+** 2582. Pass the Pillow **
+
+# Approach 1:
+class Solution:
+    def passThePillow(self, n: int, time: int) -> int:
+        n-= 1                       
+        time%= n+n                 
+        return n+1 - abs(n - time)  
+
+# Approach 2:
+class Solution(object):
+    def passThePillow(self, n: int, time: int) -> int:
+        stand, flag = 1, 1
+        while time:
+            time -= 1
+            if flag:
+                stand += 1
+                if stand == n:
+                    flag = not flag
+            else:
+                stand -= 1
+                if stand == 1:
+                    flag = not flag
+        return stand
