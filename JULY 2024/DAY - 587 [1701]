@@ -1,0 +1,34 @@
+** 1701. Average Waiting Time **
+
+# Approach 1:
+class Solution:
+    def averageWaitingTime(self, customers: List[List[int]]) -> float:
+        arr, time = [], 0
+        
+        for i , j in customers:
+            if(i > time):
+                time = i + j
+            else:
+                time += j
+            arr.append(time - i)
+        
+        return sum(arr) / len(arr)
+
+# Approach 2:
+class Solution:
+    def averageWaitingTime(self, customers: List[List[int]]) -> float:
+        n = len(customers)
+        wait = 0
+        finish_time = 0
+        
+        for i in range(n):
+            arrival, time = customers[i]
+            
+            if finish_time > arrival:
+                finish_time += time
+            else:
+                finish_time = arrival + time
+            
+            wait += finish_time - arrival
+        
+        return wait / n
