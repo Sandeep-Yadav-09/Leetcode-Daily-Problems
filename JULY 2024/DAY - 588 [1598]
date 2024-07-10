@@ -1,0 +1,33 @@
+** 1598. Crawler Log Folder **
+
+# Approach 1:
+class Solution:
+    def minOperations(self, logs: List[str]) -> int:
+        res = 0
+        
+        for i in logs:
+            if i == '../' and res > 0:
+                res -= 1
+            elif i != './' and i != '../':
+                res += 1
+                
+        return res
+
+# Approach 2:
+class Solution:
+    def minOperations(self, logs: List[str]) -> int:
+        if not logs:
+            return 0
+        
+        stk = []
+        
+        for log in logs:
+            if log == '../':
+                if stk:
+                    stk.pop()
+            elif log == './':
+                continue
+            else:
+                stk.append(log)
+        
+        return len(stk)
