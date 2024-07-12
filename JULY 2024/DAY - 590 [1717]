@@ -1,0 +1,50 @@
+** 1717. Maximum Score From Removing Substrings **
+
+# Approach 1:
+class Solution:
+    def cnt(self, s, target):
+        res = 0
+        st = []
+        for ch in s:
+            if st and ch == target[1] and st[-1] == target[0]:
+                st.pop()
+                res += 1
+            else: 
+                st.append(ch)
+        return res, "".join(st)
+
+    def maximumGain(self, s: str, x: int, y: int) -> int:
+        res = 0
+        hs = "ba" if y > x else "ab"
+        ls = "ab" if hs == "ba" else "ba"
+
+        cnth, nexts = self.cnt(s, hs)
+
+        cntl, _ = self.cnt(nexts, ls)
+
+        return cnth * max(x, y) + cntl * min(x, y)
+
+# Approach 2:
+class Solution:
+    def maximumGain(self, s: str, x: int, y: int) -> int:
+        res = 0
+        a = b = 0
+        for c in s:
+            if c == 'a' or c == 'b':
+                if c == 'a':
+                    if x < y and b > 0:
+                        b -= 1
+                        res += y
+                    else:
+                        a += 1
+                else:
+                    if x > y and a > 0:
+                        a -= 1
+                        res += x
+                    else:
+                        b += 1
+            else:
+                res += min(a, b) * min(x, y)
+                a = b = 0
+        res += min(a, b) * min(x, y)
+        return res
