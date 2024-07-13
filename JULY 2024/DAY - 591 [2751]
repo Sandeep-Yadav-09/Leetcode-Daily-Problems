@@ -1,0 +1,56 @@
+** 2751. Robot Collisions **
+
+# Approach 1:
+class Solution:
+    def survivedRobotsHealths(self, positions: List[int], healths: List[int], directions: str) -> List[int]:
+        stack = []
+        for i in sorted(range(len(positions)), key = lambda i: positions[i]):
+            if directions[i] == 'R':
+                stack.append(i)
+            else:
+                while stack and healths[stack[-1]] < healths[i]:
+                    healths[i] -= 1
+                    healths[stack.pop()] = 0
+                if stack:
+                    if healths[stack[-1]] == healths[i]:
+                        healths[stack.pop()] = 0
+                    else:
+                        healths[stack[-1]] -= 1
+                    healths[i] = 0
+        return [h for h in healths if h]   
+
+# Approach 2:
+class Solution:
+    def survivedRobotsHealths(self, positions: List[int], healths: List[int], directions: str) -> List[int]:
+        left = []
+        right = []
+        for i in range(len(positions)):
+            if directions[i]=='L': left.append([positions[i],healths[i],i])
+            else: right.append([positions[i],healths[i],i])
+        
+        left.sort()
+        right.sort()
+        print(left)
+        print(right)
+        rem = []
+        res = []
+
+        for leftPos, leftHealth, leftIndex in left:
+            idx = bisect.bisect_right(right, leftPos, key = lambda a:a[0]) - 1
+            while idx >= 0 and right[idx][1] < leftHealth: 
+                right.pop(idx)
+                idx-=1
+                leftHealth -= 1 
+            if idx >= 0: 
+                if right[idx][1] == leftHealth: 
+                    right.pop(idx)
+                else:
+                    right[idx][1] -= 1
+            else: 
+                rem.append([leftIndex,leftHealth]) 
+        print(right,rem)
+        for pos,h,i in right: 
+            rem.append([i,h])
+        rem.sort()
+        for i,h in rem: res.append(h) 
+        return res
