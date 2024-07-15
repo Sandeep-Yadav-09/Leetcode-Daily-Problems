@@ -1,0 +1,34 @@
+** 2196. Create Binary Tree From Descriptions **
+
+# Approach 1:
+class Solution:
+    def createBinaryTree(self, descriptions: List[List[int]]) -> Optional[TreeNode]:
+        
+        tree = dict()
+        children = set()
+        for parent, child, isLeft in descriptions:
+            if parent not in tree : tree[parent] = TreeNode(parent)
+            if child not in tree : tree[child] = TreeNode(child)
+            
+            if isLeft : tree[parent].left = tree[child]
+            else : tree[parent].right = tree[child]
+        
+            children.add(child)
+        
+        for parent in tree:
+            if parent not in children:
+                return tree[parent]
+
+# Approach 2:
+class Solution:
+    def createBinaryTree(self, descriptions: List[List[int]]) -> Optional[TreeNode]:
+        mp = {}
+        seen = set()
+        for p, c, left in descriptions: 
+            if p not in mp: mp[p] = TreeNode(p)
+            if c not in mp: mp[c] = TreeNode(c)
+            if left: mp[p].left = mp[c]
+            else: mp[p].right = mp[c]
+            seen.add(c)
+        for p, _, _ in descriptions: 
+            if p not in seen: return mp[p]
