@@ -1,0 +1,46 @@
+** 2096. Step-By-Step Directions From a Binary Tree Node to Another **
+
+# Approach 1:
+class Solution:
+    def getDirections(self, root: Optional[TreeNode], startValue: int, destValue: int) -> str:
+        def find(n: TreeNode, val: int, path: List[str]) -> bool:
+            if n.val == val:
+                return True
+            if n.left and find(n.left, val, path):
+                path += "L"
+            elif n.right and find(n.right, val, path):
+                path += "R"
+            return path
+        s, d = [], []
+        find(root, startValue, s)
+        find(root, destValue, d)
+        while len(s) and len(d) and s[-1] == d[-1]:
+            s.pop()
+            d.pop()
+        return "".join("U" * len(s)) + "".join(reversed(d))
+
+# Approach 2:
+class Solution:
+    def getDirections(self, root: Optional[TreeNode], startValue: int, destValue: int) -> str:
+        dq = deque([[root, ""]])
+        sourceDirections = ""
+        destDirections = ""
+        while len(dq) > 0:
+            curr = dq.popleft()
+            if curr[0] is None:
+                continue
+            if curr[0].val == startValue:
+                sourceDirections = curr[1]
+            if curr[0].val == destValue:
+                destDirections = curr[1]
+            dq.append([curr[0].left, curr[1]+"L"])
+            dq.append([curr[0].right, curr[1]+"R"])
+
+        index = 0
+        for i in range(min(len(sourceDirections), len(destDirections))):
+            if sourceDirections[i] == destDirections[i]:
+                index += 1
+            else:
+                break
+        
+        return (len(sourceDirections) - index) * "U" + destDirections[index:]
