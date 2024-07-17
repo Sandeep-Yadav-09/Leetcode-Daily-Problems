@@ -1,0 +1,56 @@
+** 1110. Delete Nodes And Return Forest **
+
+# Approach 1:
+class Solution(object):
+    def delNodes(self, root, to_delete):
+        to_delete = set(to_delete)
+        res = []
+        def walk(root, parent_exist):
+            if root is None:
+                return None
+            if root.val in to_delete:
+                root.left = walk(root.left, parent_exist=False)
+                root.right = walk(root.right, parent_exist=False)
+                return None
+            else:
+                if not parent_exist:
+                    res.append(root)
+                root.left = walk(root.left, parent_exist=True)
+                root.right = walk(root.right, parent_exist=True)
+                return root
+        walk(root, parent_exist=False)
+        return res
+
+# Approach 2:
+class Solution:
+    def delNodes(self, root: TreeNode, to_delete: List[int]) -> List[TreeNode]:        
+        if not root:
+            return []
+        
+        if not to_delete:
+            return [root]
+        
+        toDel = set(to_delete)
+        
+        stk = [(None, root)]
+        res = []
+        
+        while stk:
+            parent, node = stk.pop()  
+            if node.val in toDel:
+                if node.left:
+                    stk.append((None, node.left))
+                if node.right:
+                    stk.append((None, node.right))
+            else:
+                if node.left:
+                    stk.append((node, node.left))
+                    if node.left.val in toDel:
+                        node.left = None
+                if node.right:
+                    stk.append((node, node.right))
+                    if node.right.val in toDel:
+                        node.right = None
+                if not parent or parent.val in toDel:
+                    res.append(node)
+        return res
