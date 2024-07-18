@@ -1,0 +1,57 @@
+** 1530. Number of Good Leaf Nodes Pairs **
+
+# Approach 1:
+class Solution:
+    def countPairs(self, root: TreeNode, distance: int) -> int:
+        res = [0] 
+        def dfs(node):
+            if not node:return []
+            if not node.left and not node.right:return [0]
+            left,right = dfs(node.left),dfs(node.right)
+            m,n = len(left),len(right)
+            for i in range(m):
+                left[i]+=1
+            for j in range(n):
+                right[j]+=1
+
+            for l in left:
+                for r in right:
+                    if l + r <= distance:
+                        res[0] += 1
+            return left+right
+        dfs(root)
+        return res[0]
+
+# Approach 2:
+class Solution:
+    def countPairs(self, root: TreeNode, distance: int) -> int:
+        self.result = 0
+        
+        def dfs(node):
+            if not node:
+                return []
+            if not node.left and not node.right:
+                return [1]
+            
+            left_distances = dfs(node.left)
+            right_distances = dfs(node.right)
+            
+            # Count pairs from left and right distances
+            for l in left_distances:
+                for r in right_distances:
+                    if l + r <= distance:
+                        self.result += 1
+            
+            # Prepare the distance list to return
+            distances = []
+            for d in left_distances:
+                if d + 1 <= distance:
+                    distances.append(d + 1)
+            for d in right_distances:
+                if d + 1 <= distance:
+                    distances.append(d + 1)
+            
+            return distances
+        
+        dfs(root)
+        return self.result
