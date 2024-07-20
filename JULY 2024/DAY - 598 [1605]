@@ -1,0 +1,51 @@
+** 1605. Find Valid Matrix Given Row and Column Sums **
+
+# Approach 1:
+class Solution:
+    def restoreMatrix(self, rowSum: List[int], colSum: List[int]) -> List[List[int]]:
+        n=len(rowSum)
+        m=len(colSum)
+
+        #initializing matrix with zeroes
+        matrix=[[0]*m for _ in range(n)]
+
+        for i in range(n):
+            for j in range(m):
+                tmp=min(rowSum[i],colSum[j])
+                matrix[i][j]=tmp
+                rowSum[i]-=tmp
+                colSum[j]-=tmp
+        return matrix
+
+# Approach 2:
+class Solution:
+    def restoreMatrix(self, rowSum: List[int], colSum: List[int]) -> List[List[int]]:
+        rowheap,colheap = [],[]
+        rowlength,collength  = len(rowSum),len(colSum)
+        
+        for i in range(rowlength):
+            heappush(rowheap,(rowSum[i],i))
+            
+        for i in range(collength):
+            heappush(colheap,(colSum[i],i))
+        
+        matrix = [[0 for _ in range(collength)] for _ in range(rowlength)]
+            
+        while rowheap and colheap:
+            
+            row,rowidx = heappop(rowheap)
+            col,colidx = heappop(colheap)
+            
+            if  row < col:
+                
+                matrix[rowidx][colidx] = row
+                if col- row !=0:
+                    heappush(colheap,(col-row,colidx))
+                
+            else:
+                
+                matrix[rowidx][colidx] = col
+                if  row - col!=0:
+                    heappush(rowheap,(row-col,rowidx))
+        
+        return matrix
