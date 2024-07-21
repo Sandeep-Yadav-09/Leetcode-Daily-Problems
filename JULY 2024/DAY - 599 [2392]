@@ -1,0 +1,79 @@
+** 2392. Build a Matrix With Conditions **
+
+# Approach 1:
+class Solution:
+    def buildMatrix(self, k: int, rowConditions: List[List[int]], colConditions: List[List[int]]) -> List[List[int]]:
+        def f(cond):
+            g = defaultdict(list)
+            indeg = [0] * (k + 1)
+            for a, b in cond:
+                g[a].append(b)
+                indeg[b] += 1
+            q = deque([i for i, v in enumerate(indeg[1:], 1) if v == 0])
+            res = []
+            while q:
+                for _ in range(len(q)):
+                    i = q.popleft()
+                    res.append(i)
+                    for j in g[i]:
+                        indeg[j] -= 1
+                        if indeg[j] == 0:
+                            q.append(j)
+            return None if len(res) != k else res
+
+        row = f(rowConditions)
+        col = f(colConditions)
+        if row is None or col is None:
+            return []
+        ans = [[0] * k for _ in range(k)]
+        m = [0] * (k + 1)
+        for i, v in enumerate(col):
+            m[v] = i
+        for i, v in enumerate(row):
+            ans[i][m[v]] = v
+        return ans
+
+# Approach 2:
+class Solution:
+    def buildMatrix(self, k: int, rowConditions: List[List[int]], colConditions: List[List[int]]) -> List[List[int]]:
+        
+        def topSort(conditions):
+            graph = [[] for _ in range(k)]
+            indegrees = [0 for _ in range(k)]
+            for u, v in conditions:
+                graph[u - 1].append(v - 1)
+                indegrees[v - 1] += 1
+            
+            queue = deque()
+            for node, indegree in enumerate(indegrees):
+                if indegree == 0:
+                    queue.append(node)
+
+            topSortNodes = []
+            while len(queue) > 0:
+                currNode = queue.popleft()
+                topSortNodes.append(currNode)
+                for neighbor in graph[currNode]:
+                    indegrees[neighbor] -= 1
+                    if indegrees[neighbor] == 0:
+                        queue.append(neighbor)
+            
+            return topSortNodes
+        
+        topSortRows = topSort(rowConditions)
+        topSortCols = topSort(colConditions)
+
+        if len(topSortRows) < k or len(topSortCols) < k:
+            return []
+
+        res = [[0 for _ in range(k)] for _ in range(k)]
+        rowIndexes = [0 for _ in range(k)]
+        colIndexes = [0 for _ in range(k)]
+        for rowIndex, node in enumerate(topSortRows):
+            rowIndexes[node] = rowIndex
+        for colIndex, node in enumerate(topSortCols):
+            colIndexes[node] = colIndex
+        
+        for node, (rowIndex, colIndex) in enumerate(zip(rowIndexes, colIndexes)):
+            res[rowIndex][colIndex] = node + 1  
+        return res
