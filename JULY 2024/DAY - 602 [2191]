@@ -1,0 +1,35 @@
+** 2191. Sort the Jumbled Numbers **
+  
+# Approach 1:
+class Solution:
+    def sortJumbled(self, mapping: List[int], nums: List[int]) -> List[int]:
+        mappedNums = {}
+        for num in nums:
+            if num in mappedNums: continue
+            digits = map(int, str(num))
+            mappedNum = ''.join(str(mapping[d]) for d in digits)
+            mappedNums[num] = int(mappedNum)
+
+        return sorted(nums, key = mappedNums.get)
+          
+# Approach 2:
+class Solution:
+    def sortJumbled(self, mapping: List[int], nums: List[int]) -> List[int]:
+        def convert(x):
+            if x==0: return mapping[0]
+            z=0
+            pow10=1
+            while x>0:
+                q, r=divmod(x, 10)
+                z+=mapping[r]*pow10
+                x=q
+                pow10*=10
+            return z
+        n=len(nums)
+        mapNum=[]
+        for i, x in enumerate(nums):
+            mapNum.append([convert(x), i, x])
+        mapNum.sort()
+        for i in range(n):
+            nums[i]=mapNum[i][2]
+        return nums
