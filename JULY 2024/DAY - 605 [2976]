@@ -1,0 +1,74 @@
+** 2976. Minimum Cost to Convert String I **
+
+# Approach 1:
+from collections import defaultdict
+import heapq
+from typing import List
+
+class Solution:
+    def minimumCost(self, source: str, target: str, original: List[str], changed: List[str], cost: List[int]) -> int:
+        adj = defaultdict(list)
+        for src, dst, cur_cost in zip(original, changed, cost):
+            adj[src].append((dst, cur_cost))
+        
+        def dijkstra(src):
+            heap = [(0, src)]  
+            min_cost_map = {}  
+            while heap:
+                cur_cost, node = heapq.heappop(heap)
+                if node in min_cost_map:
+                    continue
+                min_cost_map[node] = cur_cost
+                for nei, nei_cost in adj[node]:
+                    heapq.heappush(heap, (cur_cost + nei_cost, nei))
+            return min_cost_map
+        
+        min_cost_maps = {c: dijkstra(c) for c in set(source)}
+        
+        res = 0  
+        for src, dst in zip(source, target):
+            if dst not in min_cost_maps[src]:
+                return -1  
+            res += min_cost_maps[src][dst]
+        
+        return res
+
+# Approach 2:
+class Solution:
+    def minimumCost(self, source: str, target: str, original: List[str], changed: List[str], cost: List[int]) -> int:
+        graph = defaultdict(list)
+
+        for ori,ch,co in zip(original,changed,cost):
+            graph[ori].append((ch,co))
+
+        cache = {}
+        def bfs(src,dest):
+            if (src,dest) in cache:
+                return cache[(src,dest)]
+            heap = [(0,src)] #cost,node
+            visited = set()
+
+            while heap:
+                cost,node = heappop(heap)
+                
+                if node==dest:
+                    cache[(src,node)] = cost
+                    return cost
+                
+                if node in visited:
+                    continue
+                
+                visited.add(node)
+                for nei,w in graph[node]:
+                    heappush(heap,(cost+w,nei))
+            
+            return -1
+
+        ans = 0
+        for s,t in zip(source,target):
+            cost = bfs(s,t)
+            if cost==-1:
+                return -1
+            ans+=cost
+
+        return ans
