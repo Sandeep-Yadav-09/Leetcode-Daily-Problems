@@ -1,0 +1,59 @@
+** 2045. Second Minimum Time to Reach Destination **
+
+# Approach 1:
+class Solution:
+    def secondMinimum(self, n: int, edges: List[List[int]], time: int, change: int) -> int:
+        g = [[] for _ in range(n + 1)]
+        for u, v in edges:
+            g[u].append(v)
+            g[v].append(u)
+        
+        d = [[float("inf"), float("inf")] for _ in range(n + 1)]
+        pq = [(0, 1)]
+        while pq:
+            t1, u1 = heapq.heappop(pq)
+            if u1 == n and d[u1][1] != float("inf"): return d[u1][1]
+            t = time
+            if (t1 // change) % 2 == 1: t += (t1 // change + 1) * change - t1
+            for u2 in g[u1]:
+                if t1 + t < d[u2][0]:
+                    d[u2][0], d[u2][1] = t1 + t, d[u2][0]
+                    heapq.heappush(pq, (t1 + t, u2))
+                if d[u2][0] < t1 + t < d[u2][1]:
+                    d[u2][1] = t1 + t
+                    heapq.heappush(pq, (t1 + t, u2))
+        return -1
+
+# Approach 2:
+class Solution:
+    def secondMinimum(self, n: int, edges: List[List[int]], time: int, change: int) -> int:
+
+        graph = [[] for _ in range(n+1)]
+        for u, v in edges:
+            graph[u].append(v)
+            graph[v].append(u)
+
+        distance = [[float('inf'), float('inf')] for _ in range(n+1)]
+        queue = deque([(0, 1)])
+
+        while queue:
+            curr_time, curr_node = queue.popleft()
+
+            for child in graph[curr_node]:
+                
+                if (curr_time // change) % 2 == 1:
+                    wait_time = change - (curr_time % change)
+                else:
+                    wait_time = 0
+                
+                new_time = curr_time + wait_time + time
+
+                if new_time < distance[child][0]:
+                    distance[child][1] = distance[child][0]
+                    distance[child][0] = new_time
+                    queue.append((new_time, child))
+                elif distance[child][0] < new_time < distance[child][1]:
+                    distance[child][1] = new_time
+                    queue.append((new_time, child))
+        
+        return distance[n][1]
