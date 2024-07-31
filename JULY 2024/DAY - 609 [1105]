@@ -1,0 +1,43 @@
+** 1105. Filling Bookcase Shelves **
+
+# Approach 1:
+import functools
+
+class Solution:
+    def minHeightShelves(self, books: List[List[int]], shelfWidth: int) -> int:
+        @functools.lru_cache(None)
+        def dp(i, width, height):
+            if i == len(books):
+                return 0
+            res = float('inf')
+            if books[i][0] + width <= shelfWidth:
+                res = min(res, max(height, books[i][1]) - height + 
+						  dp(i+1, width + books[i][0], max(height, books[i][1])))
+            res = min(res, books[i][1] + dp(i+1, books[i][0], books[i][1]))
+            return res
+        return dp(0, 0, 0)
+
+# Approach 2:
+class Solution:
+    def minHeightShelves(self, books: List[List[int]], shelfWidth: int) -> int:
+        self.memo = [None] * len(books)
+        return self.solve(books, shelfWidth, 0)
+    
+    def solve(self, books: List[List[int]], shelfWidth: int, ind: int) -> int:
+        if ind == len(books):
+            return 0
+        if self.memo[ind] is not None:
+            return self.memo[ind]
+        
+        ans = float('inf')
+        maxH = 0
+        width = 0
+        for i in range(ind, len(books)):
+            width += books[i][0]
+            if width > shelfWidth:
+                break
+            maxH = max(maxH, books[i][1])
+            ans = min(ans, maxH + self.solve(books, shelfWidth, i + 1))
+        
+        self.memo[ind] = ans
+        return ans
