@@ -1,0 +1,17 @@
+** 2053. Kth Distinct String in an Array **
+
+# Approach 1:
+class Solution:
+    def kthDistinct(self, arr: List[str], k: int) -> str:
+        arr = [i for i in arr if arr.count(i) == 1]
+        return "" if k > len(arr) else arr[k - 1]
+
+# Approach 2:
+class Solution:
+    def kthDistinct(self, arr: List[str], k: int) -> str:
+        freq = Counter(arr)
+        for s in arr: 
+            if freq[s] == 1: 
+                k -= 1
+                if k == 0: return s
+        return ""
