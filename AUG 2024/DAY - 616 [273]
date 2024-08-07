@@ -1,0 +1,53 @@
+** 273. Integer to English Words **
+
+# Approach 1:
+class Solution:
+    def numberToWords(self, num: int) -> str:
+        self.lessThan20 = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"]
+        self.tens = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"]
+        self.thousands = ["", "Thousand", "Million", "Billion"];
+        if num == 0 :
+            return "Zero"
+        res = ''
+        i = 0
+        while num>0:
+            if num%1000 != 0:
+                res = self.helper(num%1000) + self.thousands[i] + " " + res
+            num //= 1000
+            i += 1
+        return res.strip()
+    
+    def helper(self, num):
+        if num == 0:
+            return ""
+        if num < 20:
+            return self.lessThan20[num] + " "
+        if num < 100:
+            return self.tens[num//10] + " " + self.helper(num%10)
+        if num < 1000:
+            return self.lessThan20[num//100] + " Hundred " + self.helper(num%100)
+
+# Approach 2:
+class Solution:
+    def __init__(self):
+        self.n2w = {
+               1e9: "Billion", 1e6: "Million", 1e3: "Thousand", 1e2: "Hundred",
+               90:  "Ninety", 80:  "Eighty", 70:  "Seventy",
+               60:  "Sixty", 50:  "Fifty", 40:  "Forty",
+               30:  "Thirty", 20:  "Twenty", 19: "Nineteen",
+               18:  "Eighteen", 17: "Seventeen", 16: "Sixteen",
+               15:  "Fifteen", 14: "Fourteen", 13: "Thirteen",
+               12:  "Twelve", 11:  "Eleven", 10:  "Ten",
+               9:   "Nine", 8:   "Eight", 7:   "Seven",
+               6:   "Six", 5:   "Five", 4: "Four", 3: "Three",
+               2: "Two", 1: "One", 0: "Zero"
+        }
+
+    def numberToWords(self, n: int) -> str:
+        if n <= 20: return self.n2w[n]
+        for div in self.n2w:
+            d, r = divmod(n, div)
+            if not d: continue
+            s1 = self.numberToWords(d) + " " if div >= 100 else ""
+            s2 = " " + self.numberToWords(r) if r else ""
+            return s1 + self.n2w[div] + s2
