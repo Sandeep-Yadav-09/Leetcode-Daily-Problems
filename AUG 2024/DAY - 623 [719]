@@ -1,0 +1,26 @@
+** 719. Find K-th Smallest Pair Distance **
+
+# Approach 1:
+class Solution:
+    def smallestDistancePair(self, nums: List[int], k: int) -> int:
+        def check(dist: int)-> bool:
+            i = j = cnt = 0
+            for i in range(n):                             
+                while j < n and nums[j] - nums[i] <= dist:  
+                    cnt += j - i
+                    j += 1
+            return cnt >= k   
+
+        nums.sort()
+        n, left, right = len(nums), 0, nums[-1] - nums[0]
+
+        while left < right:                              
+            mid = (left + right) // 2
+            if check(mid): right = mid
+            else: left = mid + 1
+        return left
+
+# Approach 2:
+class Solution:
+    def smallestDistancePair(self, n: List[int], k: int) -> int:
+        return n.sort() or bisect_left(range(n[-1]-n[0]), k, key= lambda d: reduce(lambda c, r: c+r-bisect_left(n, n[r]-d), range(len(n))))
