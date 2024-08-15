@@ -1,0 +1,51 @@
+** 860. Lemonade Change **
+
+# Approach 1:
+class Solution:
+    def lemonadeChange(self, bills: List[int]) -> bool:
+        if bills[0] != 5:
+            return False
+
+        five_dollars = 0
+        ten_dollars = 0
+
+        for x in bills:
+            if x == 5:
+                five_dollars += 1
+            elif x == 10:
+                if five_dollars > 0:
+                    five_dollars -= 1
+                else:
+                    return False
+                ten_dollars += 1
+            else:
+                if five_dollars > 0 and ten_dollars > 0:
+                    five_dollars -= 1
+                    ten_dollars -= 1
+                elif five_dollars > 2:
+                    five_dollars -= 3
+                else:
+                    return False
+            print(five_dollars, ten_dollars)
+        return True
+
+# Approach 2:
+class Solution(object):
+    def lemonadeChange(self, bills):
+        count = {5: 0, 10: 0}
+        for bill in bills:
+            if bill == 5:
+                count[5] += 1
+            elif bill == 10:
+                if count[5]:
+                    count[5] -= 1
+                    count[10] += 1
+                else: return False
+            else:
+                if count[5] and count[10]:
+                    count[5] -= 1
+                    count[10] -= 1
+                elif count[5] >= 3:
+                    count[5] -= 3
+                else: return False
+        return True
