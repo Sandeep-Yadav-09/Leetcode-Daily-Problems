@@ -1,0 +1,43 @@
+** 624. Maximum Distance in Arrays **
+
+# Approach 1:
+class Solution:
+    def maxDistance(self, arrays: List[List[int]]) -> int:
+        res, minn, maxx = 0, inf, -inf
+        for b in arrays:
+            res = max(res, b[-1] - minn, maxx - b[0])
+            minn = min(minn, b[0])
+            maxx = max(maxx, b[-1])
+            
+        return res
+
+# Approach 2:
+class Solution:
+    def maxDistance(self, arrays: List[List[int]]) -> int:
+        max1, max2 = (-inf, 0), (-inf, 0)
+        min1, mins2 = (inf, 0), (inf, 0)
+
+        for i, a in enumerate(arrays):
+            # get largest and second largest
+            if a[-1] > max1[0]:
+                max2 = max1
+                max1 = (a[-1], i)
+            elif a[-1] > max2[0]:
+                max2 = (a[-1], i)
+
+            # get smallest and second smallest
+            if a[0] < min1[0]:
+                min2 = min1
+                min1 = (a[0], i)
+            elif a[0] < min2[0]:
+                min2 = (a[0], i)
+
+        # true largest and true smallest are from different arrays
+        if max1[1] != min1[1]:
+            return max1[0] - min1[0]
+        
+        # either second largest and smallest...
+        t1 = max2[0] - min1[0]
+        # ...or largest and second smallest
+        t2 = max1[0] - min2[0]
+        return max(t1, t2)
