@@ -1,0 +1,35 @@
+** 1140. Stone Game II **
+
+# Approach 1:
+class Solution:
+    def stoneGameII(self, piles: List[int]) -> int:
+        l = len(piles)
+        @cache
+        def dp(i,m):
+            if i >= l :
+                return 0
+            val = max(sum(piles[i:]) - dp(i+x,max(x,m)) for x in range(1, (2*m) + 1))
+            return val
+        return dp(0,1)
+
+# Approach 2:
+class Solution:
+    def stoneGameII(self, piles: List[int]) -> int:
+        postfix = [0 for _ in piles]
+        csum = 0
+        for i in range(len(piles)-1 , -1, -1):
+            csum += piles[i]
+            postfix[i] = csum
+        @functools.cache
+        def dp(M, c):
+            if 2 * M >= len(piles) - c:
+                return sum(piles[c:])
+            else:
+                val = 0
+                cmax = 0
+                for i in range(c, min(len(piles), c + 2* M)):
+                    val += piles[i]
+                    cmax = max(val + postfix[i + 1] - dp(max(i - c + 1, M), i + 1), cmax)
+                return cmax
+
+        return dp(1, 0)
