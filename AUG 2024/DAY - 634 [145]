@@ -1,0 +1,29 @@
+** 145. Binary Tree Postorder Traversal **
+
+# Approach 1:
+class Solution:
+    def postorderTraversal(self, root: TreeNode) -> List[int]:
+        res = []
+        def postorder(root):
+            if not root:
+                return 
+            postorder(root.left)
+            postorder(root.right)
+            res.append(root.val)
+        postorder(root)
+        return res
+
+# Approach 2:
+class Solution:
+    def postorderTraversal(self, root: TreeNode) -> List[int]:
+        res, stack = [], [(root, False)]
+        while stack:
+            node, visited = stack.pop()  # the last element
+            if node:
+                if visited:
+                    res.append(node.val)
+                else:  # postorder: left -> right -> root
+                    stack.append((node, True))
+                    stack.append((node.right, False))
+                    stack.append((node.left, False))
+        return res
