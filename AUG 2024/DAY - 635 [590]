@@ -1,0 +1,33 @@
+** 590. N-ary Tree Postorder Traversal **
+
+# Approach 1:
+class Solution:
+    def postorder(self, root: 'Node') -> List[int]:
+        if not root:
+            return []
+        
+        stack = [root]
+        output = []
+        
+        while stack:
+            node = stack.pop()
+            output.append(node.val)
+            if node.children:
+                stack.extend(node.children)
+        
+        return output[::-1]
+
+# Approach 2:
+class Solution:
+    def postorder(self, root: 'Node') -> List[int]:
+        if not root:
+            return []
+
+        def traversal(root):
+            for child in root.children:
+                traversal(child)
+            postorder_traversal.append(root.val)
+
+        postorder_traversal = []
+        traversal(root)
+        return postorder_traversal
