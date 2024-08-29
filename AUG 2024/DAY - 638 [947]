@@ -1,0 +1,60 @@
+** 947. Most Stones Removed with Same Row or Column **
+
+# Approach 1:
+class Solution:
+    def removeStones(self, stones: List[List[int]]) -> int:
+        x,y=defaultdict(list),defaultdict(list)
+        for i in stones:
+            x[i[0]].append(i[1])
+            y[i[1]].append(i[0])
+        neighbour,visited=0,set()
+        for i in stones:
+            if (i[0],i[1]) not in visited:
+                q=deque()
+                q.append(i)
+                while q:
+                    stonex,stoney=q.popleft()
+                    if (stonex,stoney) not in visited:
+                        visited.add((stonex,stoney))
+                        for j in x[stonex]:
+                            q.append([stonex,j])
+                        for j in y[stoney]:
+                            q.append([j,stoney])
+                neighbour+=1
+        return len(stones)-neighbour
+
+# Approach 2:
+class Solution:
+    def removeStones(self, stones: List[List[int]]) -> int:
+        n = len(stones)
+        rank = [1] * n
+        parent = [i for i in range(n)]
+        
+        def union(i, j):
+            i, j = find(i), find(j)
+            if i == j:
+                return 0
+            if rank[i] < rank[j]:
+                i, j = j, i
+            rank[i] += rank[j]
+            parent[j] = parent[i]
+            return 1
+        
+        def find(i):
+            while i != parent[i]:
+                parent[i] = i = parent[parent[i]]
+            return i
+        
+        rows, cols = {}, {}
+        removed = 0
+        for i, (row, col) in enumerate(stones):
+            if row in rows:
+                removed += union(i, rows[row])
+            else:
+                rows[row] = i
+            if col in cols:
+                removed += union(i, cols[col])
+            else:
+                cols[col] = i
+        
+        return removed
