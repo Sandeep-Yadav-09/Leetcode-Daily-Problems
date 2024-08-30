@@ -1,0 +1,109 @@
+** 2699. Modify Graph Edge Weights **
+
+# Approach 1:
+class Solution:
+    def modifiedGraphEdges(self, n, edges, source, destination, target):
+        dict1, ans, res = defaultdict(set), [], []
+
+        for i,j,w in edges:
+            if w != -1:
+                dict1[i].add((j,w))
+                dict1[j].add((i,w))
+                res.append([i,j,w])
+            else:
+                ans.append((i,j))
+
+        def dfs(src,des):
+            dist = [2*10**9 for _ in range(n)]
+
+            dist[src] = 0
+
+            stack, res = [(src,0)], []
+
+            while stack:
+                node,val = heappop(stack)
+
+                for neighbor,weight in dict1[node]:
+                    if dist[neighbor] > weight + val:
+                        dist[neighbor] = weight + val
+                        heappush(stack,(neighbor,weight+val))
+
+            return dist
+
+    
+        if dfs(source,destination)[destination] < target: return []
+
+        i, m = 0, len(ans)
+
+        while i < m and dfs(source,destination)[destination] > target:
+            a,b = ans[i]
+            i += 1
+            dict1[a].add((b,1))
+            dict1[b].add((a,1))
+
+            if dfs(source,destination)[destination] <= target:
+                res.append([a,b,1+target-dfs(source,destination)[destination]])
+                break
+
+            res.append([a,b,1])
+
+        if dfs(source,destination)[destination] > target: return []
+
+        while i < m:
+            a,b = ans[i]
+            res.append([a,b,2*10**9])
+            i += 1
+
+        return res
+
+# Approach 2:
+from collections import defaultdict
+
+class Solution:
+    def modifiedGraphEdges(self, n: int, edges: List[List[int]], source: int, destination: int, target: int) -> List[List[int]]:
+        MAX_DIST = int(2 * 10e9)
+        graph = defaultdict(dict)
+        
+        for u, v, dist in edges:
+            if dist != -1:
+                graph[u][v] = graph[v][u] = dist
+
+        def dijkstra():
+            heap = [(0, source)]
+            min_dist = [MAX_DIST] * n
+            min_dist[source] = 0
+            visited = set()
+
+            while heap:
+                u_dist, u = heapq.heappop(heap)
+                visited.add(u)
+                if u == destination:
+                    return u_dist
+                for v in graph[u]:
+                    if v not in visited:
+                        v_dist = graph[u][v]
+                        if u_dist + v_dist < min_dist[v]:
+                            min_dist[v] = u_dist + v_dist
+                            heapq.heappush(heap, (min_dist[v], v))
+            
+            return MAX_DIST
+
+        curr_shortest_dist = dijkstra()
+        if curr_shortest_dist < target:
+            return []
+        else:
+            for i in range(len(edges)):
+                u, v, dist = edges[i]
+                if dist == -1:
+
+                    if curr_shortest_dist == target:
+                        edges[i][2] = target + 1
+                    else:
+                        edges[i][2] = 1
+                        graph[u][v] = graph[v][u] = 1
+                        curr_shortest_dist = dijkstra()
+                        if curr_shortest_dist <= target:
+                            edges[i][2] = edges[i][2] + target - curr_shortest_dist
+                            curr_shortest_dist = target
+
+        return edges if curr_shortest_dist == target else []        
