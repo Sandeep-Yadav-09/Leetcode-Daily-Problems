@@ -1,0 +1,25 @@
+** 2022. Convert 1D Array Into 2D Array **
+
+# Approach 1:
+class Solution:
+    def construct2DArray(self, original: List[int], m: int, n: int) -> List[List[int]]:
+
+        if m*n != len(original):
+            return []
+        
+        q = []
+
+        for i in range(0, len(original), n):
+            q.append(original[i:i+n])
+            
+        return q
+
+# Approach 2:
+import numpy
+
+class Solution:
+    def construct2DArray(self, original, m, n):
+        try:
+            return numpy.reshape(original, (m, n)).tolist()
+        except ValueError:
+            return []
