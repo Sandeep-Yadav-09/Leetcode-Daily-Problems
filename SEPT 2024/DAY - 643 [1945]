@@ -1,0 +1,25 @@
+** 1945. Sum of Digits of String After Convert **
+
+# Approach 1:
+class Solution:
+    def getLucky(self, s: str, k: int) -> int:
+        number = ''
+        for x in s:
+            number += str(ord(x) - ord('a') + 1)
+            print(number)
+        
+        while k > 0:
+            temp = 0
+            for x in number:
+                temp += int(x)  
+            number = str(temp)  
+            k -= 1
+        return int(number)
+
+# Approach 2:
+class Solution:
+    def getLucky(self, s: str, k: int) -> int:
+        s = ''.join(str(ord(ch)-96) for ch in s)
+        for _ in range(k):
+            s = sum(map(int, str(s)))
+        return s
