@@ -1,0 +1,31 @@
+** 3217. Delete Nodes From Linked List Present in Array **
+
+# Approach 1:
+class Solution:
+    def modifiedList(self, nums: List[int], head: Optional[ListNode]) -> Optional[ListNode]:        
+        nums = set(nums)        
+        
+        while head.val in nums:                 # <-- 1
+            head = head.next
+
+        ans = ListNode(head.val, head)          # <-- 2
+ 
+        while head and head.next:               # <-- 3
+            if head.next.val in nums:
+                head.next = head.next.next
+
+            else:                               # <-- 4
+                head = head.next
+
+        return ans.next                         # <-- 5
+
+# Approach 2:
+class Solution:
+    def modifiedList(self, nums: List[int], head: Optional[ListNode]) -> Optional[ListNode]:
+        s = set(nums)
+        dummy = tmp = ListNode()
+        dummy.next = head
+        while tmp.next:
+            if tmp.next.val in s: tmp.next = tmp.next.next
+            else: tmp = tmp.next
+        return dummy.next
