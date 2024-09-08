@@ -1,0 +1,57 @@
+** 725. Split Linked List in Parts **
+
+# Approach 1:
+class Solution:
+    def splitListToParts(self, head: Optional[ListNode], k: int) -> List[Optional[ListNode]]:
+        n = 0
+        tmp = head
+        while tmp:
+            n+=1
+            tmp = tmp.next
+
+        size,left = n//k,n%k
+        chunkHead = head
+        res = []
+        
+        for _ in range(k):
+
+            nodeSize = size + (1 if left>0 else 0)
+            tmp = chunkHead
+            prev = None
+            for _ in range(nodeSize):
+                prev = tmp
+                tmp = tmp.next
+            
+            if prev:
+                prev.next = None
+            res.append(chunkHead)
+            chunkHead = tmp
+            left-=1
+        return res
+
+# Approach 2:
+class Solution:
+    def splitListToParts(self, head: Optional[ListNode], k: int) -> List[Optional[ListNode]]:
+        length, current, parts = 0, head, []
+        
+        while current:
+            length += 1
+            current = current.next
+        
+        base_size, extra = divmod(length, k)
+        current = head
+        
+        for _ in range(k):
+            dummy = ListNode()
+            part_head = dummy
+            
+            for _ in range(base_size + (extra > 0)):
+                dummy.next, current, dummy = current, current.next, current
+            
+            if extra > 0:
+                extra -= 1
+  
+            dummy.next = None
+            parts.append(part_head.next)
+        
+        return parts        
