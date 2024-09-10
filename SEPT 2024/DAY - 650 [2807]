@@ -1,0 +1,23 @@
+** 2807. Insert Greatest Common Divisors in Linked List **
+
+# Approach 1:
+class Solution:
+    def insertGreatestCommonDivisors(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        node = head
+        
+        while node.next:
+           node.next, node = ListNode(gcd(node.val, node.next.val), node.next), node.next
+           
+        return head
+
+# Approahc 2:
+class Solution:
+    def insertGreatestCommonDivisors(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        prv, nxt = head, head.next
+        while nxt:
+            new_val = math.gcd(prv.val, nxt.val)
+            new_node = ListNode(new_val)
+            prv.next, new_node.next = new_node, nxt
+            prv = nxt
+            nxt = nxt.next
+        return head
