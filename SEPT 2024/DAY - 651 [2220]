@@ -1,0 +1,17 @@
+** 2220. Minimum Bit Flips to Convert Number **
+
+# Approach 1:
+class Solution:
+    def minBitFlips(self, start: int, goal: int) -> int:
+        xor_value = start ^ goal
+        return bin(xor_value).count('1')
+
+# Approach 2:
+class Solution:
+    def minBitFlips(self, start: int, goal: int) -> int:
+        res = start ^ goal
+        cnt = 0
+        while res:
+            res &= res - 1
+            cnt += 1
+        return cnt
