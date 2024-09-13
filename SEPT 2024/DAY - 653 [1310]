@@ -1,0 +1,15 @@
+** 1310. XOR Queries of a Subarray **
+
+# Approach 1:
+class Solution:
+    def xorQueries(self, arr: List[int], queries: List[List[int]]) -> List[int]:
+        b = [arr[0]]
+        for i in arr[1:]: b.append(b[-1]^i)
+        b.append(0)
+        return [b[l-1]^b[r] for l,r in queries]
+
+# Approach 2:
+class Solution:
+    def xorQueries(self, arr: list[int], queries: list[list[int]]) -> list[int]:
+        arr = list(accumulate(arr, xor, initial = 0))
+        return [arr[l]^arr[r+1] for l,r in queries]
