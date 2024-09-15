@@ -1,0 +1,26 @@
+** 1371. Find the Longest Substring Containing Vowels in Even Counts **
+
+# Approach 1:
+class Solution:
+    def findTheLongestSubstring(self, s: str) -> int:
+        seen = {0: -1}
+        res = cur = 0
+        for i, c in enumerate(s):
+            cur ^= 1 << ('aeiou'.find(c) + 1) >> 1
+            seen.setdefault(cur, i)
+            res = max(res, i - seen[cur])
+        return res
+
+# Approach 2:
+class Solution:
+    def findTheLongestSubstring(self, s: str) -> int:
+        vowels = {'a': 1, 'e': 2, 'i': 4, 'o': 8, 'u': 16}
+        d, n, r = {0: -1}, 0, 0
+        for i, c in enumerate(s):
+            if c in vowels:
+                n ^= vowels[c]
+            if n not in d:
+                d[n] = i
+            else:
+                r = max(r, i - d[n])
+        return r
