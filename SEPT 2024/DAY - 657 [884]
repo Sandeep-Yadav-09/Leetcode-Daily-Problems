@@ -1,0 +1,20 @@
+** 884. Uncommon Words from Two Sentences **
+
+# Approach 1:
+from collections import Counter as c
+
+class Solution:
+    def uncommonFromSentences(self, s1: str, s2: str) -> List[str]:
+        return [k for k, v in c(s1.split() + s2.split()).items() if v == 1]
+
+# Approach 2:
+class Solution:
+    def uncommonFromSentences(self, s1: str, s2: str) -> List[str]:
+        words_s1 = s1.split()
+        words_s2 = s2.split()
+        
+        all_words = words_s1 + words_s2
+        
+        word_count = Counter(all_words)
+        
+        return [word for word in word_count if word_count[word] == 1]
