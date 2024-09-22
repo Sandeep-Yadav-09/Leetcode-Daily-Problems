@@ -1,0 +1,55 @@
+** 440. K-th Smallest in Lexicographical Order **
+
+# Approach 1:
+class Solution:
+    def getReqNum(self, a, b, n):
+        gap = 0
+        while a <= n:
+            gap += min(n + 1, b) - a
+            a *= 10
+            b *= 10
+        return gap
+
+    def findKthNumber(self, n: int, k: int) -> int:
+        num = 1
+        i = 1
+        while i < k:
+            req = self.getReqNum(num, num + 1, n)
+            if i + req <= k:
+                i += req
+                num += 1
+            else:
+                i += 1
+                num *= 10
+        return num
+
+# Approach 2:
+class Solution:
+    def findKthNumber(self, n: int, k: int) -> int:
+        decrement_amount = 1
+        base = 1
+        while n // base >= 10:
+            decrement_amount = decrement_amount * 10 + 1
+            base *= 10
+
+        cur = 1 
+        while k > 1:
+            decrease_distance = False
+            furthest = max(1, min((k - 1) // decrement_amount, n // base - cur))
+            potential_next_cur = cur + furthest
+            potential_next_k = k - decrement_amount * furthest
+            if potential_next_cur > n // base:
+                potential_next_k += base - (n + 1) % base
+                decrease_distance = True
+            
+            if potential_next_k < 1:
+                k -= 1
+                cur *= 10
+                decrease_distance = True
+            else:
+                cur = potential_next_cur
+                k = potential_next_k
+            if decrease_distance:
+                base //= 10
+                decrement_amount //= 10
+        return cur
