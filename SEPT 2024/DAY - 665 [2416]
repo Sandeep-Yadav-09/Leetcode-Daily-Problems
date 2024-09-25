@@ -1,0 +1,52 @@
+** 2416. Sum of Prefix Scores of Strings **
+
+# Approach 1:
+class TrieNode:
+    def __init__(self):
+        self.children = {}
+        self.prefix_count = 0
+
+class Solution:
+    def sumPrefixScores(self, words: List[str]) -> List[int]:
+        root = TrieNode()
+        
+        for word in words:
+            current = root
+            for char in word:
+                if char not in current.children:
+                    current.children[char] = TrieNode()
+                current = current.children[char]
+                current.prefix_count += 1  
+        
+        result = []
+        for word in words:
+            current = root
+            score = 0
+            for char in word:
+                current = current.children[char]
+                score += current.prefix_count  
+            result.append(score)
+        
+        return result
+
+# Approach 2:
+class Solution:
+    def sumPrefixScores(self, words: List[str]) -> List[int]:
+        ws = dict()
+
+        for word in words:
+            buffer = ""
+            for c in word:
+                buffer += c
+                if buffer not in ws:
+                    ws[buffer] = 0
+                ws[buffer] += 1
+
+        counts = [0] * len(words)
+        for i, word in enumerate(words):
+            buffer = ""
+            for c in word:
+                buffer += c
+                if buffer in ws:
+                    counts[i] += ws[buffer]
+        return counts
