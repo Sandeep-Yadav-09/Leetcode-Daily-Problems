@@ -1,0 +1,68 @@
+** 729. My Calendar I **
+
+# Approach 1:
+from sortedcontainers import SortedList
+
+START = 0
+END = 1
+
+class MyCalendar:
+    def __init__(self):
+        self.booked = SortedList()
+
+
+    def book(self, start: int, end: int) -> bool:
+        if not self.booked:
+            self.booked.add((start, end))
+            return True
+        
+        # Check most left case
+        left = self.booked[0]
+        if end <= left[END]:
+            if end <= left[START]:
+                self.booked.add((start, end))
+                return True
+            return False
+        
+        # Check most right case
+        right = self.booked[-1]
+        if start >= right[START]:
+            if start >= right[END]:
+                self.booked.add((start, end))
+                return True
+            return False
+        
+        # Check middle case
+        l, r = 0, len(self.booked)-1
+        while l <= r:
+            mid = (l + r)//2
+            if self.booked[mid][START] <= start < self.booked[mid+1][START]:
+                if self.booked[mid][END] <= start and end <= self.booked[mid+1][START]:
+                    self.booked.add((start, end))
+                    return True
+                return False
+            elif self.booked[mid][START] <= start:
+                l = mid + 1
+            else:
+                r = mid - 1
+
+# Approach 2:
+from collections import Counter
+
+class MyCalendar:
+    def __init__(self):
+        self.delta = Counter()
+
+    def book(self, start, end) -> bool:
+        self.delta[start] += 1
+        self.delta[end] -= 1
+
+        active = 0
+        for boundary in sorted(self.delta):
+            active += self.delta[boundary]
+            if active > 1:
+                # revert the updates
+                self.delta[start] -= 1
+                self.delta[end] += 1
+                return False
+        return True
