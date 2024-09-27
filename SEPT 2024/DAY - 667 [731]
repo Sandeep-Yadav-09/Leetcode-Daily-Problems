@@ -1,0 +1,43 @@
+** 731. My Calendar II **
+
+# Approach 1:
+from sortedcontainers import SortedList
+
+class MyCalendarTwo:
+
+    def __init__(self):
+        self.calendar = SortedList()
+
+    def book(self, start: int, end: int) -> bool:
+        self.calendar.add((start,1))
+        self.calendar.add((end,-1))
+
+        total = 0 
+
+        for i,j in self.calendar:
+            total += j 
+
+            if total == 3:
+                self.calendar.remove((start,1))
+                self.calendar.remove((end,-1))
+                return False 
+        return True
+
+# Approach 2:
+class MyCalendarTwo:
+
+    def __init__(self):
+        self.overlap = []  
+        self.booking = []
+
+    def book(self, start: int, end: int) -> bool:
+        for i, j in self.overlap:
+            if max(start, i) < min(end, j): 
+                return False  # Triple booking, so reject the event
+        
+        for i, j in self.booking:
+            if max(start, i) < min(end, j):  
+                self.overlap.append([max(start, i), min(end, j)])  
+        
+        self.booking.append([start, end])
+        return True
