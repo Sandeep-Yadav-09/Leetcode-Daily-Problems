@@ -1,0 +1,182 @@
+** 432. All O`one Data Structure **
+
+# Approach 1:
+class LinkedList:
+    def __init__(self, val, cnt=0, next=None, prev=None):
+        self.val = val
+        self.cnt = cnt
+        self.next = next
+        self.prev = prev
+
+class AllOne:
+
+    def __init__(self):
+        self.head = LinkedList(val='')
+        self.tail = LinkedList(val='', cnt=float('inf'), prev=self.head)
+        self.head.next = self.tail
+        self.dict = {}
+
+    def swap_nodes(self, node1, node2, node3, node4):
+        node1.next = node3
+        node3.prev, node3.next = node1, node2
+        node2.prev, node2.next = node3, node4
+        node4.prev = node2
+        return (node1, node3, node2, node4)
+
+    def inc(self, key: str) -> None:
+        if key not in self.dict:
+            prev, curr = self.head, self.head.next
+            node = LinkedList(val=key, cnt=1, next=curr, prev=prev)
+            prev.next = node
+            curr.prev = node
+            self.dict[key] = node
+            return 
+
+        node = self.dict[key]
+        node.cnt += 1   
+
+        while node.next.cnt < node.cnt: # swap nodes
+            node1, node2, node, node4 = self.swap_nodes(node.prev, node, node.next, node.next.next)
+            self.dict[key] = node
+
+    def dec(self, key: str) -> None:
+        node = self.dict[key]
+        node.cnt -= 1
+        if node.cnt == 0:
+            prev, next = node.prev, node.next
+            prev.next = next
+            next.prev = prev
+            del self.dict[key]
+            return
+        while node.prev.cnt > node.cnt: # swap nodes
+            node1, node, node3, node4 = self.swap_nodes(node.prev.prev, node.prev, node, node.next)
+            self.dict[key] = node
+
+    def getMaxKey(self) -> str:
+        if self.tail.prev:
+            return self.tail.prev.val
+        return ''
+
+    def getMinKey(self) -> str:    
+        if self.head.next:
+            return self.head.next.val
+        return ''
+
+# Approach 2:
+class Trie:
+    def __init__(self):
+        self.child = defaultdict(dict)
+        self.default_dict = {
+            "count": 0, 
+            "max": 1,
+            "min": 1
+        }
+    def _update(self, word):
+        current = self.child
+        q = deque([current])
+        for w in word:
+            current = current.get(w, self.default_dict.copy())
+            if not current:
+                break
+            q.append(current)
+        if len(q) <= 1:
+            return
+        while q:
+            current = q.pop()
+            maxs = []
+            mins = []
+            for k, v in current.items():
+                if k in {"wordend", "min", "max", "count"} or not v:
+                    continue
+                if v.get("count") is None:
+                    continue
+                maxs.append(v["max"])
+                mins.append(v["min"])
+            if not mins:
+                current["max"] = current["count"]
+                current["min"] = current["count"]
+                continue
+            current["max"] = max(maxs)
+            current["min"] = min(mins)
+        self.child = current
+
+    def insert(self, word):
+        current = self.child
+        for w in word:
+            current = current.setdefault(w, self.default_dict.copy())
+            current["count"] = current["count"] + 1
+        current["wordend"] = True
+        
+        self._update(word)
+    
+    def remove(self, word):
+        current = self.child
+        for w in word:
+            current_ = current.get(w, {})
+            current_["count"] = current_.setdefault("count", 0) - 1
+            if current_["count"] <= 0:
+                del current[w]
+                break
+            current = current_
+        self._update(word)
+        
+
+    def find_min(self):
+        current = self.child
+        result = ""
+        if not current:
+            return result
+        min_freq = current["min"]
+        while current:
+            new_current = None
+            for key, value in current.items():
+                if key in {"wordend", "min", "max", "count"} or not value:
+                    continue
+                
+                if value.get("min", -1) == min_freq:
+                    new_current = value
+                    result += key
+                    if new_current.get("wordend") == True:
+                        return result
+                    break
+            current = new_current
+        return result
+    
+    def find_max(self):
+        current = self.child
+        result = ""
+        if not current:
+            return result
+        max_freq = current["max"]
+        while current:
+            new_current = None
+            for key, value in current.items():
+                if key in {"wordend", "min", "max", "count"}  or not value:
+                    continue
+                if value.get("max", -1) == max_freq:
+                    new_current = value
+                    result += key
+                    if new_current.get("wordend") == True:
+                        return result
+                    break
+            current = new_current
+        return result
+
+class AllOne:
+
+    def __init__(self):
+        self.trie = Trie()
+        
+    def inc(self, key: str) -> None:
+        self.trie.insert(key)
+        # print(dict(self.trie.child))
+
+    def dec(self, key: str) -> None:
+        self.trie.remove(key)
+        # print(dict(self.trie.child))
+
+    def getMaxKey(self) -> str:
+        return self.trie.find_max()
+
+    def getMinKey(self) -> str:
+        return self.trie.find_min()
