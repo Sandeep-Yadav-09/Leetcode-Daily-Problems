@@ -1,0 +1,46 @@
+** 1381. Design a Stack With Increment Operation **
+
+# Approach 1:
+class CustomStack:
+
+    def __init__(self, maxSize: int):
+        self.stack = []
+        self.maxLength = maxSize
+        
+
+    def push(self, x: int) -> None:
+        if len(self.stack) < self.maxLength:
+            self.stack.append(x)
+        
+    def pop(self) -> int:
+        if len(self.stack) >0:
+            return self.stack.pop()
+        return -1
+    
+    def increment(self, k: int, val: int) -> None:
+        n = min(k,len(self.stack))
+        for i in range(n):
+            self.stack[i] += val
+
+# Approach 2:
+class CustomStack:
+
+    def __init__(self, maxSize: int):
+        self.stack=[]
+        self.n=maxSize
+
+    def push(self, x: int) -> None:
+        if len(self.stack)<self.n:
+            self.stack.append(x)
+
+    def pop(self) -> int:
+        if len(self.stack)==0:
+            return -1
+        return self.stack.pop()
+
+    def increment(self, k: int, val: int) -> None:
+        l=len(self.stack)
+        for i in range(l):
+            if i==k:
+                break
+            self.stack[i]+=val
