@@ -1,0 +1,42 @@
+** 1497. Check If Array Pairs Are Divisible by k **
+
+# Approach 1:
+class Solution:
+    def canArrange(self, arr: List[int], k: int) -> bool:
+        
+        count = [0]*k
+        for num in arr:
+            count[num%k] +=1
+ 
+        print(count)
+        for x in range(k):
+            comp = -x % k 
+
+            print(comp)
+            while count[x]>0:
+                count[x]-=1
+                count[comp]-=1
+                if count[comp]<0:
+                    return False
+        
+        return True
+
+# Approach 2:
+class Solution:
+    def canArrange(self, arr: List[int], k: int) -> bool:
+        remainder_count = [0] * k
+        
+        for num in arr:
+            remainder = num % k
+            if remainder < 0:
+                remainder += k
+            remainder_count[remainder] += 1
+        
+        if remainder_count[0] % 2 != 0:
+            return False  
+        
+        for i in range(1, (k // 2) + 1):
+            if remainder_count[i] != remainder_count[k - i]:
+                return False
+        
+        return True
