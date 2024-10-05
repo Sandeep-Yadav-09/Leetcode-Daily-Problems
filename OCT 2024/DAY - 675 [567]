@@ -1,0 +1,41 @@
+** 567. Permutation in String **
+
+# Approach 1:
+class Solution:
+    def checkInclusion(self, s1: str, s2: str) -> bool:
+        cntr, w, match = Counter(s1), len(s1), 0     
+
+        for i in range(len(s2)):
+            if s2[i] in cntr:
+                if not cntr[s2[i]]: match -= 1
+                cntr[s2[i]] -= 1
+                if not cntr[s2[i]]: match += 1
+
+            if i >= w and s2[i-w] in cntr:
+                if not cntr[s2[i-w]]: match -= 1
+                cntr[s2[i-w]] += 1
+                if not cntr[s2[i-w]]: match += 1
+
+            if match == len(cntr):
+                return True
+
+        return False
+
+# Approach 2:
+class Solution:
+    def checkInclusion(self, s1, s2):
+        A = [ord(x) - ord('a') for x in s1]
+        B = [ord(x) - ord('a') for x in s2]
+        
+        target = [0] * 26
+        for x in A:
+            target[x] += 1
+        
+        window = [0] * 26
+        for i, x in enumerate(B):
+            window[x] += 1
+            if i >= len(A):
+                window[B[i - len(A)]] -= 1
+            if window == target:
+                return True
+        return False
