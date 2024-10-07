@@ -1,0 +1,26 @@
+** 2696. Minimum String Length After Removing Substrings **
+
+# Approach 1:
+class Solution:
+    def minLength(self, s: str) -> int:
+        stack = []
+        
+        for char in s:
+            stack.append(char)
+            
+            if len(stack) >= 2:
+                if (stack[-2] == 'A' and stack[-1] == 'B') or (stack[-2] == 'C' and stack[-1] == 'D'):
+                    stack.pop()  
+                    stack.pop() 
+        
+        return len(stack)
+
+# Approach 2:
+class Solution:
+    def minLength(self, s: str) -> int:
+        while('AB' in s or 'CD' in s):
+            if 'AB' in s:
+                s = s.replace('AB','')
+            if 'CD' in s:
+                s = s.replace('CD','')    
+        return len(s)
