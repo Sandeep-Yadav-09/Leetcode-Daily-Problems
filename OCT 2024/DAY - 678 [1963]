@@ -1,0 +1,33 @@
+** 1963. Minimum Number of Swaps to Make the String Balanced **
+
+# Approach 1:
+class Solution:
+    def minSwaps(self, s: str) -> int:
+        balance = 0
+        max_imbalance = 0
+        
+        for char in s:
+            if char == '[':
+                balance += 1 
+            else:
+                balance -= 1  
+            
+            if balance < 0:
+                max_imbalance = max(max_imbalance, -balance)
+    
+        return (max_imbalance + 1) // 2
+
+# Approach 2:
+class Solution:
+    def minSwaps(self, s: str) -> int:
+        count = 0
+        stack = []
+        for ch in s:
+            if ch == '[':
+                stack.append(ch)
+            else:
+                if stack:
+                    stack.pop()
+                else:
+                    count += 1
+        return ceil(count / 2)
