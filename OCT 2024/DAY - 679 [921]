@@ -1,0 +1,29 @@
+** 921. Minimum Add to Make Parentheses Valid **
+
+# Approach 1:
+class Solution:
+    def minAddToMakeValid(self, s: str) -> int:
+        left_balance = 0  
+        right_balance = 0 
+        
+        for char in s:
+            if char == '(':
+                left_balance += 1  
+            elif char == ')':
+                if left_balance > 0:
+                    left_balance -= 1
+                else:
+                    right_balance += 1
+        
+        return left_balance + right_balance
+
+# Approach 2:
+class Solution:
+    def minAddToMakeValid(self, s: str) -> int:
+        count, ans = 0, 0
+
+        for ch in s:
+            if ch =='(': count += 1
+            elif count: count -= 1
+            else: ans += 1
+        return ans + count
