@@ -1,0 +1,46 @@
+** 1942. The Number of the Smallest Unoccupied Chair **
+
+# Approach 1:
+class Solution:
+    def smallestChair(self, times: List[List[int]], targetFriend: int) -> int:
+        max_chair, heap, empty_chairs = 0, [], []
+        for i in sorted(range(len(times)), key = lambda i: times[i][0]):
+            while heap and heap[0][0] <= times[i][0]:
+                heappush(empty_chairs, heappop(heap)[1])
+            if empty_chairs:
+                curr_chair = heappop(empty_chairs)
+            else:
+                curr_chair = max_chair
+                max_chair += 1
+            if i == targetFriend:
+                return curr_chair
+            heappush(heap, (times[i][1], curr_chair))
+
+# Approach 2:
+class Solution:
+    def smallestChair(self, times: List[List[int]], targetFriend: int) -> int:
+        mpp = {}
+        nums = sorted(times)
+        element = times[targetFriend][0]
+        pq = [] 
+        chair = 0
+        for arrival,departure in nums:
+            if pq and pq[0][0] <= arrival:
+                mini = pq[0][1]
+                temp = []
+                while pq and pq[0][0] <= arrival:
+                    dest,seat = heappop(pq)
+                    temp.append((dest,seat))
+                    mini = min(mini,seat)
+                for dest,seat in temp:
+                    if seat == mini:
+                        mpp[arrival] = seat
+                        heappush(pq,(departure,seat))
+                    else:
+                        heappush(pq,(dest,seat))
+            else:
+                mpp[arrival] = chair
+                heappush(pq,(departure,chair))
+                chair += 1
+        return mpp[element]
+        
