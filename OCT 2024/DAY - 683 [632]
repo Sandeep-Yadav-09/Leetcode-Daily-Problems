@@ -1,0 +1,58 @@
+** 632. Smallest Range Covering Elements from K Lists **
+
+# Approach 1:
+class Solution:
+    def smallestRange(self, nums: List[List[int]]) -> List[int]:
+        m = {}
+        for i in range(len(nums)):
+            for n in nums[i]:
+                if not n in m:
+                    m[n] = set()
+                m[n].add(i)
+        lst = list(m.keys())
+        lst.sort()
+        mm = {}
+        res = lst[-1] - lst[0]+1
+        rng = []
+        for i in range(len(lst)):
+            val = lst[i]
+            for v in m[val]:
+                mm[v] = val
+            minVal = min(mm.values())
+            if len(mm) == len(nums) and val - minVal < res:
+                rng = [minVal, val]
+                res = val - minVal
+        return rng
+
+# Approach 2:
+class Solution:
+    def smallestRange(self, nums: List[List[int]]) -> List[int]:
+        groups = len(nums)
+
+        arr = ((val, idx) for idx, num in enumerate(nums) for val in num)
+        arr = sorted(arr)
+
+        smallest_range = float('inf')
+        start = end = None
+        l = 0 
+        window = Counter()
+        for r in range(len(arr)):
+            end_val, group = arr[r]
+            window[group] += 1
+
+            while len(window) == groups:
+                start_val, start_group = arr[l]
+
+                curr_range = end_val - start_val
+                if curr_range < smallest_range:
+                    smallest_range = curr_range
+                    start = start_val
+                    end = end_val
+
+                window[start_group] -= 1
+                if window[start_group] == 0:
+                    del window[start_group]
+
+                l += 1
+
+        return [start, end]
