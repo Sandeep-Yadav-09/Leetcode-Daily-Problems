@@ -1,0 +1,32 @@
+** 2530. Maximal Score After Applying K Operations **
+
+# Approach 1:
+class Solution:
+    def maxKelements(self, nums: List[int], k: int) -> int:
+        max_heap = [-num for num in nums]
+        heapq.heapify(max_heap)
+        
+        score = 0
+        
+        for _ in range(k):
+            max_elem = -heapq.heappop(max_heap)
+            score += max_elem  
+
+            new_value = math.ceil(max_elem / 3)
+            heapq.heappush(max_heap, -new_value)
+        
+        return score
+
+# Approach 2:
+class Solution:
+    def maxKelements(self, nums: List[int], k: int) -> int:
+        ans=0
+        maxi=[-n for n in nums]
+        heapq.heapify(maxi)
+        while k:
+            n=-heapq.heappop(maxi)
+            ans+=n
+            k-=1
+            p=-math.ceil(n/3)
+            heapq.heappush(maxi,p)
+        return ans
