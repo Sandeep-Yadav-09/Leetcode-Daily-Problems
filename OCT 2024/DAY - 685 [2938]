@@ -1,0 +1,26 @@
+** 2938. Separate Black and White Balls **
+
+# Approach 1:
+class Solution:
+    def minimumSteps(self, s: str) -> int:
+        white=0
+        res=0
+        j=0
+        n=len(s)
+        while(j<n):
+            if s[j]=='0':
+                res+=white
+            white+=1 if s[j]=='1' else 0
+            j+=1  
+        return res
+
+# Approach 2:
+class Solution:
+    def minimumSteps(self, s: str) -> int:
+        res = black = 0
+        for c in s:
+            if c == '1':
+                black += 1
+            else:
+                res += black
+        return res
