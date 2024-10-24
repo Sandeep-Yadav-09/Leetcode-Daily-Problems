@@ -1,0 +1,30 @@
+** 951. Flip Equivalent Binary Trees **
+
+# Approach 1:
+class Solution:
+    def flipEquiv(self, root1: Optional[TreeNode], root2: Optional[TreeNode]) -> bool:
+        if not root1 and not root2:  
+            return True
+        if not root1 or not root2:  
+            return False
+        if root1.val != root2.val: 
+            return False
+        
+        no_flip = self.flipEquiv(root1.left, root2.left) and self.flipEquiv(root1.right, root2.right)
+        flip = self.flipEquiv(root1.left, root2.right) and self.flipEquiv(root1.right, root2.left)
+        
+        return no_flip or flip
+
+# Approach 2:
+class Solution:
+    def flipEquiv(self, n: Optional[TreeNode], u: Optional[TreeNode]) -> bool:
+        def f(n, u):
+            if n == u:
+                return True
+                
+            if n and u and n.val == u.val \
+                and (f(n.left, u.left) and f(n.right, u.right) 
+                    or f(n.left, u.right) and f(n.right, u.left)):
+                return True
+        
+        return bool(f(n, u))
