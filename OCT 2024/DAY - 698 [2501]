@@ -1,0 +1,43 @@
+** 2501. Longest Square Streak in an Array **
+
+# Approach 1:
+class Solution:
+    def longestSquareStreak(self, a: List[int]) -> int:
+        @cache
+        def f(v):
+            return 1 + (v*v in a and f(v*v))
+
+        a = {*a}
+        r = max(map(f, a))
+        if r > 1:
+            return r
+        return -1
+
+# Approach 2:
+class Solution:
+    def longestSquareStreak(self, nums: List[int]) -> int:
+        
+        nums.sort()
+
+        ans = []
+        
+        memo = {}
+        def backtrack(i, prev):
+            
+            if i == len(nums):
+                return 0
+
+            if (i,prev) in memo: return memo[(i,prev)]
+
+            if prev == 1:
+                memo[(i,prev)] = max(backtrack(i+1, nums[i]), backtrack(i+1,prev))
+            
+            elif nums[i] == prev*prev:
+                memo[(i,prev)] = max(1+backtrack(i+1, nums[i]), backtrack(i+1,prev))
+            
+            else: memo[(i,prev)] = backtrack(i+1, prev)
+            return memo[(i,prev)]
+        
+        ans = backtrack(0,1)
+        ans = ans+1 if ans != 0 else -1
+        return ans
