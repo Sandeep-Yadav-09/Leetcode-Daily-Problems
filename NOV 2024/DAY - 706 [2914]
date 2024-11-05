@@ -1,0 +1,11 @@
+** 2914. Minimum Number of Changes to Make Binary String Beautiful **
+
+# Approach 1:
+class Solution:
+    def minChanges(self, s: str) -> int:
+        return sum(s[i]!=s[i+1] for i in range(0, len(s), 2))
+
+# Approach 2:
+class Solution:
+    def minChanges(self, s: str) -> int:
+        return sum(map(ne,*[iter(s)]*2))
