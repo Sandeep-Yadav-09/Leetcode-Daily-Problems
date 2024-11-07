@@ -1,0 +1,32 @@
+** 2275. Largest Combination With Bitwise AND Greater Than Zero **
+
+# Approach 1:
+class Solution:
+    def largestCombination(self, candidates: List[int]) -> int:
+        bit_counts = [0] * 24
+        
+        for number in candidates:
+            for i in range(24):
+                if number & (1 << i):  
+                    bit_counts[i] += 1
+        return max(bit_counts)
+
+# Approach 2:
+from typing import List
+
+class Solution:
+    def largestCombination(self, candidates: List[int]) -> int:
+        maxn = max(candidates)
+        binnn = bin(maxn)[2:]
+        n = len(binnn)
+        a = [0] * n
+        
+        for candidate in candidates:
+            s = bin(candidate)[2:].zfill(n)
+            
+            for j in range(n):
+                if s[j] == '1':
+                    a[j] += 1
+                    
+        maxi = max(a)
+        return maxi
