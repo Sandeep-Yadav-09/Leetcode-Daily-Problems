@@ -1,0 +1,32 @@
+** 3133. Minimum Array End **
+
+# Approach 1:
+class Solution:
+    def minEnd(self, n: int, x: int) -> int:
+        X = x
+        N = n - 1
+        ans = 0
+        j = 0
+
+        for i in range(56):  
+            if (X >> i) & 1:  
+                ans |= (1 << i)  
+            else:
+                if (N >> j) & 1:  
+                    ans |= (1 << i)  
+                j += 1 
+        return ans
+
+# Approach 2:
+class Solution:
+    @staticmethod
+    def minEnd(n: int, x: int) -> int:
+        n -= 1
+        c, m, mask = 0, 1, x ^ ((1 << (n.bit_length() + x.bit_length())) - 1)
+        while mask:
+            b = mask & -mask
+            if n & m:
+                c |= b
+            mask -= b
+            m <<= 1
+        return x | c
