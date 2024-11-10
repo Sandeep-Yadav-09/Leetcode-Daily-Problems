@@ -1,0 +1,56 @@
+** 3097. Shortest Subarray With OR at Least K II **
+
+# Approach 1:
+class Solution:
+    def minimumSubarrayLength(self, nums: List[int], k: int) -> int:
+        if k == 0:
+            return 1
+        
+        ans = len(nums) + 1
+        bits = [0] * 32
+        left = 0
+        n = len(nums)
+
+        for right in range(n):
+            temp = 0
+            for i in range(32):
+                if nums[right] & (1 << i):
+                    bits[i] += 1
+                if bits[i] > 0:
+                    temp |= (1 << i)
+            
+            if temp >= k:
+                ans = min(ans, right - left + 1)
+            
+            while temp >= k:  
+                temp = 0
+                for i in range(32):
+                    if nums[left] & (1 << i):
+                        bits[i] -= 1
+                    if bits[i] > 0:
+                        temp |= (1 << i)
+                
+                left += 1
+                if temp >= k:
+                    ans = min(ans, right - left + 1)
+
+        return -1 if ans == (len(nums) + 1) else ans
+
+# Approach 2:
+class Solution:
+    def minimumSubarrayLength(self, nums: List[int], k: int) -> int:
+        bit = [-1 for _ in range(32)]
+        n = len(nums)
+        j, cur, res = 0, 0, float("inf")
+        for i in range(n):
+            cur |= nums[i]
+            for b in range(32):
+                if nums[i] & 1 << b: bit[b] = i
+            while cur >= k and j <= i:
+                res = min(res, i - j + 1)
+                for b in range(32):
+                    if nums[j] & 1 << b and bit[b] == j:
+                        bit[b] = -1
+                        cur ^= 1 << b
+                j += 1     
+        return res if res != float("inf") else -1
