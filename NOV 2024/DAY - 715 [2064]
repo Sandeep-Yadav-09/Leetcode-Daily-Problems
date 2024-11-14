@@ -1,0 +1,23 @@
+** 2064. Minimized Maximum of Products Distributed to Any Store **
+
+# Approach 1:
+class Solution:
+    def minimizedMaximum(self, n: int, quantities: List[int]) -> int:
+        def canDistribute(max_products: int) -> bool:
+            stores_needed = sum((quantity + max_products - 1) // max_products for quantity in quantities)
+            return stores_needed <= n
+
+        left, right = 1, max(quantities)
+        
+        while left < right:
+            mid = (left + right) // 2
+            if canDistribute(mid):
+                right = mid  
+            else:
+                left = mid + 1  
+        return left
+
+# Approach 2:
+class Solution:
+    def minimizedMaximum(self, n: int, q: List[int]) -> int:
+        return bisect_left(range(1,max(q)),0,key=lambda x:sum(-v//x for v in q)+n)+1
