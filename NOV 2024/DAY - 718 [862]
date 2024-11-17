@@ -1,0 +1,41 @@
+** 862. Shortest Subarray with Sum at Least K **
+
+# Approach 1:
+class Solution:
+    def shortestSubarray(self, nums: List[int], k: int) -> int:
+        dq, n = deque(), len(nums)
+        dq.append((0, -1))
+
+        cur, ans = 0, n + 1
+
+        for i in range(n):
+            cur += nums[i]
+            while dq and cur <= dq[-1][0]:
+                dq.pop()
+            
+            while dq and cur - dq[0][0] >= k:
+                _, j = dq.popleft()
+                ans = min(ans, i - j)
+            
+            dq.append((cur, i))
+        
+        return ans if ans <= n else -1
+
+# Approach 2:
+class Solution:
+    def shortestSubarray(self, nums: List[int], k: int) -> int:
+        heap = []
+        curr_sum = 0
+        res = float('inf')
+        
+        for i in range(len(nums)):
+            curr_sum += nums[i]
+            if k <= curr_sum:
+                res = min(res, i + 1)
+           
+            while heap and k <= curr_sum - heap[0][0]:
+                res = min(res, i - heapq.heappop(heap)[1])
+
+            heapq.heappush(heap, (curr_sum, i))
+
+        return res if res != float('inf') else -1
