@@ -1,0 +1,42 @@
+** 2461. Maximum Sum of Distinct Subarrays With Length K **
+
+# Approach 1:
+class Solution:
+    def maximumSubarraySum(self, nums: List[int], k: int) -> int:
+        mp = {}
+        n = len(nums)
+        ans, sum, i = 0, 0, 0
+        for j in range(n):
+            sum += nums[j]
+            if nums[j] in mp:
+                mp[nums[j]] += 1
+            else:
+                mp[nums[j]] = 1
+            if j - i + 1 == k:
+                if len(mp) == k:
+                    ans = max(ans, sum)
+                sum -= nums[i]
+                mp[nums[i]] -= 1
+                if not mp[nums[i]]:
+                    del mp[nums[i]]
+                i += 1
+        return ans
+
+# Approach 2:
+class Solution:
+    def maximumSubarraySum(self, nums: List[int], k: int) -> int:
+        left, ans, pref_sum  = 0, 0, 0
+        used = set()
+        for num in nums:
+            while num in used:
+                used.remove(nums[left])
+                pref_sum -= nums[left]
+                left += 1
+            used.add(num)
+            pref_sum += num
+            if len(used) == k:
+                ans = max(pref_sum, ans)
+                used.remove(nums[left])
+                pref_sum -= nums[left]
+                left += 1
+        return ans
