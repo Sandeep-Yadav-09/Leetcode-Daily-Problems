@@ -1,0 +1,40 @@
+** 2516. Take K of Each Character From Left and Right **
+
+# Approach 1:
+class Solution:
+    def takeCharacters(self, s: str, k: int) -> int:
+        if k == 0:
+            return 0
+        cnt_all = Counter(s)
+        if len(cnt_all) < 3 or any(c < k for c in cnt_all.values()):
+            return -1
+        cnt_excess = defaultdict(int)
+        window_width, left = 0, 0
+        for right, ch in enumerate(s):
+            cnt_excess[ch] += 1
+            while cnt_all[ch] - cnt_excess[ch] < k:
+                cnt_excess[s[left]] -= 1
+                left += 1
+            window_width = max(right - left + 1, window_width)
+        return len(s) - window_width
+
+# Approach 2:
+class Solution:
+    def takeCharacters(self, s: str, k: int) -> int:
+        a = s.count('a') - k
+        b = s.count('b') - k
+        c = s.count('c') - k
+        if any(i<0 for i in [a, b, c]):
+            return -1
+        dict = defaultdict(int)
+        left = length = res = 0
+        for right in s:
+            dict[right] += 1
+            length += 1
+            while dict['a'] > a or dict['b'] > b or dict['c'] > c:
+                dict[s[left]] -= 1
+                length -= 1
+                left += 1
+            res = max(res, length)
+        return len(s) - res
+        
