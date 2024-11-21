@@ -1,0 +1,98 @@
+** 2257. Count Unguarded Cells in the Grid **
+
+# Approach 1:
+class Solution:
+    def countUnguarded(self, m: int, n: int, guards: List[List[int]], walls: List[List[int]]) -> int:
+        a = [[0] * n for _ in range(m)]  # Initialize grid with 0 (unguarded cells)
+        tot = m * n  # Total number of cells
+
+        # Mark walls and guards, and adjust `tot`
+        for i, j in walls:
+            a[i][j] = "w"
+            tot -= 1
+        for i, j in guards:
+            a[i][j] = "g"
+            tot -= 1
+
+        # Process guards and mark guarded cells
+        for i, j in guards:
+            # Upward influence
+            k = i - 1
+            while k >= 0 and a[k][j] not in ("w", "g"):
+                if a[k][j] == 0:  # Only count unguarded cells
+                    tot -= 1
+                    a[k][j] = 1
+                k -= 1
+
+            # Downward influence
+            k = i + 1
+            while k < m and a[k][j] not in ("w", "g"):
+                if a[k][j] == 0:
+                    tot -= 1
+                    a[k][j] = 1
+                k += 1
+
+            # Leftward influence
+            k = j - 1
+            while k >= 0 and a[i][k] not in ("w", "g"):
+                if a[i][k] == 0:
+                    tot -= 1
+                    a[i][k] = 1
+                k -= 1
+
+            # Rightward influence
+            k = j + 1
+            while k < n and a[i][k] not in ("w", "g"):
+                if a[i][k] == 0:
+                    tot -= 1
+                    a[i][k] = 1
+                k += 1
+
+        return tot
+
+# Approach 2:
+class Solution:
+    def countUnguarded(self, m: int, n: int, guards: List[List[int]], walls: List[List[int]]) -> int:
+        # Convert guards and walls to sets for efficient lookup
+        guards_set = set(tuple(guard) for guard in guards)
+        walls_set = set(tuple(wall) for wall in walls)
+
+        # Initialize the grid
+        positions = [[0 for _ in range(n)] for _ in range(m)]
+        for row in range(m):
+            for col in range(n):
+                if (row, col) in guards_set:
+                    positions[row][col] = 1
+                elif (row, col) in walls_set:
+                    positions[row][col] = 2
+
+        # Simulate guard visibility
+        for row in range(m):
+            for col in range(n):
+                if positions[row][col] == 1:  # Guard present
+                    # Check up
+                    curr_row = row - 1
+                    while curr_row >= 0 and positions[curr_row][col] not in (1, 2):
+                        positions[curr_row][col] = 3
+                        curr_row -= 1
+                    # Check down
+                    curr_row = row + 1
+                    while curr_row < m and positions[curr_row][col] not in (1, 2):
+                        positions[curr_row][col] = 3
+                        curr_row += 1
+                    # Check left
+                    curr_col = col - 1
+                    while curr_col >= 0 and positions[row][curr_col] not in (1, 2):
+                        positions[row][curr_col] = 3
+                        curr_col -= 1
+                    # Check right
+                    curr_col = col + 1
+                    while curr_col < n and positions[row][curr_col] not in (1, 2):
+                        positions[row][curr_col] = 3
+                        curr_col += 1
+
+        # Count unguarded cells
+        count = 0
+        for i in range(m):
+            count += positions[i].count(0)
+        return count
