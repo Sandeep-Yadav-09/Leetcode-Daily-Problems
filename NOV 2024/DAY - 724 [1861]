@@ -1,0 +1,41 @@
+** 1861. Rotating the Box **
+
+# Approach 1:
+class Solution:
+    def rotateTheBox(self, box: List[List[str]]) -> List[List[str]]:   
+        n = len(box[0])-1
+        
+        for row in box:
+            i,j = n,n             
+            while i >= 0:
+                
+                if row[i] == '#':
+                    if i < j: row[i], row[j] = '.', '#'                 
+                    j -= 1
+
+                elif row[i] == '*': j = i - 1 
+                i -= 1
+
+        return  map(list, zip(*(box[::-1])))   
+
+# Approach 2:
+class Solution:
+    def rotateTheBox(self, box: List[List[str]]) -> List[List[str]]:
+        m, n = len(box), len(box[0])
+        
+        for row in box:
+            empty_slot = n - 1  
+            
+            for col in range(n - 1, -1, -1):  
+                if row[col] == '#':  
+                    row[col], row[empty_slot] = row[empty_slot], row[col]
+                    empty_slot -= 1
+                elif row[col] == '*': 
+                    empty_slot = col - 1
+        
+        rotated_box = [[None] * m for _ in range(n)]  
+        for i in range(m):
+            for j in range(n):
+                rotated_box[j][m - 1 - i] = box[i][j]
+        
+        return rotated_box
