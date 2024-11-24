@@ -1,0 +1,29 @@
+** 1975. Maximum Matrix Sum **
+
+# Approach 1:
+class Solution:
+    def maxMatrixSum(self, matrix: List[List[int]]) -> int:
+        neg = 0
+        minVal = float('inf')
+        sum_abs = 0
+
+        for row in matrix:
+            for val in row:
+                if val < 0:
+                    neg += 1
+                sum_abs += abs(val)
+                minVal = min(minVal, abs(val))
+
+        if neg % 2 == 1:
+            sum_abs -= 2 * minVal
+
+        return sum_abs
+
+# Approach 2:
+class Solution:
+    def maxMatrixSum(self, matrix: List[List[int]]) -> int:
+        neg = sum(1 for x in matrix for x in x if x < 0)
+        if neg % 2 == 0:
+            return sum(abs(x) for x in matrix for x in x)
+        else:
+            return sum(abs(x) for x in matrix for x in x) - 2 * abs(min((x for x in matrix for x in x),key=abs))
