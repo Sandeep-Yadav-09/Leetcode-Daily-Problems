@@ -1,0 +1,52 @@
+** 773. Sliding Puzzle **
+
+# Approach 1:
+from collections import deque
+from typing import List
+
+class Solution:
+    def slidingPuzzle(self, board: List[List[int]]) -> int:
+        target = "123450"
+        start = ''.join(str(num) for row in board for num in row)
+        
+        neighbors = {
+            0: [1, 3], 1: [0, 2, 4], 2: [1, 5],
+            3: [0, 4], 4: [1, 3, 5], 5: [2, 4]
+        }
+        
+        queue = deque([(start, 0)]) 
+        visited = set()
+        visited.add(start)
+        
+        while queue:
+            state, moves = queue.popleft()
+            
+            if state == target:
+                return moves
+            
+            zero_index = state.index('0')
+            
+            for neighbor in neighbors[zero_index]:
+                new_state = list(state)
+                new_state[zero_index], new_state[neighbor] = new_state[neighbor], new_state[zero_index]
+                new_state_str = ''.join(new_state)
+                
+                if new_state_str not in visited:
+                    visited.add(new_state_str)
+                    queue.append((new_state_str, moves + 1))
+        
+        return -1
+
+# Approach 2:
+class Solution:
+    def slidingPuzzle(self, b: List[List[int]]) -> int:
+        v = {}
+        @cache
+        def f(s,i,j,k,r):
+            if(s:=''.join(s[{i:j,j:i}.get(k,k)]for k in range(len(s))))=='123450':
+                return k
+            if k<r and k<v.get(s,inf):
+                v[s] = k
+                return min(f(s,j,z,k+1,r)for z in((1,3),(0,2,4),(1,5),(0,4),(3,5,1),(4,2))[j])
+            return r
+        return(-1,t:=f(s:=''.join(map(str,sum(b,[]))),i:=s.find('0'),i,0,inf))[t<inf]
