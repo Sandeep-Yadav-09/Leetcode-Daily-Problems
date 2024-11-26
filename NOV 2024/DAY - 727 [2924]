@@ -1,0 +1,32 @@
+** 2924. Find Champion II **
+
+# Approach 1:
+class Solution:
+    def findChampion(self, n: int, edges: List[List[int]]) -> int:
+        count = defaultdict(int)
+
+        for u, v in edges:
+            count[v] += 1
+
+        ans, parentCount = 0, 0
+        for i in range(n):
+            if not count[i]:
+                ans = i
+                parentCount += 1
+            if parentCount == 2:
+                return -1
+        return ans
+
+# Approach 2:
+class Solution:
+    def findChampion(self, n: int, edges: List[List[int]]) -> int:
+        arr = [0] * n
+        for edge in edges:
+            arr[edge[1]] += 1
+        res, counter = -1, 0
+        for i in range(0, len(arr)):
+            if arr[i] == 0:
+                res = i
+                counter += 1
+            if counter > 1: return -1
+        return res 
