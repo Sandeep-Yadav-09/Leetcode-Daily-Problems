@@ -1,0 +1,72 @@
+** 2290. Minimum Obstacle Removal to Reach Corner **
+
+# Approach 1:
+class Solution:
+    def minimumObstacles(self, grid: List[List[int]]) -> int:
+        n, m = len(grid), len(grid[0])
+        q = []
+        heapify(q)
+        dist = [[float('inf')]*m for _ in range(n)]
+        dist[0][0] = 0
+        heappush(q, (0, 0, 0))
+        while q:
+            wt, x, y = heappop(q)
+            
+            for dx, dy in [(1,0), (-1,0), (0,1), (0,-1)]:
+                r, c = x + dx, y + dy
+                if 0<=r<n and 0<=c<m:
+                    if grid[r][c] == 1 and dist[r][c] > wt + 1:
+                        dist[r][c] = wt + 1
+                        heappush(q, (dist[r][c], r, c))
+                    elif grid[r][c] == 0 and dist[r][c] > wt:
+                        dist[r][c] = wt
+                        heappush(q, (dist[r][c], r, c))
+        return dist[n-1][m-1]
+
+# Approach 2:
+class Solution:
+    def minimumObstacles(self, grid: List[List[int]]) -> int:
+        lastRow = len(grid) - 1
+        lastCol = len(grid[0]) - 1
+
+        def getNeigbors(ri, ci):
+            if ri > 0:
+                yield ri - 1, ci
+            if ri < lastRow:
+                yield ri + 1, ci
+            if ci > 0:
+                yield ri, ci - 1
+            if ci < lastCol:
+                yield ri, ci + 1
+
+        result = 0
+        q0 = [(0, 0)]
+        grid[0][0] = -1
+
+        q1 = []
+        qWall = []
+
+        while q0 or qWall:
+            if not q0:
+                q0.extend(qWall)
+                qWall.clear()
+                result += 1
+
+            for ri, ci in q0:
+                if ri == lastRow and ci == lastCol:
+                    return result
+                for nri, nci in getNeigbors(ri, ci):
+                    match grid[nri][nci]:
+                        case 0:
+                            grid[nri][nci] = -1
+                            q1.append((nri, nci))
+                        case 1:
+                            grid[nri][nci] = -1
+                            qWall.append((nri, nci))
+                        case _:
+                            pass
+
+            q1, q0 = q0, q1
+            q1.clear()
+
+        return result
