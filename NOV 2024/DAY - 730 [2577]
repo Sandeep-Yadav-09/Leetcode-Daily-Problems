@@ -1,0 +1,71 @@
+** 2577. Minimum Time to Visit a Cell In a Grid **
+
+# Approach 1:
+import heapq
+from typing import List
+
+class Solution:
+    def minimumTime(self, grid: List[List[int]]) -> int:
+        directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]  
+        
+        if grid[0][1] > 1 and grid[1][0] > 1:
+            return -1
+        
+        m, n = len(grid), len(grid[0])
+        heap = [(0, 0, 0)]  
+        visited = [[False] * n for _ in range(m)]  
+        
+        while heap:
+            time, row, col = heapq.heappop(heap)
+            
+            if row == m - 1 and col == n - 1:
+                return time
+            
+            if visited[row][col]:
+                continue
+            visited[row][col] = True
+            
+            for dr, dc in directions:
+                r, c = row + dr, col + dc
+                
+                if 0 <= r < m and 0 <= c < n and not visited[r][c]:
+                    if grid[r][c] <= time + 1:
+                        heapq.heappush(heap, (time + 1, r, c))
+                    else:
+                        diff = grid[r][c] - time
+                        if diff % 2 == 1:
+                            heapq.heappush(heap, (grid[r][c], r, c))
+                        else:
+                            heapq.heappush(heap, (grid[r][c] + 1, r, c))
+        
+        return -1
+
+# Approach 2:
+class Solution:
+    def minimumTime(self, grid: List[List[int]]) -> int:
+        if grid[0][1] > 1 and grid[1][0] > 1:
+            return -1        
+        m, n = len(grid), len(grid[0])
+        directions = ((1, 0), (0, 1), (-1, 0), (0, -1))
+        heap = [(0, m + n, 0)] 
+        min_time = [[math.inf]*n for _ in range(m)]
+        min_time[0][0] = 0
+        while True:
+            t, d, i = heappop(heap)
+            j = m + n - d - i
+            if i == m - 1 and j == n - 1:
+                return t           
+            for di, dj in directions:
+                ni, nj = i + di, j + dj
+                if ni < 0 or nj < 0 or ni >= m or nj >= n:
+                    continue
+                dt = grid[ni][nj] - t 
+                if dt <= 1:
+                    nt = t + 1
+                else:
+                    nt = t + dt + (dt % 2 == 0) 
+                if min_time[ni][nj] <= nt:
+                    continue
+                min_time[ni][nj] = nt
+                heappush(heap, (nt, d + i + j - ni - nj, ni))
+        raise ValueError("Unreachable")
