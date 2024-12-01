@@ -1,0 +1,16 @@
+** 1346. Check If N and Its Double Exist **
+
+# Approach 1:
+class Solution:
+    def checkIfExist(self, arr: List[int]) -> bool:
+        seen = set()
+        for num in arr:
+            if 2 * num in seen or (num % 2 == 0 and num // 2 in seen):
+                return True
+            seen.add(num)
+        return False
+
+# Approach 2:
+class Solution:
+    def checkIfExist(self, arr: List[int]) -> bool:
+        return (a := Counter(arr))[0] >= 2 or sum([1 if 2 * i in a and i != 0 else 0 for i in arr]) > 0
