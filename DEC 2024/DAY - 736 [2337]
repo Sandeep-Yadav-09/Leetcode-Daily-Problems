@@ -1,0 +1,24 @@
+** 2337. Move Pieces to Obtain a String **
+
+# Approach 1:
+class Solution:
+    def canChange(self, s: str, t: str) -> bool:
+        n=len(s)
+        s+='@'
+        t+='@'
+        i, j=0, 0
+        while i<n or j<n:
+            while i<n and s[i]=='_': i+=1
+            while j<n and t[j]=='_': j+=1
+            c=s[i]
+            if c!=t[j]: return False
+            if c=='L' and i<j: return False
+            if c=='R' and i>j: return False
+            i+=1
+            j+=1
+        return True 
+
+# Approach 2:
+class Solution:
+    def canChange(self, s: str, t: str) -> bool:
+        return (f:=lambda q:(p for p in enumerate(q) if p[1]!='_')) and all(c==w and (i<=j,i>=j)[c=='L'] for (i,c),(j,w) in zip_longest(f(s),f(t),fillvalue=(0,'')))
