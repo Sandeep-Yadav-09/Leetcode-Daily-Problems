@@ -1,0 +1,35 @@
+** 1760. Minimum Limit of Balls in a Bag **
+
+# Approach 1:
+class Solution:
+    def minimumSize(self, nums: List[int], k: int) -> int:
+        l, r=1, max(nums)
+        while l<r:
+            m=(l+r)>>1
+            cnt=sum((x-1)//m for x in nums)
+            if cnt<=k: r=m
+            else: l=m+1
+        return r
+
+# Approach 2:
+class Solution:
+    def minimumSize(self, nums: List[int], maxOperations: int) -> int:
+        def canDivide(nums, maxOperations, penalty):
+            operations = 0
+            for num in nums:
+                if num > penalty:
+                    operations += (num - 1) // penalty
+                    if operations > maxOperations:
+                        return False
+            return True
+
+        left, right = 1, max(nums)
+        result = right
+        while left <= right:
+            mid = (left + right) // 2
+            if canDivide(nums, maxOperations, mid):
+                result = mid
+                right = mid - 1
+            else:
+                left = mid + 1
+        return result
