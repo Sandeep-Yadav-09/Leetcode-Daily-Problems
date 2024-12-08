@@ -1,0 +1,35 @@
+** 2054. Two Best Non-Overlapping Events **
+
+# Approach 1:
+class Solution:
+    def maxTwoEvents(self, events: List[List[int]]) -> int:
+        events.sort(key=lambda x: x[1])
+        
+        max_until = []
+        max_value = 0
+        for _, end, value in events:
+            max_value = max(max_value, value)
+            max_until.append((end, max_value))
+        
+        result = 0
+        for start, end, value in events:
+            result = max(result, value)
+            
+            idx = bisect.bisect_left(max_until, (start, 0)) - 1
+            if idx >= 0:
+                result = max(result, value + max_until[idx][1])
+        
+        return result
+
+# Approach 2:
+class Solution:
+    def maxTwoEvents(self, events: List[List[int]]) -> int:
+        events.sort(key=lambda event: event[1])        
+        h = [(-event[2], event[0]) for event in events]
+        heapq.heapify(h)
+        ans = 0
+        for start, end, value in events:
+            while h and h[0][1] <= end:
+                heapq.heappop(h)
+            ans = max(ans, value - h[0][0] if h else value)
+        return ans
