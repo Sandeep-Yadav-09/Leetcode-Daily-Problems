@@ -1,0 +1,29 @@
+** 2779. Maximum Beauty of an Array After Applying Operation **
+
+# Approach 1:
+class Solution:
+    def maximumBeauty(self, nums: List[int], k: int) -> int:
+        events = []
+        for num in nums:
+            events.append((num - k, 1))  
+            events.append((num + k + 1, -1))  
+
+        events.sort()
+
+        max_beauty = 0
+        current_count = 0
+        for value, effect in events:
+            current_count += effect
+            max_beauty = max(max_beauty, current_count)
+
+        return max_beauty
+
+# Approach 2:
+class Solution:
+    def maximumBeauty(self, nums: List[int], k: int) -> int:
+        nums.sort()
+        left = 0
+        for num in nums:
+            if num - nums[left] > 2*k:
+                left += 1
+        return len(nums) - left
