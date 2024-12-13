@@ -1,0 +1,39 @@
+** 2593. Find Score of an Array After Marking All Elements **
+
+# Approach 1:
+class Solution:
+    def findScore(self, nums: List[int]) -> int:
+        n = len(nums)
+        ord = list(range(n))
+        
+        ord.sort(key=lambda x: (nums[x], x)) 
+        
+        m = [False] * n 
+        score = 0
+        
+        for x in ord:
+            if m[x]: continue  
+            score += nums[x] 
+            m[x] = True  
+            if x > 0: m[x - 1] = True  
+            if x + 1 < n: m[x + 1] = True  
+        
+        return score
+
+# Approach 2:
+class Solution:
+    def findScore(self, nums: List[int]) -> int:
+        heap = [(n, i) for i, n in enumerate(nums)]
+        marked = set()
+        heapify(heap)
+        res = 0
+        while heap:
+            n, i = heappop(heap)
+            if i in marked:
+                continue
+            
+            marked.add(i - 1)
+            marked.add(i + 1)
+            res += n
+        
+        return res
