@@ -1,0 +1,30 @@
+** 1475. Final Prices With a Special Discount in a Shop **
+
+# Approach 1:
+class Solution:
+    def finalPrices(self, prices: List[int]) -> List[int]:
+        l=len(prices)
+        answer=[x for x in range(l)]
+        for i in range(l):
+            for j in range(i+1,l):
+                if prices[j]<=prices[i]:
+                    answer[i]=(prices[i]-prices[j])
+                    break
+            else:
+                answer[i]=(prices[i])
+        return answer
+
+# Approach 2:
+class Solution:
+    def finalPrices(self, prices: List[int]) -> List[int]:
+        stack, discount, l =[], [0]*len(prices), len(prices)
+
+        for i in range(l):
+            while stack and prices[i] <= prices[stack[-1]]:
+                discount[stack.pop()] = prices[i]
+            stack.append(i)
+        ans = []
+        for i in range(l):
+            ans.append(prices[i]-discount[i])
+        
+        return ans
