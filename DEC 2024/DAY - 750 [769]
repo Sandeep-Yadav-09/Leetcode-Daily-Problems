@@ -1,0 +1,19 @@
+** 769. Max Chunks To Make Sorted **
+
+# Approach 1:
+class Solution:
+    def maxChunksToSorted(self, arr: List[int]) -> int:
+        m = 0
+        count = 0
+
+        for i in range(len(arr)):
+            m = max(m, arr[i])
+            if m == i:
+                count += 1
+
+        return count
+
+# Approach 2:
+class Solution:
+    def maxChunksToSorted(self, arr: List[int]) -> int:
+        return sum(map(eq, accumulate(arr, max), count(0)))
