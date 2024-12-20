@@ -1,0 +1,50 @@
+** 2415. Reverse Odd Levels of Binary Tree **
+
+# Approach 1:
+from collections import deque
+
+class Solution:
+    def reverseOddLevels(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
+        lvl = 0
+        q = deque([root])
+
+        while q:
+            size = len(q)
+            nodes = []
+            temp = deque(q)
+            for _ in range(size):
+                node = q.popleft()
+                if node.left:
+                    q.append(node.left)
+                if node.right:
+                    q.append(node.right)
+                nodes.append(node.val)
+            if lvl % 2 != 0:
+                nodes.reverse()
+                i = 0
+                while size > 0:
+                    node = temp.popleft()
+                    node.val = nodes[i]
+                    i += 1
+                    size -= 1
+            lvl += 1
+        return root
+
+# Approach 2:
+class Solution:
+    def invertTree(self, root: Optional[TreeNode], root1: Optional[TreeNode], level: int)-> Optional[TreeNode]:
+        pointer = root
+        pointer1 = root1
+        if not root:
+            return root, root1
+        if pointer and level % 2 == 0:
+            cal = pointer.val
+            pointer.val = pointer1.val
+            pointer1.val = cal
+        if pointer.left:        
+            self.invertTree(pointer.left, pointer1.right,  level + 1)
+            self.invertTree(pointer.right, pointer1.left, level + 1)
+        return root , root1
+    def reverseOddLevels(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
+        root.left, root.right =  self.invertTree(root.left, root.right, 0)
+        return root
