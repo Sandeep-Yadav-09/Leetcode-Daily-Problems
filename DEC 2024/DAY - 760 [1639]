@@ -1,0 +1,59 @@
+** 1639. Number of Ways to Form a Target String Given a Dictionary **
+
+# Approach 1:
+class Solution:
+    def numWays(self, words: List[str], target: str) -> int:
+        self.len_w = len(words[0])
+        self.len_t = len(target)
+        self.cmap_list = []
+        for idx in range(self.len_w):
+            cdict = collections.defaultdict(int)
+            for w in words:
+                cdict[w[idx]] += 1
+            self.cmap_list.append(cdict)
+
+        self.target = target
+        self.dp = collections.defaultdict(lambda: None)
+        ans = 0
+        for i in range(self.len_w):
+            ans += self.findWays(i, 0)
+        return ans % 1000000007
+        
+    def findWays(self, c_idx, target_idx):
+        if self.len_w - c_idx < self.len_t - target_idx:
+            return 0
+
+        if self.dp[c_idx, target_idx] is None:
+            cnt = self.cmap_list[c_idx][self.target[target_idx]]
+            if cnt > 0 and target_idx < self.len_t - 1:
+                rest_ways = 0
+                for i in range(c_idx + 1, self.len_w + 1):
+                    rest_ways += self.findWays(i, target_idx + 1)
+                cnt = (cnt * rest_ways) % 1000000007
+            self.dp[c_idx, target_idx] = cnt
+        return self.dp[c_idx, target_idx]
+
+# Approach 2:
+class Solution:
+    def numWays(self, words: List[str], target: str) -> int:
+        MOD = 1000000007
+        m, n = len(words[0]), len(target)
+
+        freq = [[0] * 26 for _ in range(m)]
+        for word in words:
+            for i in range(m):
+                freq[i][ord(word[i]) - ord('a')] += 1
+
+        dp = [[0] * (n + 1) for _ in range(m + 1)]
+        dp[0][0] = 1
+
+        for i in range(1, m + 1):
+            for j in range(n + 1):
+                dp[i][j] = dp[i - 1][j]
+
+                if j > 0:
+                    char_index = ord(target[j - 1]) - ord('a')
+                    dp[i][j] += dp[i - 1][j - 1] * freq[i - 1][char_index]
+                    dp[i][j] %= MOD
+
+        return dp[m][n]
