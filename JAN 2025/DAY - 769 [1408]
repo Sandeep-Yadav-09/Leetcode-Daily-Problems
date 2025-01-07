@@ -1,0 +1,33 @@
+** 1408. String Matching in an Array **
+
+# Approach 1:
+class Solution:
+    def stringMatching(self, words: List[str]) -> List[str]:
+        result = []
+        n = len(words)
+        for i in range(n):
+            for j in range(n):
+                if i != j and words[i] in words[j]:
+                    result.append(words[i])
+                    break
+        return result
+
+# Approach 2:
+class Solution:
+    def stringMatching(self, words: List[str]) -> List[str]:
+        word_dict = {}
+        for word in words:
+            hash = 0
+            for c in word:
+                hash = hash*29 + ord(c) - ord('a') + 1
+            word_dict[hash] = word
+        res = set()
+        for word in words:
+            n = len(word)
+            for i in range(n):
+                cur = 0
+                for j in range(i, n):
+                    cur = cur*29 + ord(word[j]) - ord('a') + 1
+                    if not (i == 0 and j == n - 1) and cur in word_dict:
+                        res.add(word_dict[cur])
+        return list(res) 
