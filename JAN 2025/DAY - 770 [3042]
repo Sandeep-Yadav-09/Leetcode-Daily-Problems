@@ -1,0 +1,29 @@
+** 3042. Count Prefix and Suffix Pairs I **
+
+# Approach 1:
+class Solution:
+    def countPrefixSuffixPairs(self, words: List[str]) -> int:
+        count = 0
+
+        for i in range(len(words)):
+            for j in range(i + 1, len(words)):
+                if words[j].startswith(words[i]) and words[j].endswith(words[i]):
+                    count += 1
+        return count
+
+# Approach 2:
+class TrieNode:
+    def __init__(self):
+        self.children = defaultdict(TrieNode)
+        self.cnt = 0
+
+class Solution:
+    def countPrefixSuffixPairs(self, words: List[str]) -> int:
+        ans, root = 0, TrieNode()
+        for word in words:
+            node = root
+            for ch in zip(word, reversed(word)):
+                node = node.children[ch]
+                ans += node.cnt 
+            node.cnt += 1     
+        return ans
