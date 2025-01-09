@@ -1,0 +1,16 @@
+** 2185. Counting Words With a Given Prefix **
+
+# Approach 1:
+class Solution:
+    def prefixCount(self, words: List[str], pref: str) -> int:
+        return sum(w.startswith(pref) for w in words)   
+
+# Approach 2:
+class Solution(object):
+    def prefixCount(self, words, pref):
+        n=len(words)
+        cnt=0
+        for i in range(n):
+            if words[i].startswith(pref):
+                cnt+=1
+        return cnt
