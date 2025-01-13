@@ -1,0 +1,22 @@
+** 3223. Minimum Length of String After Operations **
+
+# Approach 1:
+class Solution:
+    def minimumLength(self, s: str) -> int:
+        arr = [0] * 26
+        
+        for ch in s:
+            arr[ord(ch) - ord('a')] += 1
+        
+        for i in range(26):
+            while arr[i] >= 3:
+                arr[i] -= 2
+        
+        length = sum(arr)
+        
+        return length
+
+# Approach 2:
+class Solution:
+    def minimumLength(self, s: str) -> int:
+        return sum(1 if x % 2 else 2 for x in Counter(s).values())
