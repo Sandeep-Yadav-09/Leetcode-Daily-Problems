@@ -1,0 +1,42 @@
+** 2657. Find the Prefix Common Array of Two Arrays **
+
+# Approach 1:
+class Solution:
+    def findThePrefixCommonArray(self, A: List[int], B: List[int]) -> List[int]:
+        n=len(A)
+        ans=[0]*n
+        seen, count=0, 0
+        for i in range(n):
+            a, b=A[i], B[i]
+            seen|=1<<(2*a-1)
+            if seen& 1<<(2*a): count+=1
+            seen|=1<<(2*b)
+            if seen& 1<<(2*b-1): count+=1
+            ans[i]=count
+        return ans 
+
+# Approach 2:
+class Solution:
+    def findThePrefixCommonArray(self, A: List[int], B: List[int]) -> List[int]:
+        element_map = {}
+        ans = []
+        common_count = 0
+
+        for i in range(len(A)):
+            if A[i] not in element_map:
+                element_map[A[i]] = [True, False]
+            else:
+                if not element_map[A[i]][0] and element_map[A[i]][1]:
+                    common_count += 1
+                    element_map[A[i]][0] = True
+
+            if B[i] not in element_map:
+                element_map[B[i]] = [False, True]
+            else:
+                if not element_map[B[i]][1] and element_map[B[i]][0]:
+                    common_count += 1
+                    element_map[B[i]][1] = True
+
+            ans.append(common_count)
+
+        return ans
