@@ -1,0 +1,32 @@
+** 2429. Minimize XOR **
+
+# Approach 1:
+class Solution:
+    def countSetBits(self, n: int) -> int:
+        count = 0
+        while n:
+            count += n & 1
+            n >>= 1
+        return count
+    
+    def minimizeXor(self, num1: int, num2: int) -> int:
+        bits = self.countSetBits(num2)
+        result = 0
+        for i in range(31, -1, -1):
+            if bits > 0 and (num1 & (1 << i)):
+                result |= (1 << i)
+                bits -= 1
+        for i in range(32):
+            if bits > 0 and not (result & (1 << i)):
+                result |= (1 << i)
+                bits -= 1
+        return result
+
+# Approach 2:
+class Solution:
+    def minimizeXor(self, v: int, u: int) -> int:
+        p, q = v.bit_count(), u.bit_count()
+        if p > q:
+            return int(bin(v)[:1:-1].replace('1','0',p-q)[::-1], 2)
+
+        return int((bin(v)[:1:-1]+'0'*32).replace('0','1',q-p)[::-1], 2)
