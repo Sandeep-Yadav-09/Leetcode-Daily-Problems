@@ -1,0 +1,52 @@
+** 1368. Minimum Cost to Make at Least One Valid Path in a Grid **
+
+# Approach 1:
+from collections import deque
+from typing import List
+
+class Solution:
+    def minCost(self, grid: List[List[int]]) -> int:
+        m, n = len(grid), len(grid[0])
+        directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]  
+        visited = [[False] * n for _ in range(m)]
+        queue = deque([(0, 0, 0)]) 
+        
+        while queue:
+            r, c, cost = queue.popleft()
+            
+            if visited[r][c]:
+                continue
+            visited[r][c] = True
+            
+            if (r, c) == (m - 1, n - 1):
+                return cost
+
+            for i, (dr, dc) in enumerate(directions):
+                nr, nc = r + dr, c + dc
+                if 0 <= nr < m and 0 <= nc < n and not visited[nr][nc]:
+                    if grid[r][c] == i + 1:  
+                        queue.appendleft((nr, nc, cost))
+                    else:
+                        queue.append((nr, nc, cost + 1))
+        
+        return -1 
+
+# Approach 2:
+class Solution:
+    def minCost(self, grid: List[List[int]]) -> int:
+        m, n = len(grid), len(grid[0])
+        directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+        cost = [[float('inf')] * n for _ in range(m)]
+        heap = [(0, 0, 0)] 
+        cost[0][0] = 0
+        while heap:
+            cur_cost, x, y = heappop(heap)
+            if (x, y) == (m - 1, n - 1):
+                return cur_cost
+            for i, (dx, dy) in enumerate(directions, 1):
+                nx, ny = x + dx, y + dy
+                if 0 <= nx < m and 0 <= ny < n:
+                    new_cost = cur_cost + (grid[x][y] != i)
+                    if new_cost < cost[nx][ny]:
+                        cost[nx][ny] = new_cost
+                        heappush(heap, (new_cost, nx, ny))
