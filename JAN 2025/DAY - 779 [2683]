@@ -1,0 +1,17 @@
+** 2683. Neighboring Bitwise XOR **
+
+# Approach 1:
+class Solution:
+    def doesValidArrayExist(self, derived: List[int]) -> bool:
+        xor_val = derived[0]
+        for i in range(1, len(derived)):
+            xor_val ^= derived[i]
+        if xor_val == 0:
+            return True
+        else:
+            return False
+
+# Approach 2:
+class Solution:
+    def doesValidArrayExist(self, derived: List[int]) -> bool:
+        return True if reduce((lambda x, y: x ^ y), derived) == 0 else False
