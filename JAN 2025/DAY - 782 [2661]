@@ -1,0 +1,30 @@
+** 2661. First Completely Painted Row or Column **
+
+# Approach 1:
+class Solution:
+    def firstCompleteIndex(self, arr: List[int], mat: List[List[int]]) -> int:
+        m, n=len(mat), len(mat[0])
+        N=m*n
+
+        to_i=[-1]*(N+1)
+        to_j=[-1]*(N+1)
+        for i, row in enumerate(mat):
+            for j, x in enumerate(row):
+                to_i[x]=i
+                to_j[x]=j
+        R=[0]*m
+        C=[0]*n
+        for i, x in enumerate(arr):
+            R[to_i[x]]+=1
+            C[to_j[x]]+=1
+            if R[to_i[x]]==n or C[to_j[x]]==m:
+                return i
+        return -1
+
+# Approach 2:
+class Solution:
+    def firstCompleteIndex(self, a: List[int], g: List[List[int]]) -> int:
+        d = {v:i for i,v in enumerate(a)}
+        q = [[d[v] for v in r] for r in g]
+
+        return min(map(max, q+[*zip(*q)]))
