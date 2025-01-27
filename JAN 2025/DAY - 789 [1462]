@@ -1,0 +1,36 @@
+** 1462. Course Schedule IV **
+
+# Approach 1:
+class Solution:
+    def checkIfPrerequisite(self, numCourses: int, prerequisites: List[List[int]], queries: List[List[int]]) -> List[bool]:
+        prereq_map = defaultdict(list)
+
+        for prereq in prerequisites:
+            prereq_map[prereq[1]].append(prereq[0])
+
+        res = []
+        memo = {}
+        def dfs(course, prereq):
+            if (course, prereq) in memo:
+                return memo[(course, prereq)]
+            
+            course_prereqs = prereq_map[course]
+            for p in course_prereqs:
+                if p == prereq or dfs(p, prereq):
+                    memo[(course, prereq)] = True
+                    return True
+            
+            memo[(course, prereq)] = False
+            return False
+                
+        return [dfs(query[1], query[0]) for query in queries]  
+
+# Approach 2:
+class Solution:
+    def checkIfPrerequisite(self, _: int, p: List[List[int]], q: List[List[int]]) -> List[bool]:
+        
+        g = {v:[*zip(*w)][1] for v,w in groupby(p,itemgetter(0))}
+        
+        f = cache(lambda n:set.union({n},*map(f,g.get(n,[]))))
+        
+        return [u in f(v) for v,u in q]
