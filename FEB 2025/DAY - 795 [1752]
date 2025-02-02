@@ -1,0 +1,23 @@
+** 1752. Check if Array Is Sorted and Rotated **
+
+# Approach 1:
+class Solution:
+    def check(self, nums: List[int]) -> bool:
+        n, rotations = len(nums), 0
+        for i in range(n):
+            if nums[i] > nums[(i + 1) % n]: 
+                rotations += 1 
+                if rotations > 1: 
+                    return False 
+        
+        return True 
+
+# Approach 2:
+class Solution:
+    def check(self, nums: List[int]) -> bool:
+        cnt, prev = 0, nums[-1]
+        for num in nums:
+            if prev > num:
+                cnt += 1  
+            prev = num
+        return cnt < 2    
