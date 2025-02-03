@@ -1,0 +1,33 @@
+** 3105. Longest Strictly Increasing or Strictly Decreasing Subarray **
+
+# Approach 1:
+class Solution:
+    def longestMonotonicSubarray(self, nums: List[int]) -> int:
+        res = low = high = 1
+        prev = nums[0]
+        for i in range(1, len(nums)):
+            if nums[i] > prev:
+                high += 1
+                low = 1
+            elif nums[i] < prev:
+                low += 1
+                high = 1
+            else:
+                low = 1
+                high = 1
+            res = max([res, low, high])
+            prev = nums[i]
+        return res
+
+# Approach 2:
+class Solution:
+    def longestMonotonicSubarray(self, nums: List[int]) -> int:
+        l1, l2 = 0, 0
+        maxLen = 1
+        for r in range(1, len(nums)):
+            if nums[r] <= nums[r - 1]:
+                l1 = r
+            if nums[r] >= nums[r - 1]:
+                l2 = r
+            maxLen = max(maxLen, r - l1 + 1, r - l2 + 1)
+        return maxLen
