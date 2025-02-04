@@ -1,0 +1,26 @@
+** 1800. Maximum Ascending Subarray Sum **
+
+# Approach 1:
+class Solution:
+    def maxAscendingSum(self, nums: List[int]) -> int:
+        maxSum = Sum = nums[0]
+        for x, y in pairwise(nums):
+            Sum=y if y<=x else Sum+y
+            maxSum = max(maxSum, Sum)
+        return maxSum
+
+# Approach 2:
+class Solution:
+    def maxAscendingSum(self, nums: List[int]) -> int:
+        n=len(nums)
+        maxVal=0
+
+        curVal=nums[0]
+        for i in range(1,n):
+            if nums[i-1]<nums[i]:
+                curVal+=nums[i]
+            else:
+                maxVal=max(maxVal, curVal)
+                curVal=nums[i]
+        
+        return max(maxVal, curVal)
