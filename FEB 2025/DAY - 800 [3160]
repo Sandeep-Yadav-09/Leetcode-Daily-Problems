@@ -1,0 +1,48 @@
+** 3160. Find the Number of Distinct Colors Among the Balls **
+
+# Approach 1:
+class Solution:
+    def queryResults(self, limit: int, queries: List[List[int]]) -> List[int]:
+        bal = {}
+        col = defaultdict(int)
+        n = len(queries)
+        res = [0] * n
+
+        for i in range(n):
+            key = queries[i][0]
+            value = queries[i][1]
+
+            if key not in bal:
+                bal[key] = value
+            else:
+                oldBalance = bal[key]
+                if col[oldBalance] == 1:
+                    del col[oldBalance]
+                else:
+                    col[oldBalance] -= 1
+                bal[key] = value
+
+            col[value] += 1
+            res[i] = len(col)
+
+        return res
+
+# Approach 2:
+class Solution:
+    def queryResults(self, limit: int, queries: List[List[int]]) -> List[int]:
+        ball_to_color = {}
+        color_count = {}
+        result = []
+        
+        for ball, color in queries:
+            if ball in ball_to_color:
+                old_color = ball_to_color[ball]
+                color_count[old_color] -= 1
+                if color_count[old_color] == 0:
+                    del color_count[old_color]
+            
+            ball_to_color[ball] = color
+            color_count[color] = color_count.get(color, 0) + 1
+            result.append(len(color_count))
+        
+        return result
