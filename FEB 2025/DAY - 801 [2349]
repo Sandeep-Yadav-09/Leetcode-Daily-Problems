@@ -1,0 +1,47 @@
+** 2349. Design a Number Container System **
+
+# Approach 1:
+class NumberContainers:
+
+    def __init__(self):
+        self.map = defaultdict(sortedcontainers.SortedSet)
+        self.indexMap = {}
+
+    def change(self, index: int, number: int) -> None:
+        if index in self.indexMap:
+            prevNumber = self.indexMap[index]
+            self.map[prevNumber].discard(index)
+            if not self.map[prevNumber]:
+                del self.map[prevNumber]
+        self.indexMap[index] = number
+        self.map[number].add(index)
+
+    def find(self, number: int) -> int:
+        return next(iter(self.map[number]), -1) if number in self.map else -1
+
+# Approach 2:
+from sortedcontainers import SortedSet
+
+class NumberContainers:
+
+    def __init__(self):
+        self.numbers = {}  
+        self.idx = {}  
+
+    def change(self, index: int, number: int) -> None:
+        if index in self.idx:  
+            prev = self.idx[index]
+            if prev in self.numbers:  
+                self.numbers[prev].discard(index)
+                if not self.numbers[prev]: 
+                    del self.numbers[prev]
+        
+        self.idx[index] = number
+        if number not in self.numbers:
+            self.numbers[number] = SortedSet()
+        self.numbers[number].add(index)
+
+    def find(self, number: int) -> int:
+        if number in self.numbers and self.numbers[number]:
+            return next(iter(self.numbers[number])) 
+        return -1
