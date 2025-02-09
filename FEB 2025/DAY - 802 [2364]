@@ -1,0 +1,21 @@
+** 2364. Count Number of Bad Pairs **
+
+# Approach 1:
+from collections import defaultdict
+
+class Solution:
+    def countBadPairs(self, nums: List[int]) -> int:
+        n = len(nums)
+        map = defaultdict(int)
+        cntBadPair = (n-1)*n//2
+        for i in range(0, n):
+            val = map[nums[i]-i]
+            cntBadPair -= val
+            map[nums[i]-i] = val+1
+
+        return cntBadPair
+
+# Approach 2:
+class Solution:
+    def countBadPairs(self, nums: List[int]) -> int:
+        return (n:=len(nums))*(n-1)//2-sum(f*(f-1)//2 for f in Counter(x-i for i, x in enumerate(nums)).values())
