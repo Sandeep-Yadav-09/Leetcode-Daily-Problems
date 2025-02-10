@@ -1,0 +1,30 @@
+** 3174. Clear Digits **
+
+# Approach 1:
+class Solution:
+    def clearDigits(self, s: str) -> str:
+        j=0
+        s = list(s)
+        for i, c in enumerate(s):
+            if c.isdigit() and j>0: 
+                j-=1
+            else:
+                s[j]=c
+                j+=1
+        s=s[:j] 
+        return "".join(s)
+
+# Approach 2:
+class Solution:
+    def clearDigits(self, s: str) -> str:
+        index = 0
+        while index < len(s):
+            if s[index].isdigit():
+                s = s[:index] + s[index+1:]
+                
+                if index > 0:
+                    s = s[:index-1] + s[index:]
+                    index -= 1
+            else:
+                index += 1
+        return s
