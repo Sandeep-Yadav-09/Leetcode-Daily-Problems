@@ -1,0 +1,22 @@
+** 1910. Remove All Occurrences of a Substring **
+
+# Approach 1:
+class Solution:
+    def removeOccurrences(self, s: str, part: str) -> str:
+        while True:
+            idx = s.find(part)
+            if idx == -1:
+                break
+            s = s[:idx] + s[idx + len(part):]
+        return s
+
+# Approach 2:
+class Solution:
+    def removeOccurrences(self, s: str, part: str) -> str:
+        stack = ""
+        part_size = len(part)
+        for i in s:
+            stack += i
+            if stack[len(stack)-part_size:] == part:
+                stack = stack[:len(stack)-part_size]
+        return stack
