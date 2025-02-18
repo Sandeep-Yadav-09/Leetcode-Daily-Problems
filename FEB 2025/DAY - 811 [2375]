@@ -1,0 +1,22 @@
+** 2375. Construct Smallest Number From DI String **
+
+# Approach 1:
+class Solution:
+    def smallestNumber(self, pattern: str) -> str:
+        res = ""
+        s = ['1']
+        for i in range(len(pattern)):
+            if pattern[i] == 'I':
+                while s:
+                    res += s.pop()
+            s.append(chr(i + 1 + ord('1')))
+        while s: res += s.pop()
+        return res
+
+# Approach 2:
+class Solution:
+    def smallestNumber(self, s: str) -> str:
+        return min(
+            ''.join(p) for p in permutations('123456789'[:len(s)+1])
+                if all((gt,lt)[q=='I'](*p[i:i+2]) for i,q in enumerate(s))
+        )
