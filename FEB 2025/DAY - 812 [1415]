@@ -1,0 +1,34 @@
+** 1415. The k-th Lexicographical String of All Happy Strings of Length n **
+
+# Approach 1:
+class Solution:
+    def __init__(self):
+        self.ans = ""
+
+    def solve(self, length, k, n, chars, s):
+        if length == n:
+            k[0] -= 1
+            if k[0] == 0:
+                self.ans = s
+            return
+        for c in chars:
+            if length == 0 or s[-1] != c:
+                self.solve(length + 1, k, n, chars, s + c)
+                if k[0] == 0:
+                    return 
+
+    def getHappyString(self, n: int, k: int) -> str:
+        self.ans = ""
+        self.solve(0, [k], n, ['a', 'b', 'c'], "")
+        return self.ans
+
+# Approach 2:
+class Solution:
+    def getHappyString(self, n: int, k: int) -> str:
+        for p in product('abc', repeat=n):
+            s = ''.join(p)
+            if not search(r'(.)\1', s):
+                k -= 1
+                if k == 0:
+                    return s
+        return ''
