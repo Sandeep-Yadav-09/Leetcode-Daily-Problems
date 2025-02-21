@@ -1,0 +1,55 @@
+** 1261. Find Elements in a Contaminated Binary Tree **
+
+# Approach 1:
+class FindElements:
+    
+    def __init__(self, root: Optional[TreeNode]):
+        self.groot=TreeNode()
+        self.sets=set()
+        
+        if root is not None and root.val==-1:
+            root.val=0   
+            self.sets.add(root.val) 
+
+        self.solve(root)
+        self.groot=root
+
+
+    def solve(self, node):
+        if node is None:
+            return
+        
+        if node.left is not None:
+            node.left.val=2*node.val+1;   
+            self.sets.add(node.left.val); 
+        
+        if node.right is not None:
+            node.right.val=2*node.val+2;   
+            self.sets.add(node.right.val); 
+        
+        self.solve(node.left)
+        self.solve(node.right)        
+        
+
+    def find(self, target: int) -> bool:
+        if target in self.sets:
+            return True
+        
+        return False
+
+# Approach 2:
+class FindElements:
+    def __init__(self, root: TreeNode):
+        self.values = set()
+        self.solve(root, 0)
+
+    def solve(self, node, val):
+        if not node:
+            return
+        node.val = val
+        self.values.add(val)
+        self.solve(node.left, 2 * val + 1)
+        self.solve(node.right, 2 * val + 2)
+
+    def find(self, target: int) -> bool:
+        return target in self.values
