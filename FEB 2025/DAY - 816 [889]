@@ -1,0 +1,59 @@
+** 889. Construct Binary Tree from Preorder and Postorder Traversal **
+
+# Approach 1:
+class Solution:
+    def constructFromPrePost(self, preorder: List[int], postorder: List[int]) -> Optional[TreeNode]:
+        dic = {}
+        for val in preorder:
+            dic[val] = TreeNode(val)
+        
+        while postorder:
+            node = postorder[0]
+            idx = preorder.index(node)
+            parent = preorder[idx - 1]
+            if idx-1 < 0:
+                return dic[node]
+            if not dic[parent].left:
+                dic[parent].left = dic[node]
+            else:
+                dic[parent].right = dic[node]
+            
+            postorder = postorder[1:]
+            preorder = preorder[:idx] + preorder[idx+1:]
+
+        return dic[node]
+
+# Approach 2:
+class Solution:
+    def constructFromPrePost(self, preorder: List[int], postorder: List[int]) -> Optional[TreeNode]:
+        
+        inTree = set()
+        root = TreeNode(preorder[0])
+        dq = deque([root])
+        cache = defaultdict(list)
+
+        for i,num in enumerate(preorder):
+            if i+1==len(preorder):
+                cache[num].append(None)
+            else:
+                cache[num].append(preorder[i+1])
+
+        for i in range(len(postorder)-1,-1,-1):
+            if i-1==-1:
+                cache[postorder[i]].append(None)
+            else:
+                cache[postorder[i]].append(postorder[i-1])
+        inTree.add(root.val)
+
+        while dq:
+            node = dq.popleft()
+            left, right = cache[node.val][0],cache[node.val][1]
+            if left and left not in inTree:
+                node.left=TreeNode(left)
+                dq.append(node.left)
+                inTree.add(left)
+            if right and right not in inTree:
+                node.right = TreeNode(right)
+                dq.append(node.right)
+                inTree.add(right)
+        return root
