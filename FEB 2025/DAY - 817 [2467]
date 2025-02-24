@@ -1,0 +1,102 @@
+** 2467. Most Profitable Path in a Tree **
+
+# Approach 1:
+class Solution:
+    def mostProfitablePath(self, edges: List[List[int]], bob: int, amount: List[int]) -> int:
+        n=len(edges)+1
+        adj=[[] for _ in range(n)]
+        parent=[-1]*n
+        Bob=[float('inf')]*n 
+
+        for u, v in edges:
+            adj[u].append(v)
+            adj[v].append(u)
+
+        def dfs(i, p):
+            parent[i] = p
+            for j in adj[i]:
+                if j == p: continue
+                dfs(j, i)
+
+        dfs(0, -1)  
+
+        x=bob
+        move=0
+        while x!=-1:
+            Bob[x]=move
+            move+=1
+            x=parent[x]
+
+        def dfs_sum(i, dist, prev):
+            alice=0
+            if dist < Bob[i]:
+                alice=amount[i]  
+            elif dist==Bob[i]:
+                alice=amount[i]//2  
+
+            isLeaf=True
+            maxLeafSum=-float('inf')
+
+            for j in adj[i]:
+                if j == prev: continue
+                isLeaf=False
+                maxLeafSum = max(maxLeafSum, dfs_sum(j, dist+1, i))
+
+            return alice if isLeaf else alice + maxLeafSum
+
+        return dfs_sum(0, 0, -1)
+    
+# Approach 2:
+class Solution:
+    def mostProfitablePath(self, edges: List[List[int]], bob: int, amount: List[int]) -> int:
+        adj = defaultdict(list)
+        for u, v in edges:
+            adj[u].append(v)
+            adj[v].append(u)
+
+        mp, ans = {}, float('-inf')
+
+        # Find the path from Bob to node 0 and store distances in mp
+        def path_to_zero(node, steps, visited):
+            visited[node] = True
+            if node == 0:
+                mp[node] = steps
+                return True
+
+            for neighbor in adj[node]:
+                if not visited[neighbor]:
+                    if path_to_zero(neighbor, steps + 1, visited):
+                        mp[neighbor] = steps
+                        return True
+            return False
+
+        # DFS for Alice to find max profit
+        def dfs(node, steps, total, visited):
+            nonlocal ans
+            visited[node] = True
+
+            if len(adj[node]) == 1 and node != 0:  # Leaf node
+                ans = max(ans, total)
+                return
+
+            for neighbor in adj[node]:
+                if not visited[neighbor]:
+                    add_val = 0
+                    if neighbor in mp:  # Bob's path
+                        if mp[neighbor] == steps + 1:
+                            add_val = amount[neighbor] // 2
+                        elif mp[neighbor] > steps + 1:
+                            add_val = amount[neighbor]
+                    else:
+                        add_val = amount[neighbor]
+                    
+                    dfs(neighbor, steps + 1, total + add_val, visited)
+
+        visited_bob = [False] * len(amount)
+        path_to_zero(bob, 1, visited_bob)
+        mp[bob] = 0
+
+        visited_alice = [False] * len(amount)
+        dfs(0, 0, amount[0], visited_alice)
+
+        return ans
