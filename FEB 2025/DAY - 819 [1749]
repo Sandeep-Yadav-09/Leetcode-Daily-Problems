@@ -1,0 +1,22 @@
+** 1749. Maximum Absolute Sum of Any Subarray **
+
+# Approach 1:
+class Solution:
+    def maxAbsoluteSum(self, nums: List[int]) -> int:
+        return max(0, max(K:=list(accumulate(nums))))-min(0, min(K))
+
+# Approach 2:
+class Solution:
+    def maxAbsoluteSum(self, nums: list[int]) -> int:
+        maxs, mins = float('-inf'), float('inf')
+        cur, curr = 0, 0
+        for num in nums:
+            cur += num
+            curr += num
+            maxs = max(cur, maxs)
+            mins = min(curr, mins)
+            if cur < 0:
+                cur = 0
+            if curr > 0:
+                curr = 0
+        return max(abs(mins), maxs)
