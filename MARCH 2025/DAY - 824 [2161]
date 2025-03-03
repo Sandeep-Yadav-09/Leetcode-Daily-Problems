@@ -1,0 +1,31 @@
+** 2161. Partition Array According to Given Pivot **
+
+# Approach 1:
+class Solution:
+    def pivotArray(self, nums: List[int], pivot: int) -> List[int]:
+        l1, l2, l3 = [], [], []
+        i = 0
+        m = len(nums)
+        
+        for n in nums:
+            if n == pivot:
+                l1.append(n)
+            elif n > pivot:
+                l2.append(n)
+            else:
+                l3.append(n)
+        return l3+l1+l2
+
+# Approach 2:
+class Solution:
+    def pivotArray(self, nums: List[int], pivot: int) -> List[int]:
+        before, after = [], [] 
+
+        for num in nums: 
+            if num < pivot:
+                before.append(num)
+            elif num > pivot:
+                after.append(num)
+
+        equal_pivot = len(nums) - len(before) - len(after) 
+        return before + [pivot] * equal_pivot + after 
