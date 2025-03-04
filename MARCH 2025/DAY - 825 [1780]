@@ -1,0 +1,15 @@
+** 1780. Check if Number is a Sum of Powers of Three **
+
+# Approach 1:
+class Solution:
+    def checkPowersOfThree(self, n: int) -> bool:
+        while n > 0:
+            if n % 3 == 2:
+                return False
+            n //= 3
+        return True
+
+# Approach 2:
+class Solution:
+    def checkPowersOfThree(self, n: int) -> bool:
+        return n<2 or n%3<2 and self.checkPowersOfThree(n//3)
