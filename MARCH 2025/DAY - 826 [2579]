@@ -1,0 +1,15 @@
+** 2579. Count Total Number of Colored Cells **
+
+# Approach 1:
+class Solution:
+    def coloredCells(self, n: int) -> int:
+        sum=1
+        for i in range(2, n+1):    
+            sum+=(i-1)*4
+        
+        return sum
+
+# Approach 2:
+class Solution:
+    def coloredCells(self, n: int) -> int:
+        return 2*n*(n-1)+1
