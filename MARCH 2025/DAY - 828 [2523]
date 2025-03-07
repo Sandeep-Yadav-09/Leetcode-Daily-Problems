@@ -1,0 +1,43 @@
+** 2523. Closest Prime Numbers in Range **
+
+# Approach 1:
+class Solution:
+    def closestPrimes(self, l: int, r: int) -> List[int]:
+        ans=[]
+        def prime(i):
+            if i<2:
+                return False
+            if i in (2,3,5):
+                return True
+            if i%2==0 or i%3==0 or i%5==0:
+                return False
+            for j in range(7,int(math.sqrt(i))+1,2):
+                if i%j==0:
+                    return False
+            return True
+
+        for i in range(l,r+1):
+            if prime(i):
+                ans.append(i)
+            
+        if len(ans)<2:
+            return [-1,-1]
+        val=float('inf')
+        res=[0,0]
+        for i in range(len(ans)-1):
+            if ans[i+1]-ans[i]<val:
+                res[0]=ans[i]
+                res[1]=ans[i+1]
+                val=ans[i+1]-ans[i]
+        return res
+
+# Approach 2:
+class Solution:
+
+    p = sorted({*range(2,1000001)}-{p*q for p in range(2,1001) for q in range(2,1000000//p+1)})
+
+    def closestPrimes(self, l: int, r: int) -> List[int]:
+
+        a = self.p[bisect_left(self.p,l):bisect_right(self.p,r)]
+        
+        return max(pairwise(a),key=lambda p:sub(*p),default=(-1,-1))
