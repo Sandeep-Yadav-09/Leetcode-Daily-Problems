@@ -1,0 +1,66 @@
+** 3306. Count of Substrings Containing Every Vowel and K Consonants II **
+
+# Approach 1:
+class Solution:
+    def countOfSubstrings(self, word: str, k: int) -> int:
+        res = cons = left = cur = 0
+        freq = defaultdict(int)
+        vowel = 'aeiou'
+
+        for ch in word:
+            if ch in vowel:
+                freq[ch] += 1
+            else: 
+                cons += 1
+                cur = 0 
+
+            while cons > k:
+                if word[left] not in vowel:
+                    cons -= 1
+                elif freq[word[left]] == 1:
+                    del freq[word[left]]
+                else:
+                    freq[word[left]] -= 1
+                left += 1
+
+            while len(freq) == 5 and cons == k:
+                cur += 1
+                if word[left] not in vowel:
+                    cons -= 1
+                elif freq[word[left]] == 1:
+                    del freq[word[left]]
+                else:
+                    freq[word[left]] -= 1
+                left += 1
+            res += cur 
+        return res
+
+# Approach 2:
+class Solution:
+    def countOfSubstrings(self, word: str, k: int) -> int:
+        def contain_more_then(k):
+            vowels = set('aeiou')
+            vowels_map = defaultdict(int)
+            consonants = 0
+            res = 0
+            l = 0
+            for r in range(len(word)):
+                if word[r] in vowels:
+                    vowels_map[word[r]] += 1
+                else:
+                    consonants += 1
+
+                while len(vowels_map) == 5 and k <= consonants:
+                    res += (len(word) - r)
+                    if word[l] in vowels:
+                        vowels_map[word[l]] -= 1
+                        if vowels_map[word[l]] == 0:
+                            vowels_map.pop(word[l])
+                    else:
+                        consonants -= 1
+
+                    l += 1
+
+            return res
+
+        return contain_more_then(k) - contain_more_then(k + 1)
