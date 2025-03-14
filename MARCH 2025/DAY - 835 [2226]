@@ -1,0 +1,27 @@
+** 2226. Maximum Candies Allocated to K Children **
+
+# Approach 1:
+class Solution:
+    def maximumCandies(self, candies: List[int], k: int) -> int:
+        def get_c(c, k):
+            for x in candies:
+                k-=x//c
+                if k<=0: 
+                    return True
+            return False
+        Sum = sum(candies)
+        if Sum<k: 
+            return 0
+        l, r=1, Sum//k
+        while l<r:
+            m=(l+r+1)//2
+            if get_c(m, k): 
+                l=m
+            else: 
+                r=m-1
+        return l
+
+# Approach 2:
+class Solution:
+    def maximumCandies(self, a: List[int], k: int) -> int:
+        return bisect_left(range(max(a)+1),1,1,key=lambda q:sum(v//q for v in a)<k)-1
