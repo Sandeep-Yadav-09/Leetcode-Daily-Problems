@@ -1,0 +1,47 @@
+** 2594. Minimum Time to Repair Cars **
+
+# Approach 1:
+class Solution:
+    def repairCars(self, ranks: List[int], cars: int) -> int:
+        left = 1
+        right = min(ranks) * cars * cars 
+        
+        def can_repair_all(time):
+            total_cars_repaired = 0
+            for rank in ranks:
+                cars_repaired = int((time / rank) ** 0.5)
+                total_cars_repaired += cars_repaired
+                if total_cars_repaired >= cars:
+                    return True
+            return False
+        
+        while left < right:
+            mid = (left + right) // 2
+            if can_repair_all(mid):
+                right = mid
+            else:
+                left = mid + 1
+                
+        return left
+
+# Approach 2:
+class Solution:
+    def repairCars(self, ranks: List[int], n: int) -> int:
+        def canrepair(mid):
+            count=0
+            for i in range(len(ranks)):
+                count+=math.floor(math.sqrt(mid/ranks[i]))
+            return count>=n
+        def binsearch():
+            left=1
+            right=max(ranks)*n*n
+            ans=max(ranks)*n*n
+            while(left<=right):
+                mid=(left+right)//2
+                if(canrepair(mid)):
+                    right=mid-1
+                    ans=mid
+                else:
+                    left=mid+1
+            return ans
+        return binsearch()
