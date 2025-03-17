@@ -1,0 +1,15 @@
+** 2206. Divide Array Into Equal Pairs **
+
+# Approach 1:
+class Solution:
+    def divideArray(self, nums: List[int]) -> bool:
+        K=0
+        for x in nums:
+            K^=(1<<x) 
+        return K==0
+
+# Approach 2:
+class Solution:
+    def divideArray(self, nums: List[int]) -> bool:
+        nums.sort() 
+        return all(nums[i] == nums[i+1] for i in range(0, len(nums), 2))
