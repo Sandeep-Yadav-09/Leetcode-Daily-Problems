@@ -1,0 +1,39 @@
+** 3191. Minimum Operations to Make Binary Array Elements Equal to One I **
+
+# Approach 1:
+class Solution:
+    def minOperations(self, nums: List[int]) -> int:
+        n = len(nums)
+        count = 0 
+        flip1 = flip2 = False 
+        
+        for i in range(n - 2):
+            need_flip = nums[i] == flip1
+
+            flip1, flip2 = flip2, False 
+
+            if need_flip:
+                count += 1 
+                flip1, flip2 = not flip1, not flip2         
+        return count if nums[n - 2] != flip1 and nums[n - 1] != flip2 else -1
+
+# Approach 2:
+class Solution:
+    def minOperations(self, nums: List[int]) -> int:
+        c, i = 0, 0
+        ln = len(nums)
+        while i<ln-2:
+
+            if nums[i]==0:
+                c=c+1
+
+                for j in range(i,i+3):
+                    if nums[j]==0:
+                        nums[j]=1
+                    else:
+                        nums[j]=0
+            i=i+1
+        if 0 in nums[ln-2:]:
+            return -1
+        
+        return c
