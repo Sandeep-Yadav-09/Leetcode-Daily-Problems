@@ -1,0 +1,63 @@
+** 3108. Minimum Cost Walk in Weighted Graph **
+
+# Approach 1:
+class Solution:
+    def minimumCost(self, n: int, edges: List[List[int]], query: List[List[int]]) -> List[int]:
+        arr, val = [-1]*n, [-1]*n
+        for edge in edges:
+            a = edge[0]
+            b = edge[1]
+            while arr[a] >= 0: a = arr[a]
+            while arr[b] >= 0: b = arr[b]
+
+            bit = edge[2]
+            if val[a] != -1: bit &= val[a]
+            if val[b] != -1: bit &= val[b]
+
+            if a == b:
+                val[a] = bit
+            elif arr[a] <= arr[b]:
+                arr[a] += arr[b]
+                arr[b] = a
+                val[a] = bit
+            else:
+                arr[b] += arr[a]
+                arr[a] = b
+                val[b] = bit
+
+        res = []
+        for List in query:
+            a = List[0]
+            b = List[1]
+            while arr[a] >= 0: a = arr[a]
+            while arr[b] >= 0: b = arr[b]
+            if a==b:
+                res.append(val[a])
+            else:
+                res.append(-1)
+        return res
+
+# Approach 2:
+class Solution:
+    def minimumCost(self, n: int, edges: List[List[int]], query: List[List[int]]) -> List[int]:
+        par=[i for i in range(n)]
+        bit_ands={i:-1 for i in range(n)}
+
+        def find(x):
+            while par[x]!=par[par[x]]: par[x]=par[par[x]]
+            return par[x]
+        
+        def union(x,y,weight):
+            px,py=find(x),find(y)
+            par[py]=px
+            bit_ands[px]=bit_ands[py]=(bit_ands[px] & bit_ands[py]) & weight
+        
+        for u,v,w in edges:
+            union(u,v,w)
+        
+        ans=[]
+        for x,y in query:
+            if find(x)!=find(y): ans.append(-1)
+            else: ans.append(bit_ands[par[x]])
+
+        return ans
