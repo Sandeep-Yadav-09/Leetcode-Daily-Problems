@@ -1,0 +1,63 @@
+** 1976. Number of Ways to Arrive at Destination **
+
+# Approach 1:
+class Solution:
+    def countPaths(self, n: int, roads: List[List[int]]) -> int:
+        adj = defaultdict(list)
+        for u, v, t in roads:
+            adj[u].append((t, v))
+            adj[v].append((t, u))
+        dist = [(0, 0, -1)]
+        vis = set()
+        ways = [0] * (n + 1)
+        ways[-1] = 1
+        while dist:
+            time, node, prev = heappop(dist)
+            if node in vis:
+                continue
+            vis.add(node)
+            ways[node] += ways[prev]
+            while dist and dist[0][0] == time and dist[0][1] == node:
+                _, _, p = heappop(dist)
+                ways[node] += ways[p]
+            if node == n-1:
+                return ways[node] % (10 ** 9 + 7)
+            for t, nd in adj[node]:
+                if nd not in vis:
+                    heappush(dist, (t + time, nd, node))
+
+# Approach 2:
+class Solution:
+    def countPaths(self, n: int, roads: List[List[int]]) -> int:
+        MOD = 10**9 + 7
+    
+        graph = {i: [] for i in range(n)}
+        for u, v, time in roads:
+            graph[u].append((v, time))
+            graph[v].append((u, time))
+
+        dist = [float('inf')] * n  
+        ways = [0] * n  
+        dist[0] = 0
+        ways[0] = 1
+
+        min_heap = [(0, 0)]  
+
+        while min_heap:
+            time, u = heapq.heappop(min_heap)
+
+            if time > dist[u]:
+                continue
+
+            for v, travel_time in graph[u]:
+                new_time = time + travel_time
+
+                if new_time < dist[v]:
+                    dist[v] = new_time
+                    ways[v] = ways[u]  
+                    heapq.heappush(min_heap, (new_time, v))
+
+                elif new_time == dist[v]:
+                    ways[v] = (ways[v] + ways[u]) % MOD  
+
+        return ways[n-1] % MOD
