@@ -1,0 +1,66 @@
+** 3394. Check if Grid can be Cut into Sections **
+
+# Approach 1:
+class Solution:
+    def checkValidCuts(self, n: int, rectangles: List[List[int]]) -> bool:
+        def can_split(intervals: List[List[int]]) -> bool:
+            intervals.sort()
+            cuts = 0
+            current_end = intervals[0][1]
+            
+            for start, end in intervals[1:]:
+                if start >= current_end:
+                    cuts += 1
+                    if cuts >= 2:
+                        return True
+                current_end = max(current_end, end)
+            
+            return False
+
+        x_intervals = [[x1, x2] for x1, _, x2, _ in rectangles]
+        y_intervals = [[y1, y2] for _, y1, _, y2 in rectangles]
+
+        return can_split(x_intervals) or can_split(y_intervals)
+
+# Approach 2:
+class Solution:
+    def checkValidCuts(self, n: int, rectangles: List[List[int]]) -> bool:
+        
+        line = []
+        for rect in rectangles:
+            line.append((rect[0], 1))
+            line.append((rect[2], 0))
+
+        line.sort()
+        res = 0
+        curr_amount = 1
+        for i in range(1, len(line)-1):
+            if line[i][1] == 1: 
+                curr_amount += 1
+            else:
+                curr_amount -= 1
+
+            if curr_amount == 0:
+                res += 1
+        
+        if res >= 2:
+            return True
+        
+        line = []
+        for rect in rectangles:
+            line.append((rect[1], 1))
+            line.append((rect[3], 0))
+
+        line.sort()
+        res = 0
+        curr_amount = 1
+        for i in range(1, len(line)-1):
+            if line[i][1] == 1: 
+                curr_amount += 1
+            else:
+                curr_amount -= 1
+
+            if curr_amount == 0:
+                res += 1
+        
+        return res >= 2
