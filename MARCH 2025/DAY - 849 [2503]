@@ -1,0 +1,73 @@
+** 2503. Maximum Number of Points From Grid Queries **
+
+# Approach 1:
+class Solution:
+    def maxPoints(self, grid: List[List[int]], queries: List[int]) -> List[int]:
+        directions = [(-1,0),(1,0),(0,-1),(0,1)]
+        m, n = len(grid), len(grid[0])
+        point = 0
+        
+        indexed_queries = sorted((query, index) for index, query in enumerate(queries))
+        
+        visited = [[False]*n for _ in range(m)]
+        
+        visited[0][0] = True
+        
+        heap = [(grid[0][0], 0, 0)]
+        
+        answer = [0] * len(queries)
+
+        for query, i in indexed_queries:
+            while heap and heap[0][0] < query:
+                val, x, y = heappop(heap)
+                point += 1
+                for dx, dy in directions:
+                    nx, ny = x + dx, y + dy
+
+                    if 0 <= nx < m and 0 <= ny < n and not visited[nx][ny]:
+                        visited[nx][ny] = True
+                        heappush(heap, (grid[nx][ny], nx, ny))
+            answer[i] = point
+        
+        return answer
+
+# Approach 2:
+class Solution:
+    def maxPoints(self, a: List[List[int]], q: List[int]) -> List[int]:
+        n = len(a)
+        m = len(a[0])
+
+        u = defaultdict(list)
+        for i, x in enumerate(q):
+            u[x].append(i)
+
+        u = [(x, u[x]) for x in u] 
+        v, y = set(), set()        
+        c = [(a[0][0], 0, 0)]     
+        heapq.heapify(u)
+
+        def add(i, j):
+            if not (0 <= i < n):
+                return
+            if not (0 <= j < m):
+                return
+            if (i, j) in y:
+                return
+            y.add((i, j))
+            heapq.heappush(c, (a[i][j], i, j))
+        
+        while u:
+            while c and c[0][0] < u[0][0]:
+                x, i, j = heapq.heappop(c)
+                v.add((i, j))
+                add(i+1, j)
+                add(i-1, j)
+                add(i, j+1)
+                add(i, j-1)
+
+            while u and (not c or u[0][0] <= c[0][0]):
+                x, b = heapq.heappop(u)
+                for i in b:
+                    assert x == q[i]
+                    q[i] = len(v)
+        return q
