@@ -1,0 +1,36 @@
+** 763. Partition Labels **
+
+# Approach 1:
+from typing import List
+
+class Solution:
+    def partitionLabels(self, s: str) -> List[int]:
+        if not s:
+            return []
+
+        last_index = {char: idx for idx, char in enumerate(s)}
+
+        partitions = []
+        start = end = 0
+
+        for idx, char in enumerate(s):
+            end = max(end, last_index[char])  
+            if idx == end:
+                partitions.append(end - start + 1)
+                start = idx + 1  
+        return partitions
+
+# Approach 2:
+class Solution:
+    def partitionLabels(self, s: str) -> List[int]:
+        last = {c: i for i, c in enumerate(s)}
+        ans = []
+        start, end = 0, 0
+
+        for i, c in enumerate(s):
+            end = max(end, last[c])  
+            if i == end:  
+                ans.append(end - start + 1)
+                start = i + 1
+
+        return ans
