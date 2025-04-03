@@ -1,0 +1,24 @@
+** 2874. Maximum Value of an Ordered Triplet II **
+
+# Approach 1:
+class Solution:
+    def maximumTripletValue(self, nums: List[int]) -> int:
+        max_result = 0
+        max_num = 0
+        max_diff = 0
+        for num in nums:
+            max_result = max(max_result, max_diff * num)
+            max_diff = max(max_diff, max_num - num)
+            max_num = max(max_num , num)
+        return max_result
+
+# Approach 2:
+class Solution:
+    def maximumTripletValue(self, nums: List[int]) -> int:
+        result = float('-inf')
+        for j in range(len(nums)):
+            for e in range(1 + j, len(nums)):
+                for s in range(1 + e , len(nums)):
+                    process = (nums[j] - nums[e]) * nums[s]
+                    result = max(process, result)
+        return max(result, 0 )
