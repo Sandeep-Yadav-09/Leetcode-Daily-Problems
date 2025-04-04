@@ -1,0 +1,30 @@
+** 1123. Lowest Common Ancestor of Deepest Leaves **
+
+# Approach 1:
+class Solution:
+    def lcaDeepestLeaves(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
+        def dfs(root):
+            if root is None:
+                return None, 0
+            l, d1 = dfs(root.left)
+            r, d2 = dfs(root.right)
+            if d1 > d2:
+                return l, d1 + 1
+            if d1 < d2:
+                return r, d2 + 1
+            return root, d1 + 1
+
+        return dfs(root)[0]
+
+# Approach 2:
+class Solution:
+    def lcaDeepestLeaves(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
+        def getDepth(node, step):
+            if not node:
+                return step
+            step += 1
+            return max(getDepth(node.left, step), getDepth(node.right, step))
+
+        left, right = getDepth(root.left, 0), getDepth(root.right, 0)
+
+        return root if left == right else self.lcaDeepestLeaves(root.left) if left > right else self.lcaDeepestLeaves(root.right)
