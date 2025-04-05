@@ -1,0 +1,24 @@
+** 1863. Sum of All Subset XOR Totals **
+
+# Approach 1:
+class Solution:
+    def subsetXORSum(self, nums: List[int]) -> int:
+        res=[]  
+        def backtrack(start,arr,l):
+            x=0
+            for i in l:
+                x=x^i 
+            res.append(x) 
+
+            for i in range(start,len(arr)):
+                l.append(arr[i])   
+                backtrack(i+1,arr,l) 
+                l.pop()
+            
+        backtrack(0,nums,[])
+        return sum(res)
+
+# Approach 2:
+class Solution:
+    def subsetXORSum(self, nums: List[int]) -> int:
+        return reduce(or_, nums) << (len(nums) - 1)
