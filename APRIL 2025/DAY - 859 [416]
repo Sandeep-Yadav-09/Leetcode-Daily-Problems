@@ -1,0 +1,38 @@
+** 416. Partition Equal Subset Sum **
+
+# Approach 1:
+class Solution:
+    def canPartition(self, nums: List[int]) -> bool:
+        total_sum = sum(nums)
+        if total_sum % 2 != 0:
+            return False
+        target_sum = total_sum // 2
+        reachable_sums = set()
+        reachable_sums.add(0)
+        
+        for num in nums:
+            current_sums = list(reachable_sums)
+            for s in current_sums:
+                new_sum = s + num
+                if new_sum == target_sum:
+                    return True
+                if new_sum < target_sum:
+                    reachable_sums.add(new_sum)
+        return target_sum in reachable_sums
+
+# Approach 2:
+class Solution:
+    def canPartition(self, nums: List[int]) -> bool:
+        nums_sum = sum(nums)
+        if nums_sum % 2 != 0:
+            return False
+
+        target = nums_sum // 2
+        dp = [False] * (target + 1)
+        dp[0] = True  
+
+        for num in nums:
+            for i in range(target, num - 1, -1):
+                dp[i] |= dp[i - num]
+        
+        return dp[target]
