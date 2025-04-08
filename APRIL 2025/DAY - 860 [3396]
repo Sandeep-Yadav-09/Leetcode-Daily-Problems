@@ -1,0 +1,21 @@
+** 3396. Minimum Number of Operations to Make Elements in Array Distinct **
+
+# Approach 1:
+class Solution:
+    def minimumOperations(self, nums: List[int]) -> int:
+        count=0
+        while len(nums)>len(set(nums)):
+            nums=nums[3:]
+            count+=1
+        return count
+        
+# Approach 2:
+class Solution:
+    def minimumOperations(self, nums: List[int]) -> int:
+        l,c = len(nums), 0
+        for i in range(0,len(nums),3):
+            if len(set(nums[i:]))==l-i:
+                break
+            else:
+                c+=1
+        return c
