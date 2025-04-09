@@ -1,0 +1,21 @@
+** 3375. Minimum Operations to Make Array Values Equal to K **
+
+# Approach 1:
+class Solution:
+    def minOperations(self, nums: List[int], k: int) -> int:
+        if nums == [k]*len(nums):
+            return 0
+        s = set()
+        for i in nums:
+            if i > k and i not in s:
+                s.add(i)
+        if len(s) != 0 and min(nums) >= k:
+            return len(s)
+        return -1
+
+# Approach 2:
+class Solution:
+    def minOperations(self, nums: List[int], k: int) -> int:
+        if any(x < k for x in nums): 
+            return -1
+        return len(set(x for x in nums if x > k))
