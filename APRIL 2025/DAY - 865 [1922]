@@ -1,0 +1,25 @@
+** 1922. Count Good Numbers **
+
+# Approach 1:
+class Solution:
+    def countGoodNumbers(self, n: int) -> int:
+       
+        MOD = 10**9 + 7
+        evens = (n + 1) // 2  
+        odds = n // 2         
+        
+        return (pow(5, evens, MOD) * pow(4, odds, MOD)) % MOD
+
+# Approach 2:
+MOD = 10 ** 9 + 7
+
+class Solution:
+    def countGoodNumbers(self, n: int) -> int:
+        if n % 4 == 0:
+            half = self.countGoodNumbers(n // 2)
+            return  half * half % MOD
+
+        if n % 2 == 0:
+            return self.countGoodNumbers(n - 1) * 4 % MOD
+        
+        return 5 if n == 1 else self.countGoodNumbers(n - 1) * 5 % MOD
