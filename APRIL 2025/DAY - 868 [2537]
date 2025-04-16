@@ -1,0 +1,39 @@
+** 2537. Count the Number of Good Subarrays **
+
+# Approach 1:
+class Solution:
+    def countGood(self, nums: List[int], k: int) -> int:
+        n = len(nums)
+        freq = defaultdict(int)
+        ans, cnt, l = 0, 0, 0
+        for r,x in enumerate(nums):
+            cnt+=freq[x]
+            freq[x]+=1
+            while cnt>=k:
+                ans+=n-r
+                freq[nums[l]]-=1
+                cnt-=freq[nums[l]]
+                l+=1
+        return ans
+
+# Approach 2:
+from collections import defaultdict
+
+class Solution:
+    def countGood(self, nums: List[int], k: int) -> int:        
+        freq = defaultdict(int)
+        prev_count = 0
+        res = 0
+        left = 0
+        
+        for right in range(len(nums)):
+            prev_count += freq[nums[right]]
+            freq[nums[right]] += 1
+            
+            while prev_count >= k:
+                res += len(nums) - right
+                prev_count -= freq[nums[left]] - 1
+                freq[nums[left]] -= 1
+                left += 1
+        
+        return res
