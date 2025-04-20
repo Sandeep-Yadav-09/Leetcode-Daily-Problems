@@ -1,0 +1,21 @@
+** 781. Rabbits in Forest **
+
+# Approach 1:
+class Solution:
+    def numRabbits(self, answers: List[int]) -> int:
+        return sum((f+x)//(x+1)*(x+1) for x, f in Counter(answers).items())
+
+# Approach 2:
+import math
+from collections import Counter
+
+class Solution:
+    def numRabbits(self, answers):
+        f = Counter(answers)
+        res = 0
+        for ans, count in f.items():
+            if ans == 0:
+                res += count
+            else:
+                res += math.ceil(count / (ans + 1)) * (ans + 1)
+        return res
