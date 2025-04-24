@@ -1,0 +1,38 @@
+** 2799. Count Complete Subarrays in an Array **
+
+# Approach 1:
+class Solution:
+    def countCompleteSubarrays(self, nums: List[int]) -> int:
+        n=len(nums)
+        k=len(set(nums))
+        freq=[0]*2001
+        cnt, winCnt, l=0, 0, 0
+        for r, x in enumerate(nums):
+            if freq[x]==0: winCnt+=1
+            freq[x]+=1
+            while l<=r and winCnt==k:
+                cnt+=n-r
+                freq[nums[l]]-=1
+                if freq[nums[l]]==0: winCnt-=1
+                l+=1
+        return cnt
+
+# Approach 2:
+class Solution:
+    def countCompleteSubarrays(self, nums: List[int]) -> int:
+        res, l = 0, 0
+        n, all_arr = len(nums), len(set(nums))
+        curr_nums = defaultdict(int)
+
+        for r in range(n):
+            curr_nums[nums[r]] += 1
+            while len(curr_nums) == all_arr:
+                res += n - r
+                curr_nums[nums[l]] -= 1
+
+                if curr_nums[nums[l]] == 0:
+                    curr_nums.pop(nums[l])
+                
+                l += 1
+        
+        return res
