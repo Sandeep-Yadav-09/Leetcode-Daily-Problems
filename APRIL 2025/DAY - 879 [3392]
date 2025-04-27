@@ -1,0 +1,25 @@
+** 3392. Count Subarrays of Length Three With a Condition **
+
+# Approach 1:
+class Solution:
+    def countSubarrays(self, nums: List[int]) -> int:
+        count = 0
+
+        for i in range(len(nums) - 2):
+            first = nums[i]
+            middle = nums[i + 1]
+            third = nums[i + 2]
+
+            if (first + third) * 2 == middle:
+                count += 1
+
+        return count
+
+# Approach 2:
+class Solution:
+    def countSubarrays(self, nums: List[int]) -> int:
+        res = 0
+        for i in range(len(nums) - 2):
+            if nums[i] + nums[i + 2] == nums[i + 1] / 2:
+                res += 1
+        return res
