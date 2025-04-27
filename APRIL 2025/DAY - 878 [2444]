@@ -1,0 +1,48 @@
+** 2444. Count Subarrays With Fixed Bounds **
+
+# Approach 1:
+class Solution:
+    def countSubarrays(self, nums: List[int], minK: int, maxK: int) -> int:
+        pMin = pMax = bad = -1
+        ans = 0
+        
+        for i, num in enumerate(nums):
+            if num == minK:
+                pMin = i
+            if num == maxK:
+                pMax = i
+            if num < minK or num > maxK:
+                bad = i
+            if pMin != -1 and pMax != -1:
+                ans += max(0, min(pMin, pMax) - bad)
+        
+        return ans
+
+# Approach 2:
+class Solution:
+    def countSubarrays(self, nums: List[int], minK: int, maxK: int) -> int:
+        minq = []
+        maxq = []
+        n = len(nums)
+        left = -1
+        cnt = 0
+        for right in range(n):
+            if not (minK <= nums[right] <= maxK):
+                left = right
+                minq.clear()
+                maxq.clear()
+                continue
+
+            while maxq and nums[right] >= nums[maxq[-1]]:
+                maxq.pop()
+            while minq and nums[right] <= nums[minq[-1]]:
+                minq.pop()
+            
+            minq.append(right)
+            maxq.append(right)
+
+            a, b = minq[0], maxq[0]
+            if nums[a] == minK and nums[b] == maxK:
+                cnt += max(0, (min(a, b) - left))
+        
+        return cnt
