@@ -1,0 +1,37 @@
+** 2302. Count Subarrays With Score Less Than K **
+
+# Approach 1:
+class Solution:
+    def countSubarrays(self, nums: List[int], k: int) -> int:
+        res = part_sum = 0
+        left = 0
+
+        for right, num in enumerate(nums):
+            part_sum += num
+            while part_sum * (right - left + 1) >= k:
+                part_sum -= nums[left]
+                left += 1
+            res += right - left + 1
+
+        return res
+
+# Approach 2:
+class Solution:
+    def countSubarrays(self, nums: List[int], k: int) -> int:
+        n = len(nums)
+        count = 0
+        curr_sum, length = 0, 0
+        left = 0
+
+        for right in range(n):
+            curr_sum += nums[right]
+            length += 1
+            
+            while (curr_sum * length) >= k:
+                curr_sum -= nums[left]
+                length -= 1
+                left += 1
+
+            count += length
+
+        return count
