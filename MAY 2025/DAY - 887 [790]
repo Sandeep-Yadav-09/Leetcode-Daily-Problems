@@ -1,0 +1,18 @@
+** 790. Domino and Tromino Tiling **
+
+# Approach 1:
+class Solution:
+    def numTilings(self, n: int) -> int:
+        MOD = 10**9 + 7
+        arr = [0] * max(3, n)
+        arr[0] = 1  # n = 1
+        arr[1] = 2  # n = 2
+        arr[2] = 5  # n = 3
+        for i in range(3, n):
+            arr[i] = (2 * arr[i - 1] + arr[i - 3]) % MOD
+        return arr[n - 1]
+
+# Approach 2:
+class Solution:
+    def numTilings(self, n: int) -> int:
+        return (f:=cache(lambda i:i>2 and (2*f(i-1)+f(i-3))%(10**9+7) or (1,1,2)[i]))(n)
