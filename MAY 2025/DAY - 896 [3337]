@@ -1,0 +1,84 @@
+** 3337. Total Characters in String After Transformations II **
+
+# Approach 1:
+class Solution:
+    def lengthAfterTransformations(self, s: str, t: int, nums: List[int]) -> int:
+        mod = 10**9 + 7
+        vector = [[0] * 26 for _ in range(26)]
+        for c in range(26):
+            num = nums[c]
+            for j in range(1, num + 1):
+                next_c = (c + j) % 26
+                vector[c][next_c] += 1
+
+        def matrix_multi(x, y):
+            res = [[0] * 26 for _ in range(26)]
+            for i in range(26):
+                for j in range(26):
+                    if x[i][j] == 0:
+                        continue
+                    for l in range(26):
+                        res[i][l] = (res[i][l] + x[i][j] * y[j][l]) % mod
+            return res
+
+        def matrix_pol(m, n):
+            total = [[1 if i == j else 0 for j in range(26)] for i in range(26)]
+            while n > 0:
+                if n % 2 == 1:
+                    total = matrix_multi(total, m)
+                m = matrix_multi(m, m)
+                n //= 2
+            return total
+        compute = matrix_pol(vector, t)
+
+        cnt = [0] * 26
+        for c in s:
+            cnt[ord(c) - ord('a')] += 1
+            
+        new_cnt =[0] * 26
+        for i in range(26):
+            for j in range(26):
+                new_cnt[j] = (new_cnt[j] + cnt[i] * compute[i][j]) % mod
+                         
+        result = 0
+        for x in new_cnt:
+            result = (result + x) % mod
+        return result
+
+# Approach 2:
+import numpy as np
+
+class Solution:
+    def lengthAfterTransformations(self, s: str, t: int, nums: List[int]) -> int:
+        mod = 10**9 + 7
+        T = np.zeros((26, 26), dtype=object)
+
+        # Build transformation matrix
+        for r in range(26):
+            for c in range(r + 1, r + nums[r] + 1):
+                T[c % 26][r] = 1
+
+        # Modular matrix multiplication
+        def matmul_mod(a, b):
+            return (a @ b) % mod
+
+        # Modular matrix exponentiation
+        def matrix_power_mod(mat, power):
+            result = np.identity(26, dtype=object)
+            while power > 0:
+                if power & 1 == 1:
+                    result = matmul_mod(result, mat)
+                mat = matmul_mod(mat, mat)
+                power = power >> 1
+            return result
+
+        T_t = matrix_power_mod(T, t)
+
+        # Initial count vector
+        X = np.zeros((26, 1), dtype=object)
+        for c in s:
+            X[ord(c) - ord('a')][0] += 1
+
+        # Final multiplication
+        res = matmul_mod(T_t, X)
+        return int(res.sum() % mod)
