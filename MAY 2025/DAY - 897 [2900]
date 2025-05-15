@@ -1,0 +1,22 @@
+** 2900. Longest Unequal Adjacent Groups Subsequence I **
+
+# Approach 1:
+class Solution:
+    def getLongestSubsequence(self, words: List[str], groups: List[int]) -> List[str]:
+        if not words: return []
+        result, last = [words[0]], groups[0]
+        for word, group in zip(words[1:], groups[1:]):
+            if group != last:
+                result.append(word)
+                last = group
+        return result
+
+# Approach 2:
+class Solution:
+    def getLongestSubsequence(self, words: List[str], groups: List[int]) -> List[str]:
+        lis=[]
+        lis.append(words[0])
+        for i in range(len(groups)-1):
+            if groups[i]!=groups[i+1]:
+                lis.append(words[i+1])
+        return lis
