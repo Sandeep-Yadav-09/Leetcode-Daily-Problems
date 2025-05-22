@@ -1,0 +1,62 @@
+** 3362. Zero Array Transformation III **
+
+# Approach 1:
+class Solution:
+    def maxRemoval(self, nums: List[int], queries: List[List[int]]) -> int:
+        n = len(nums)
+        m = len(queries)
+        intervals = sorted(queries, key=lambda x: x[0])
+        idx = 0
+        avail = []
+        active = []
+        chosen = 0
+
+        for i in range(n):
+            while active and active[0] < i:
+                heapq.heappop(active)
+
+            coverage = len(active)
+            while idx < m and intervals[idx][0] <= i:
+                l, r = intervals[idx]
+                heapq.heappush(avail, (-r, r))
+                idx += 1
+
+            demand = nums[i]
+            while coverage < demand:
+                while avail and avail[0][1] < i:
+                    heapq.heappop(avail)
+                if not avail:
+                    return -1
+                _, r = heapq.heappop(avail)
+                heapq.heappush(active, r)
+                chosen += 1
+                coverage += 1
+
+        return m - chosen     
+
+# Approach 2:
+class Solution:
+    def maxRemoval(self, nums: List[int], queries: List[List[int]]) -> int:
+        n = len(nums)
+        queries.sort(key = lambda x: [x[0], x[1]])
+
+        size = len(queries)
+        diff = [0] * (len(nums) + 1)
+        left, curr = 0, 0
+        res = []
+
+        for i, num in enumerate(nums):
+            curr += diff[i]
+            while left < size and queries[left][0] <= i:
+                heappush(res, -queries[left][1])
+                left += 1
+            
+            while res and curr < num and -res[0] >= i:
+                curr += 1
+                temp = -heapq.heappop(res)
+                diff[temp + 1] -= 1
+
+            if curr < num: 
+                return -1
+            
+        return len(res)
