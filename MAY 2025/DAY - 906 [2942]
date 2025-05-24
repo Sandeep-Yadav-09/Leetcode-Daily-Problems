@@ -1,0 +1,15 @@
+** 2942. Find Words Containing Character **
+
+# Approach 1:
+class Solution(object):
+    def findWordsContaining(self, words, x):
+        return [i for i, w in enumerate(words) if x in w]
+
+# Approach 2:
+class Solution:
+    def findWordsContaining(self, words: List[str], x: str) -> List[int]:
+        res = []
+        for i, word in enumerate(words):
+            if x in word:
+                res.append(i)
+        return res
