@@ -1,0 +1,99 @@
+** 3373. Maximize the Number of Target Nodes After Connecting Trees II **
+
+# Approach 1:
+class Solution:
+    def maxTargetNodes(self, edges1: List[List[int]], edges2: List[List[int]]) -> List[int]:
+        def makeAdj(edges, n):
+            mat = [[] for _ in range(n)]
+            for u, v in edges:
+                mat[u].append(v)
+                mat[v].append(u)
+            return mat
+
+        def colour(graph, n):
+            color = [-1] * n
+            cnt = [0, 0]
+
+            def dfs(node, c):
+                color[node] = c
+                cnt[c] += 1
+                for dest in graph[node]:
+                    if color[dest] == -1:
+                        dfs(dest, 1 - c)
+
+            dfs(0, 0)
+            return color, cnt
+
+        n = len(edges1) + 1
+        m = len(edges2) + 1
+
+        g1 = makeAdj(edges1, n)
+        g2 = makeAdj(edges2, m)
+
+        c1, cnt1 = colour(g1, n)
+        c2, cnt2 = colour(g2, m)
+
+        max2 = max(cnt2[0], cnt2[1])
+
+        targets = []
+        for i in range(n):
+            c = c1[i]
+            same = cnt1[c]
+            targets.append(same + max2)
+
+        return targets
+
+# Approach 2:
+from collections import deque
+from typing import List, Optional
+
+class Solution:
+    def bfs(self, start: int, adj: List[List[int]], included: Optional[List[bool]] = None) -> int:
+        q = deque()
+        q.append((start, -1))
+        count = 0
+        level = 0
+
+        while q:
+            size = len(q)
+            if level % 2 == 0:
+                count += size
+
+            for _ in range(size):
+                curr, parent = q.popleft()
+                if included is not None and level % 2 == 0:
+                    included[curr] = True
+                for v in adj[curr]:
+                    if v == parent:
+                        continue
+                    q.append((v, curr))
+            level += 1
+        return count
+
+    def maxTargetNodes(self, edges1: List[List[int]], edges2: List[List[int]]) -> List[int]:
+        n1 = len(edges1) + 1
+        n2 = len(edges2) + 1
+        adj1 = [[] for _ in range(n1 + 1)]
+        adj2 = [[] for _ in range(n2 + 1)]
+
+        for u, v in edges1:
+            adj1[u].append(v)
+            adj1[v].append(u)
+        for u, v in edges2:
+            adj2[u].append(v)
+            adj2[v].append(u)
+
+        even_count2 = self.bfs(0, adj2)            
+        odd_count2 = n2 - even_count2              
+        best2 = max(even_count2, odd_count2)
+
+        included = [False] * n1
+        even_count1 = self.bfs(0, adj1, included)
+
+        ans = [0] * n1
+        for i in range(n1):
+            if included[i]:
+                ans[i] = even_count1 + best2
+            else:
+                ans[i] = (n1 - even_count1) + best2
+        return ans
