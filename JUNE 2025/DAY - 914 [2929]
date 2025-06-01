@@ -1,0 +1,33 @@
+** 2929. Distribute Candies Among Children II **
+
+# Approach 1:
+class Solution:
+    def distributeCandies(self, n: int, limit: int) -> int:
+        min_first = max(0, n - 2 * limit)
+        max_first = min(n, limit)
+        ways = 0
+
+        for i in range(min_first, max_first + 1):
+            N = n - i
+
+            min_ch2 = max(0, N - limit)
+            max_ch2 = min(N, limit)
+
+            ways += max_ch2 - min_ch2 + 1
+
+        return ways
+
+# Approach 2:
+class Solution:
+    def distributeCandies(self, n: int, limit: int) -> int:
+        S = (n+2) * (n+1) // 2
+        T = n - limit + 1
+        if T > 0:
+            S -= 3 * ((T) * (T-1) // 2)
+            T -= limit + 1
+        if T> 0:
+            S += 3* (T *(T-1) // 2)
+            T -= limit + 1
+        if T > 0:
+            S -= (T) * (T-1) // 2
+        return S
