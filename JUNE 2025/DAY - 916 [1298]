@@ -1,0 +1,65 @@
+** 1298. Maximum Candies You Can Get from Boxes **
+
+# Approach 1:
+class Solution:
+    def maxCandies(self, status: List[int], candies: List[int], keys: List[List[int]], containedBoxes: List[List[int]], initialBoxes: List[int]) -> int:
+        n = len(status)
+        canOpen = [False] * n
+        hasBox = [False] * n
+        visited = [False] * n
+        queue = []
+
+        for i in initialBoxes:
+            hasBox[i] = True
+            if status[i] == 1:
+                canOpen[i] = True
+                queue.append(i)
+
+        for i in range(n):
+            if status[i] == 1:
+                canOpen[i] = True
+
+        total = 0
+
+        while queue:
+            i = queue.pop()
+            if visited[i]:
+                continue
+            visited[i] = True
+            total += candies[i]
+
+            for k in keys[i]:
+                if not canOpen[k]:
+                    canOpen[k] = True
+                    if hasBox[k] and not visited[k]:
+                        queue.append(k)
+
+            for j in containedBoxes[i]:
+                hasBox[j] = True
+                if canOpen[j] and not visited[j]:
+                    queue.append(j)
+
+        return total
+
+# Approach 2:
+class Solution:
+    def maxCandies(self, status: List[int], candies: List[int], keys: List[List[int]], containedBoxes: List[List[int]], initialBoxes: List[int]) -> int:
+        answer = 0
+        box_inv = deque(initialBoxes)
+        visited = [0] * len(status)
+
+        while box_inv:
+            box = box_inv.popleft()
+            if visited[box] == 2:
+                continue
+            visited[box] += 1
+            if status[box] == 1:
+                answer += candies[box]
+                box_inv.extend(containedBoxes[box])
+                for k in keys[box]:
+                    status[k] = 1
+                visited[box] = 2
+            else:
+                box_inv.append(box)
+            
+        return answer
