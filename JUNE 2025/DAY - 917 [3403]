@@ -1,0 +1,23 @@
+** 3403. Find the Lexicographically Largest String From the Box I **
+
+# Approach 1:
+class Solution:
+    def answerString(self, s: str, n: int) -> str:
+        return n>1 and max(s[i:i+len(s)-n+1] for i in range(len(s))) or s
+
+# Approach 2:
+class Solution:
+    def answerString(self, word: str, numFriends: int) -> str:
+        if numFriends == 1: 
+            return word
+
+        n = len(word)
+        ma = max(list(word))
+        numFriends = n - numFriends + 1
+        res = ''
+
+        for i in range(n):
+            if word[i] == ma:
+                res = max(res, word[i:numFriends + i])
+
+        return res
