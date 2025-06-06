@@ -1,0 +1,51 @@
+** 2434. Using a Robot to Print the Lexicographically Smallest String **
+
+# Approach 1:
+from collections import Counter
+
+class Solution:
+    def robotWithString(self, s: str) -> str:
+        ans = []
+        t = []
+        freq = Counter(s)
+        sml = 'a'
+
+        for c in s:
+            if c == sml:
+                ans.append(c)
+            else:
+                t.append(c)
+
+            freq[c] -= 1
+            if freq[c] == 0:
+                del freq[c]
+
+            while sml <= 'z' and sml not in freq:
+                sml = chr(ord(sml) + 1)
+
+            while t and t[-1] <= sml:
+                ans.append(t.pop())
+
+        while t:
+            ans.append(t.pop())
+
+        return ''.join(ans)
+
+# Approach 2:
+class Solution:
+    def robotWithString(self, s: str) -> str:
+        n = len(s)
+        result = []
+        stack = []
+
+        min_suf = [''] * n
+        min_suf[-1] = s[-1]
+        for i in range(n - 2, -1, -1):
+            min_suf[i] = min(s[i], min_suf[i + 1])
+
+        for i in range(n):
+            stack.append(s[i])
+            while stack and (i == n - 1 or stack[-1] <= min_suf[i + 1]):
+                result.append(stack.pop())
+
+        return ''.join(result)
