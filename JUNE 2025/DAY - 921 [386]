@@ -1,0 +1,23 @@
+** 386. Lexicographical Numbers **
+
+# Approach 1:
+class Solution:
+    def lexicalOrder(self, n: int) -> List[int]:
+        output = []
+        curr = 1
+
+        for _ in range(n):
+            output.append(curr)
+            if curr*10 <= n:
+                curr *= 10
+            else:
+                while curr%10 == 9 or curr+1 > n:
+                    curr //= 10
+                curr += 1
+        
+        return output
+
+# Approach 2:
+class Solution:
+    def lexicalOrder(self, n: int) -> List[int]:
+        return [int(j) for j in sorted([str(i+1) for i in range(n)])]
