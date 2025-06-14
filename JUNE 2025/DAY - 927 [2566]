@@ -1,0 +1,46 @@
+** 2566. Maximum Difference by Remapping a Digit **
+
+# Approach 1:
+class Solution:
+    def minMaxDifference(self, num: int) -> int:
+        s = str(num)
+
+        max_s = s
+        for ch in s:
+            if ch != '9':
+                max_s = s.replace(ch, '9')
+                break
+
+        min_s = s
+        for ch in s:
+            if ch != '0':
+                min_s = s.replace(ch, '0')
+                break
+
+        return int(max_s) - int(min_s)
+
+# Approach 2:
+class Solution:
+    def remapDigit(self, x: int, fro: int, to: int) -> int:
+        if fro == to: return x
+        answer = x
+        rem = x
+        p = 1
+        while rem > 0:
+            if rem % 10 == fro:
+                answer += (to - fro) * p
+            p *= 10
+            rem //= 10
+        return answer
+
+    def minMaxDifference(self, num: int) -> int:
+        k = 9
+        m = 0
+        rem = num
+        while rem > 0:
+            digit = rem % 10
+            k = digit
+            if digit != 9:
+                m = digit
+            rem //= 10
+        return self.remapDigit(num, m, 9) - self.remapDigit(num, k, 0)
