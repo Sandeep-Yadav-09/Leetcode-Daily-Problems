@@ -1,0 +1,25 @@
+** 2966. Divide Array Into Arrays With Max Difference **
+
+# Approach 1:
+class Solution:
+    def divideArray(self, nums: List[int], k: int) -> List[List[int]]:
+        nums.sort()
+        ans=[]
+        for i in range(0,len(nums)-2,3):
+            if nums[i+2]-nums[i]>k:
+                return []
+            ans.append(nums[i:i+3])
+        return ans
+
+# Approach 2:
+class Solution:
+    def divideArray(self, nums: List[int], k: int) -> List[List[int]]:
+        nums.sort()
+        ans = []
+        for i in range(0, len(nums), 3):
+            x, y, z = nums[i], nums[i+1], nums[i+2]
+            if(z-x) > k: return []
+            else:
+                ans.append([x,y,z])
+        
+        return ans
