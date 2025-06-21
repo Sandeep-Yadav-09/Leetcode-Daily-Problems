@@ -1,0 +1,29 @@
+** 3085. Minimum Deletions to Make String K-Special **
+
+# Approach 1:
+class Solution:
+    def minimumDeletions(self, word: str, k: int) -> int:
+        count = Counter(word)
+        
+        arr = []
+        for ch in ascii_lowercase:
+            arr.append(count[ch])
+
+        ans = 1e9
+        for mid in arr:
+            remove_count = 0
+            for val in arr:
+                if val < mid: 
+                    remove_count += val
+                elif val <= mid + k:
+                    continue
+                else:
+                    remove_count += (val - (mid + k))
+            ans = min(ans, remove_count)
+        return ans
+
+# Approach 2:
+class Solution:
+    def minimumDeletions(self, s: str, k: int) -> int:
+        b = sorted(Counter(s).values())
+        return min(sum(b[:i])+sum(max(v-b[i]-k,0) for v in b[i:]) for i in range(len(b))) 
