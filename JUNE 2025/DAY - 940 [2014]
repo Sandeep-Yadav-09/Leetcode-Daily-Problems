@@ -1,0 +1,81 @@
+** 2014. Longest Subsequence Repeated k Times **
+
+# Approach 1:
+class Solution:
+    def isKRepeatedSubsequence(self, s: str, pattern: str, k: int) -> bool:
+        pos = matched = 0
+        m = len(pattern)
+        for ch in s:
+            if ch == pattern[pos]:
+                pos += 1
+                if pos == m:
+                    pos = 0
+                    matched += 1
+                    if matched == k:
+                        return True
+        return False
+
+    def longestSubsequenceRepeatedK(self, s: str, k: int) -> str:
+        freq = [0]*26
+        for ch in s:
+            freq[ord(ch)-97] += 1
+        candidates = [chr(i+97) for i in range(25, -1, -1) if freq[i] >= k]
+
+        q = deque(candidates)
+        ans = ""
+
+        while q:
+            curr = q.popleft()
+            if len(curr) > len(ans) or (len(curr) == len(ans) and curr > ans):
+                if self.isKRepeatedSubsequence(s, curr, k):
+                    ans = curr
+            if len(curr) == 7:
+                continue
+            for ch in candidates:
+                nxt = curr + ch
+                if self.isKRepeatedSubsequence(s, nxt, k):
+                    q.append(nxt)
+        return ans
+
+# Approach 2:
+class Solution:
+    def longestSubsequenceRepeatedK(self, s: str, k: int) -> str:
+        def check(t):
+            pos = 0
+            for _ in range(k):
+                for c in t:
+                    pos = nxt[pos][c] + 1
+                    if pos > n: return False
+            return True
+
+        def dfs(d):
+            if d == L: return True
+            for c in cand:
+                res.append(c)
+                if check(res) and dfs(d + 1):
+                    return True
+                res.pop()
+            return False
+
+        arr = [ord(c) - 97 for c in s]
+        cnt = Counter(arr)
+        cand = sorted([c for c, v in cnt.items() if v >= k], reverse=True)
+        if not cand:
+            return ''
+
+        filtered = [c for c in arr if cnt[c] >= k]
+        n = len(filtered)
+        nxt = [[n] * 26 for _ in range(n + 1)]
+        for i in range(n - 1, -1, -1):
+            nxt[i] = nxt[i + 1].copy()
+            nxt[i][filtered[i]] = i
+
+        maxL = n // k
+        res = best = []
+        for L in range(maxL, 0, -1):
+            res.clear()
+            if dfs(0):
+                best = res.copy()
+                break
+
+        return ''.join(chr(c + 97) for c in best)
