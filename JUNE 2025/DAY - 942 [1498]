@@ -1,0 +1,39 @@
+** 1498. Number of Subsequences That Satisfy the Given Sum Condition **
+
+# Approach 1:
+class Solution:
+    def numSubseq(self, nums: List[int], target: int) -> int:
+        mod = 10 ** 9 + 7
+        ans = 0
+        nums.sort()
+        for i, n in enumerate(nums):
+            if 2 * n > target:
+                break
+            j = bisect.bisect(nums, target - n, lo=i)
+            ans += pow(2, j - i - 1, mod)
+        return ans % mod
+
+# Approach 2:
+MOD: int = 10**9 + 7
+
+class Solution:
+    def numSubseq(self, nums: List[int], target: int) -> int:
+        ans: int = 0
+        nums.sort()
+        for start_idx in range(len(nums)):
+            left: int = start_idx - 1
+            right: int = len(nums) - 1
+            while left < right:
+                mid: int = (left + right + 1) // 2
+                if nums[start_idx] + nums[mid] <= target:
+                    left = mid
+                else:
+                    right = mid - 1
+
+            if left == start_idx - 1:
+                break
+
+            ans += pow(2, left - start_idx, MOD)
+            ans %= MOD
+        
+        return ans
