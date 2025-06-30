@@ -1,0 +1,29 @@
+** 594. Longest Harmonious Subsequence **
+
+# Approach 1:
+from collections import Counter
+
+class Solution:
+    def findLHS(self, nums: List[int]) -> int:
+        freq = Counter(nums)
+        ans = 0
+        for key in freq:
+            if key + 1 in freq:
+                ans = max(ans, freq[key] + freq[key + 1])
+        return ans
+
+# Approach 2:
+class Solution:
+    def findLHS(self, nums: List[int]) -> int:
+        nums.sort()
+        j = 0
+        ans = 0
+
+        for i in range(len(nums)):
+            while nums[i] - nums[j] > 1:
+                j += 1
+
+            if nums[i] - nums[j] == 1:
+                ans = max(ans, i - j + 1)
+
+        return ans
