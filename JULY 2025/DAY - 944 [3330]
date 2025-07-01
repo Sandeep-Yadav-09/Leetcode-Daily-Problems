@@ -1,0 +1,24 @@
+** 3330. Find the Original Typed String I **
+
+# Approach 1:
+class Solution:
+    def possibleStringCount(self, word: str) -> int:
+        n = len(word)
+        count = n
+        for i in range(1, n):
+            if word[i] != word[i - 1]:
+                count -= 1
+        return count
+
+# Approach 2:
+class Solution:
+    def possibleStringCount(self, word: str) -> int:
+        word += '.'
+        ans, count, n = 1, 0, len(word)
+        for i in range(1, n):
+            if word[i] == word[i - 1]:
+                count += 1
+                continue
+            ans += count
+            count = 0
+        return ans
