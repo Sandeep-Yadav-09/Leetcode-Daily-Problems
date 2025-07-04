@@ -1,0 +1,27 @@
+** 3307. Find the K-th Character in String Game II **
+
+# Approach 1:
+class Solution:
+    def kthCharacter(self, k: int, operations: List[int]) -> str:
+        cnt = 0
+        n = len(operations)
+        length = pow(2, n-1)
+        for i in range(n-1, -1, -1):
+            if k > length:
+                k -= length
+                if operations[i] == 1:
+                    cnt += 1
+            length //= 2
+        return chr(ord('a') + (cnt % 26))
+
+# Approach 2:
+class Solution:
+    def kthCharacter(self, k: int, operations: List[int]) -> str:
+        shift = 0
+        k -= 1
+        for i in range(len(ops)-1, -1, -1):
+            half = float('inf') if i >= 60 else 1 << i
+            if k >= half:
+                k -= half
+                shift += ops[i]
+        return chr(ord('a') + shift % 26)
