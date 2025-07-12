@@ -1,0 +1,84 @@
+** 1900. The Earliest and Latest Rounds Where Players Compete **
+
+# Approach 1:
+from functools import lru_cache
+
+class Solution:
+    def earliestAndLatest(self, n: int, firstPlayer: int, secondPlayer: int) -> list[int]:
+        @lru_cache(None)
+        def dp(n, i, j):
+            if i + j == n + 1:
+                return (1, 1)
+            pairs = n // 2
+            other = []
+            for k in range(1, pairs + 1):
+                left, right = k, n - k + 1
+                if left != i and left != j and right != i and right != j:
+                    other.append((left, right))
+            mid = (n + 1) // 2
+            m = (n + 1) // 2
+            early, latest = float('inf'), 0
+            tot = len(other)
+            for mask in range(1 << tot):
+                surv = []
+                for idx, (left, right) in enumerate(other):
+                    if (mask >> idx) & 1:
+                        surv.append(right)
+                    else:
+                        surv.append(left)
+                surv.append(i)
+                surv.append(j)
+                if (n % 2 == 1) and mid != i and mid != j:
+                    surv.append(mid)
+                surv.sort()
+                e1, l1 = dp(m, surv.index(i) + 1, surv.index(j) + 1)
+                early = min(early, e1 + 1)
+                latest = max(latest, l1 + 1)
+            return (early, latest)
+            
+        return list(dp(n, firstPlayer, secondPlayer))
+
+# Approach 2:
+class Solution:
+    def earliestAndLatest(self, n: int, firstPlayer: int, secondPlayer: int) -> list[int]:
+        def dfs(n, p1, p2):
+            if p1 + p2 == n + 1:
+                return (1, 1)
+            if p1 > p2:
+                p1, p2 = p2, p1
+            if n <= 4:
+                return (2, 2)
+
+            m = (n + 1) // 2
+            minR, maxR = float('inf'), float('-inf')
+
+            if p1 - 1 > n - p2:
+                t = n + 1 - p1
+                p1 = n + 1 - p2
+                p2 = t
+
+            if p2 * 2 <= n + 1:
+                a = p1 - 1
+                b = p2 - p1 - 1
+
+                for i in range(a + 1):
+                    for j in range(b + 1):
+                        r1, r2 = dfs(m, i + 1, i + j + 2)
+                        minR = min(minR, r1 + 1)
+                        maxR = max(maxR, r2 + 1)
+            else:
+                p4 = n + 1 - p2
+                a = p1 - 1
+                b = p4 - p1 - 1
+                c = p2 - p4 - 1
+
+                for i in range(a + 1):
+                    for j in range(b + 1):
+                        offset = i + j + 1 + (c + 1) // 2 + 1
+                        r1, r2 = dfs(m, i + 1, offset)
+                        minR = min(minR, r1 + 1)
+                        maxR = max(maxR, r2 + 1)
+
+            return (minR, maxR)
+
+        return list(dfs(n, firstPlayer, secondPlayer))
