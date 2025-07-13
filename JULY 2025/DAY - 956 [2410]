@@ -1,0 +1,37 @@
+** 2410. Maximum Matching of Players With Trainers **
+
+# Approach 1:
+class Solution:
+    def matchPlayersAndTrainers(self, players: List[int], trainers: List[int]) -> int:
+        players.sort()
+        trainers.sort()
+
+        count = 0
+        i = j = 0
+
+        while i < len(players) and j < len(trainers):
+            if players[i] <= trainers[j]:
+                count += 1
+                i += 1
+                j += 1
+            else:
+                j += 1
+
+        return count
+          
+# Approach 2:
+class Solution:
+    def matchPlayersAndTrainers(self, players: List[int], trainers: List[int]) -> int:
+        players.sort()
+        trainers.sort()
+        res = 0 
+        
+        while trainers and players: 
+
+            if players[-1] > trainers[-1]:
+                players.pop()
+                continue
+            players.pop()
+            trainers.pop()
+            res += 1
+        return res
