@@ -1,0 +1,44 @@
+** 3136. Valid Word **
+
+# Approach 1:
+class Solution:
+    def isValid(self, word: str) -> bool:
+        if len(word) < 3:
+            return False
+
+        vowels = 0
+        consonants = 0
+        vowel_set = {'a', 'e', 'i', 'o', 'u'}
+
+        for ch in word:
+            if not ch.isalnum():
+                return False
+
+            if ch.isalpha():
+                if ch.lower() in vowel_set:
+                    vowels += 1
+                else:
+                    consonants += 1
+
+        return vowels > 0 and consonants > 0
+
+# Approach 2:
+class Solution:
+    def isValid(self, word: str) -> bool:
+        if len(word) < 3:
+            return False
+        
+        vowels = set('aeiouAEIOU')
+        has_vowel = has_consonant = False
+        
+        for char in word:
+            if not char.isalnum():
+                return False
+            
+            if char.isalpha():
+                if char in vowels:
+                    has_vowel = True
+                else:
+                    has_consonant = True
+        
+        return has_vowel and has_consonant
