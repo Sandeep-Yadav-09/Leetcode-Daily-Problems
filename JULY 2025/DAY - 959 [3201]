@@ -1,0 +1,29 @@
+** 3201. Find the Maximum Length of Valid Subsequence I **
+
+# Approach 1:
+class Solution:
+    def maximumLength(self, nums: List[int]) -> int:
+        n=len(nums)
+        if n==2: return 2
+        z=nums[0]&1
+        Len=[1-z, z, 1]
+        for xx in nums[1:]:
+            x=xx&1
+            Len[x&1]+=1
+            if x!=z:
+                Len[2]+=1
+                z=1-z
+        return max(Len)
+
+# Approach 2:
+class Solution:
+    def maximumLength(self, nums: List[int]) -> int:
+        odd, even, odd_even, even_odd = 0, 0, 0, 0
+        for num in nums:
+            if num % 2:
+                odd += 1
+                odd_even = even_odd + 1 
+            else:
+                even += 1
+                even_odd = odd_even + 1
+        return max(odd, even, odd_even, even_odd)
