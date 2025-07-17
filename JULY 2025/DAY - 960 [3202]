@@ -1,0 +1,19 @@
+** 3202. Find the Maximum Length of Valid Subsequence II **
+
+# Approach 1:
+class Solution:
+    def maximumLength(self, nums: List[int], k: int) -> int:
+        dp = [[0]*k for _ in range(k)]
+        for v,q in product(nums,range(k)):
+            dp[q][v%k] = dp[v%k][q]+1
+
+        return max(chain(*dp))
+
+# Approach 2:
+class Solution:
+    def maximumLength(self, nums: List[int], k: int) -> int:
+        z = Counter()
+        for p in product((v%k for v in nums),range(k)):
+            z[p] = z[p[::-1]]+1
+
+        return max(z.values())
