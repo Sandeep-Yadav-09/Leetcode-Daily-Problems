@@ -1,0 +1,58 @@
+** 2163. Minimum Difference in Sums After Removal of Elements **
+
+# Approach 1:
+import heapq
+
+class Solution:
+    def minimumDifference(self, nums: List[int]) -> int:
+        n3 = len(nums)
+        n = n3 // 3
+
+        leftMin = [0] * n3
+        rightMin = [0] * n3
+
+        maxHeap = []
+        leftSum = 0
+        for i in range(n3):
+            heapq.heappush(maxHeap, -nums[i])
+            leftSum += nums[i]
+            if len(maxHeap) > n:
+                leftSum += heapq.heappop(maxHeap)
+            if i >= n - 1:
+                leftMin[i] = leftSum
+
+        minHeap = []
+        rightSum = 0
+        for i in range(n3 - 1, -1, -1):
+            heapq.heappush(minHeap, nums[i])
+            rightSum += nums[i]
+            if len(minHeap) > n:
+                rightSum -= heapq.heappop(minHeap)
+            if i <= n3 - n:
+                rightMin[i] = rightSum
+
+        result = float('inf')
+        for i in range(n - 1, n3 - n):
+            result = min(result, leftMin[i] - rightMin[i + 1])
+
+        return result
+
+# Approach 2:
+class Solution:
+    def minimumDifference(self, nums: List[int]) -> int:
+        
+        n = len(nums)
+        third1, third2 = n//3, (n + n)//3
+
+        left, rght = [-num for num in nums[:third1]], nums[third2:]
+        smLeft, smRght = [-sum(left)], [sum(rght)]
+
+        heapify(left)
+        heapify(rght)
+        
+        for i in range(third1, third2):
+            j = n - i -1
+            smLeft.append(smLeft[-1] + heappushpop(left, -nums[i]) + nums[i])
+            smRght.append(smRght[-1] - heappushpop(rght,  nums[j]) + nums[j])
+            
+        return min(map(sub,smLeft, smRght[::-1]))
