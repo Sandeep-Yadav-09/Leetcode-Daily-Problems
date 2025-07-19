@@ -1,0 +1,29 @@
+** 1233. Remove Sub-Folders from the Filesystem **
+
+# Approach 1:
+class Solution(object):
+    def removeSubfolders(self, folder):
+        folder.sort()
+        res = []
+
+        for path in folder:
+            if not res or not path.startswith(res[-1] + '/'):
+                res.append(path)
+        return res
+
+# Approach 2:
+class Solution:
+    def removeSubfolders(self, folder: List[str]) -> List[str]:
+        s=set()
+        ans=[]
+        for i in sorted(folder,key=len):
+            fl=True
+            val=i[1:].split('/')
+            for v in range(len(val)):
+                if tuple(val[:v]) in s:
+                    fl=False
+                    break
+            if fl:
+                ans.append(i)
+                s.add(tuple(val))
+        return ans
