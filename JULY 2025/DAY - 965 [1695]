@@ -1,0 +1,37 @@
+** 1695. Maximum Erasure Value **
+
+# Approach 1:
+class Solution:
+    def maximumUniqueSubarray(self, nums: List[int]) -> int:
+        counter=defaultdict(int)
+        res=i=tot=0
+		
+        for j in range(len(nums)):
+            x=nums[j]   
+            tot+=x
+            counter[x]+=1
+            while i < j and counter[x]>1: 
+                counter[nums[i]]-=1
+                tot-=nums[i]
+                i+=1
+            
+            res=max(res, tot)            
+        return res
+
+# Approach 2:
+class Solution:
+    def maximumUniqueSubarray(self, nums: List[int]) -> int:
+        n=len(nums)
+        hasX=[False]*(max(nums)+1)
+        ans, wsum=0, 0
+        l, r=0, 0
+        for l, x in enumerate(nums):
+            while r<n and not hasX[(y:=nums[r])]:
+                hasX[y]=True
+                wsum+=y
+                r+=1
+            ans=max(ans, wsum)
+            hasX[x]=False
+            wsum-=x
+            if r>=n-1: break
+        return ans
