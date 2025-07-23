@@ -1,0 +1,77 @@
+** 1717. Maximum Score From Removing Substrings **
+
+# Approach 1:
+class Solution:
+    def clear(self, st):
+        st.clear()
+
+    def maximumGain(self, s: str, x: int, y: int) -> int:
+        ans = 0
+        n = len(s)
+
+        if y > x:
+            st = []
+            vis = [False] * n
+
+            for i in range(n):
+                if st and st[-1][0] == 'b' and s[i] == 'a':
+                    vis[i] = True
+                    vis[st[-1][1]] = True
+                    st.pop()
+                    ans += y
+                else:
+                    st.append((s[i], i))
+
+            self.clear(st)
+
+            for i in range(n):
+                if vis[i]:
+                    continue
+                if st and st[-1][0] == 'a' and s[i] == 'b':
+                    st.pop()
+                    ans += x
+                else:
+                    st.append((s[i], i))
+
+        else:
+            st = []
+            vis = [False] * n
+
+            for i in range(n):
+                if st and st[-1][0] == 'a' and s[i] == 'b':
+                    vis[i] = True
+                    vis[st[-1][1]] = True
+                    st.pop()
+                    ans += x
+                else:
+                    st.append((s[i], i))
+
+            self.clear(st)
+
+            for i in range(n):
+                if vis[i]:
+                    continue
+                if st and st[-1][0] == 'b' and s[i] == 'a':
+                    st.pop()
+                    ans += y
+                else:
+                    st.append((s[i], i))
+
+        return ans
+
+# Approach 2:
+class Solution:
+    def maximumGain(self, s: str, x: int, y: int) -> int:
+        res = 0
+        for q,t in sorted(((x,'ab'),(y,'ba')))[::-1]:
+            stack = []
+            for ch in s:
+                if stack and stack[-1]+ch == t:
+                    res += q
+                    stack.pop()
+                else:
+                    stack.append(ch)
+        
+            s = stack
+
+        return res
