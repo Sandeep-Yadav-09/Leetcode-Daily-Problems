@@ -1,0 +1,26 @@
+** 2210. Count Hills and Valleys in an Array **
+
+# Approach 1:
+class Solution:
+    def countHillValley(self, nums: List[int]) -> int:
+        b = [v for v,_ in groupby(nums)]
+        return sum(l>m<r or l<m>r for l,m,r in zip(b,b[1:],b[2:]))
+
+# Approach 2:
+class Solution:
+    def countHillValley(self, nums: List[int]) -> int:
+        new = []
+        for i in range(len(nums)):
+            if new and new[-1] == nums[i]:
+                continue
+            new.append(nums[i])
+        res = 0
+        for i in range(len(new)):
+            if i == 0 or i == len(new)-1:
+                continue
+            elif (
+                (new[i] > new[i-1] and new[i] > new[i+1]) or
+                (new[i] < new[i-1] and new[i] < new[i+1] )
+            ): 
+                res += 1
+        return res
