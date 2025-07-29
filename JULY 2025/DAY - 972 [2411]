@@ -1,0 +1,55 @@
+** 2411. Smallest Subarrays With Maximum Bitwise OR **
+
+# Approach 1:
+class Solution:
+    def smallestSubarrays(self, nums: List[int]) -> List[int]:
+        n = len(nums)
+        answer = [0] * n
+        for i in range(n):
+            x = nums[i]
+            answer[i] = 1
+            j = i - 1
+            while j >= 0 and nums[j] | x != nums[j]:
+                answer[j] = i - j + 1
+                nums[j] |= x
+                j -= 1
+        return answer
+
+# Approach 2:
+class Solution:
+    def smallestSubarrays(self, nums: List[int]) -> List[int]:
+        n = len(nums)
+        max_ors = [0] * n
+        max_ors[-1] = nums[-1]
+        for i in range(n - 2, -1, -1):
+            max_ors[i] = nums[i] | max_ors[i + 1]
+        r = -1
+        bit_freq = [0] * max_ors[0].bit_length()
+        curr = 0
+        ans = [1] * n
+        for i in range(0, n):
+            if r < i - 1:
+                r = i - 1
+                curr = 0
+            while curr < max_ors[i]:
+                r += 1
+                curr |= nums[r]
+                num = nums[r]
+                index = 0
+                while num:
+                    if num & 1:
+                        bit_freq[index] += 1
+                    num = num >> 1
+                    index += 1
+            ans[i] = max(ans[i], r - i + 1)
+            num = nums[i]
+            index = 0
+            if r >= i:
+                while num:
+                    if num & 1:
+                        bit_freq[index] -= 1
+                        if bit_freq[index] == 0:
+                            curr -= 1 << index
+                    num = num >> 1
+                    index += 1
+        return ans
