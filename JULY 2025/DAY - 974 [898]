@@ -1,0 +1,28 @@
+** 898. Bitwise ORs of Subarrays **
+
+# Approach 1:
+class Solution:
+    def subarrayBitwiseORs(self, arr: List[int]) -> int:
+        my_set = set(arr)
+        curr = 0
+        prev = set()
+        prev.add(arr[0])
+        for num in arr[1:]:
+            temp = set()
+            for p in prev:
+                temp.add(num | p)
+                my_set.add(num | p)
+            prev = temp
+            prev.add(num)
+
+        return len(my_set)
+
+# Approach 2:
+class Solution:
+    def subarrayBitwiseORs(self, arr: list[int]) -> int:
+        cnt = set()
+        curr = set()
+        for x in arr:
+            curr = {x} | {y | x for y in curr}
+            cnt |= curr
+        return len(cnt)
