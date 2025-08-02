@@ -1,0 +1,42 @@
+** 2561. Rearranging Fruits **
+
+# Approach 1:
+class Solution:
+    def minCost(self, basket1: List[int], basket2: List[int]) -> int:
+        ct1=Counter(basket1)
+        ct2=Counter(basket2)
+        for i in range(len(basket1)):
+            if (ct1[basket1[i]]+ct2[basket1[i]])%2!=0:
+                return -1
+            if (ct1[basket2[i]]+ct2[basket2[i]])%2!=0:
+                return -1
+        a=[]
+        for i in set(basket1):
+            if ct1[i]>ct2[i]:
+                a.extend([i]*((ct1[i]-ct2[i])//2))
+        for i in set(basket2):
+            if ct1[i]<ct2[i]:
+                a.extend([i]*((ct2[i]-ct1[i])//2))
+        print(a)
+        m=min(min(basket1),min(basket2))
+        cost=0
+        a.sort()
+        for i in range(len(a)//2):
+            cost+=min(2*m,a[i])
+        return cost
+
+# Approach 2:
+from collections import Counter
+
+class Solution:
+    def minCost(self, A: List[int], B: List[int]) -> int:
+        count = Counter(A) - Counter(B)
+        count += Counter(B) - Counter(A)
+        if any(v % 2 for v in count.values()): return -1
+
+        extra = []
+        min_val = min(A + B)
+        for k, v in count.items():
+            extra += [k] * (v // 2)
+        extra.sort()
+        return sum(min(x, 2 * min_val) for x in extra[:len(extra)//2])
