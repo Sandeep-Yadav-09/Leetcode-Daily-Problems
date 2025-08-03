@@ -1,0 +1,49 @@
+** 2106. Maximum Fruits Harvested After at Most K Steps **
+
+# Approach 1:
+class Solution:
+    def maxTotalFruits(self, fruits: List[List[int]], startPos: int, k: int) -> int:
+        n=len(fruits)
+        left=0
+        total=0
+        ans=0
+
+        for right in range(n):
+            total+=fruits[right][1]
+            while left<=right:
+                l=fruits[left][0]
+                r=fruits[right][0]
+                dist=min(abs(startPos-l)+(r-l), abs(startPos-r)+(r-l))
+                if dist>k:
+                    total-=fruits[left][1]
+                    left+=1
+                else:
+                    break
+
+            ans=max(ans, total)
+
+        return ans
+
+# Approach 2:
+class Solution:
+    def maxTotalFruits(self, fruits: List[List[int]], startPos: int, k: int) -> int:
+        maxFruits = 0
+        total = 0
+        left = 0
+
+        def isReachable(leftPos: int, rightPos: int, startPos: int, k: int) -> bool:
+            return min(
+                abs(startPos - leftPos) + (rightPos - leftPos),
+                abs(rightPos - startPos) + (rightPos - leftPos)
+            ) <= k
+
+        for right in range(len(fruits)):
+            total += fruits[right][1]
+
+            while left <= right and not isReachable(fruits[left][0], fruits[right][0], startPos, k):
+                total -= fruits[left][1]
+                left += 1
+            
+            maxFruits = max(maxFruits, total)
+        
+        return maxFruits
