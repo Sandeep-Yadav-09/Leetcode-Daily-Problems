@@ -1,0 +1,32 @@
+** 3477. Fruits Into Baskets II **
+
+# Approach 1:
+from typing import List
+
+class Solution:
+    def numOfUnplacedFruits(self, fruits: List[int], baskets: List[int]) -> int:
+        total_fruits = len(fruits)
+        unplaced_fruits = total_fruits
+
+        for fruit in fruits:
+            for i in range(len(baskets)):
+                if fruit <= baskets[i]:
+                    baskets[i] = 0
+                    unplaced_fruits -= 1    
+                    break
+
+        return unplaced_fruits
+
+# Approach 2:
+class Solution:
+    def numOfUnplacedFruits(self, fruits: List[int], baskets: List[int]) -> int:
+        N = len(fruits)
+        numPlaced = 0 
+        for fruitCount in fruits:
+            for idx, basketSize in enumerate(baskets):
+                if fruitCount <= basketSize:
+                    baskets.pop(idx)
+                    numPlaced += 1
+                    break
+        
+        return N - numPlaced
