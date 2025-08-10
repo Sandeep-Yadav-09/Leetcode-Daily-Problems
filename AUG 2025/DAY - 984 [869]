@@ -1,0 +1,42 @@
+** 869. Reordered Power of 2 **
+
+# Approach 1:
+class Solution:
+    def reorderedPowerOf2(self, n: int) -> bool:
+        def count_digits(num):
+            counts = [0] * 10
+            if num == 0: 
+                counts[0] = 1
+                return tuple(counts)
+            
+            while num > 0:
+                counts[num % 10] += 1
+                num //= 10
+            return tuple(counts)
+
+        n_counts = count_digits(n)
+
+        for i in range(30): 
+            power_of_two = 1 << i  
+            if count_digits(power_of_two) == n_counts:
+                return True
+        
+        return False
+
+# Approach 2:
+class Solution:
+    def reorderedPowerOf2(self, n: int) -> bool:
+        def srt_value(x):
+            return ''.join(sorted(str(x), reverse=True))
+
+        target = srt_value(n)
+        int_target = int(target)
+        two = 1
+
+        while two <= int_target:
+            if srt_value(two) == target:
+                return True
+            else:
+                two *= 2
+
+        return False
