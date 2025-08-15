@@ -1,0 +1,14 @@
+** 342. Power of Four **
+
+# Approach 1:
+class Solution:
+    def isPowerOfFour(self, n: int) -> bool:
+        return (n & (n - 1)) == 0 and n % 3 == 1
+
+# Approach 2:
+class Solution:
+    def isPowerOfFour(self, n: int) -> bool:
+        x=0
+        if n>0:
+            x=(math.log(n,2))//2
+        return 4**x==n and n>0
