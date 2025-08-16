@@ -1,0 +1,30 @@
+** 1323. Maximum 69 Number **
+
+# Approach 1:
+class Solution:
+    def maximum69Number (self, num: int) -> int:
+        temp = num
+        index = -1
+        pos = 0
+
+        while temp > 0:
+            if temp % 10 == 6:
+                index = pos
+            temp //= 10
+            pos += 1
+
+        return num if index == -1 else num + 3 * (10 ** index)
+
+# Approach 2:
+class Solution:
+    def maximum69Number (self, num: int) -> int:
+        num=str(num)
+        st=[]
+        for k,i in enumerate(num):
+            if i!='9':
+                st.append('9')
+                st.append(num[k+1:])
+                break
+            st.append(i)
+        return int(''.join(st))
+        
