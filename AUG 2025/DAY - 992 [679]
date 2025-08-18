@@ -1,0 +1,68 @@
+** 679. 24 Game **
+
+# Approach 1:
+from math import isclose
+
+class Solution:
+    def judgePoint24(self, cards: List[int]) -> bool:
+      TARGET = 24.0
+      EPS = 1e-4
+      nums = [float(x) for x in cards]
+      def dfs(a: list[float]) -> bool:
+          n = len(a)
+          if n == 1:
+              return abs(a[0] - TARGET) < EPS
+          for i in range(n):
+              for j in range(i + 1, n):
+                  x, y = a[i], a[j]
+                  rest = [a[k] for k in range(n) if k != i and k != j]
+                  for v in (x + y, x * y, x - y, y - x):
+                      if dfs(rest + [v]):
+                          return True
+                  if abs(y) > EPS and dfs(rest + [x / y]):
+                      return True
+                  if abs(x) > EPS and dfs(rest + [y / x]):
+                      return True
+          return False
+      return dfs(nums)
+
+# Approach 2:
+class Solution:
+    def judgePoint24(self, cards: List[int]) -> bool:
+
+        accept = 1e-9
+
+        def calc(nums):
+            if len(nums) == 1:
+                return abs(nums[0] - 24.0) <= accept
+            
+            for i in range(len(nums)):
+                for j in range(len(nums)):
+                    if i == j:
+                        continue
+                    
+                    nextdata = []
+
+                    for k in range(len(nums)):
+                        if k!=i and k!=j:
+                            nextdata.append(nums[k])
+
+                    operations = [
+                        nums[i] + nums[j],
+                        nums[i] - nums[j],
+                        nums[j] - nums[i],
+                        nums[i] * nums[j]
+                    ]
+
+                    if nums[i] != 0:
+                        operations.append(nums[j] / nums[i])
+                    if nums[j] != 0:
+                        operations.append(nums[i] / nums[j])
+
+                    for op in operations:
+                        if calc(nextdata + [op]):
+                            return True
+            
+            return False
+
+        return calc(cards)
