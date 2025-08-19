@@ -1,0 +1,30 @@
+** 2348. Number of Zero-Filled Subarrays **
+
+# Approach 1:
+class Solution:
+    def zeroFilledSubarray(self, nums: List[int]) -> int:
+        counter = 0
+        total = 0
+        for num in nums:
+            if num == 0:
+                counter += 1
+                total += counter
+            else:
+                counter = 0
+        return total
+
+# Approach 2:
+class Solution:
+    def zeroFilledSubarray(self, nums: list[int]) -> int:
+        ans = 0
+        curr = 0
+
+        for num in nums:
+            if num == 0:
+                curr += 1
+            else:
+                ans += (curr * (curr + 1)) // 2
+                curr = 0
+        
+        ans += (curr * (curr + 1)) // 2
+        return ans
