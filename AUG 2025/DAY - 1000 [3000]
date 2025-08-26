@@ -1,0 +1,34 @@
+** 3000. Maximum Area of Longest Diagonal Rectangle **
+
+# Approach 1:
+class Solution:
+    def areaOfMaxDiagonal(self, dimensions: List[List[int]]) -> int:
+        n=len(dimensions)
+        maxdiag=0
+        maxarea=0
+        for i in range(n):
+            l=dimensions[i][0]
+            w=dimensions[i][1]
+            diag=l*l + w*w
+            area=l*w
+            if(diag>maxdiag):
+                maxdiag=diag
+                maxarea=area
+            elif(diag==maxdiag):
+                maxarea=max(maxarea,area)
+        return maxarea
+
+# Approach 2:
+class Solution:
+    def areaOfMaxDiagonal(self, dimensions: List[List[int]]) -> int:
+        maxArea = float(-inf)
+        maxDiag = float(-inf)
+        for rect in dimensions:
+            diag = (rect[0] ** 2 + rect[1] ** 2)
+            area = rect[0] * rect[1]
+            if diag > maxDiag:
+                maxArea = area
+                maxDiag = diag
+            elif diag == maxDiag:
+                maxArea = max(maxArea, area)
+        return maxArea
