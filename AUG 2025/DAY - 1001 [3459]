@@ -1,0 +1,92 @@
+** 3459. Length of Longest V-Shaped Diagonal Segment **
+
+# Approach 1:
+class Solution:
+    def lenOfVDiagonal(self, g: List[List[int]]) -> int:
+        n, m = len(g), len(g[0])
+        D = [(-1, 1), (1, 1), (1, -1), (-1, -1)] 
+        inb = lambda i, j: 0 <= i < n and 0 <= j < m
+        res = 0
+
+        dp0 = [[[0]*m for _ in range(n)] for _ in range(4)] 
+        dp2 = [[[0]*m for _ in range(n)] for _ in range(4)] 
+        for d, (dr, dc) in enumerate(D):
+            rows = range(n-1, -1, -1) if dr >= 0 else range(n)
+            cols = range(m-1, -1, -1) if dc >= 0 else range(m)
+            for i in rows:
+                for j in cols:
+                    ni, nj = i + dr, j + dc
+                    if g[i][j] == 0: dp0[d][i][j] = 1 + (dp2[d][ni][nj] if inb(ni, nj) else 0)
+                    if g[i][j] == 2: dp2[d][i][j] = 1 + (dp0[d][ni][nj] if inb(ni, nj) else 0)
+
+        for d, (dr, dc) in enumerate(D):
+            t = (d + 1) % 4  
+            for i in range(n):
+                for j in range(m):
+                    if g[i][j] != 1: 
+                        continue
+                    r, c, need, L = i, j, 1, 0
+                    while inb(r, c) and g[r][c] == need:
+                        L += 1
+                        res = max(res, L) 
+                        tr, tc = r + D[t][0], c + D[t][1]
+                        if inb(tr, tc):  
+                            res = max(res, L + (dp2[t][tr][tc] if L & 1 else dp0[t][tr][tc]))
+                        r, c = r + dr, c + dc
+                        need = 2 if need == 1 else (0 if need == 2 else 2)
+
+        return res
+
+# Approach 2:
+class Solution:
+    def lenOfVDiagonal(self, grid: List[List[int]]) -> int:
+        
+        ROWS , COLS = len(grid) , len(grid[0])
+        res = 0
+
+        directions = {
+            "UL": (-1, -1),
+            "UR": (-1,  1),
+            "DL": ( 1, -1),
+            "DR": ( 1,  1)
+        }
+
+        vector_to_name = {v: k for k, v in directions.items()}
+
+        def rotate_clockwise(dr, dc):
+              newVec = (dc , -dr)
+              newDir = vector_to_name[newVec]
+              return  newVec , newDir
+
+        cache = {}
+
+        def dfs( r , c , direction, hasTurned  , nextEl):
+            state = (r , c , direction, hasTurned ,  nextEl)
+            if state in cache:
+                return  cache[state]
+            if r < 0 or r >= ROWS or c < 0 or c >= COLS or grid[r][c] != nextEl:
+                cache[state] = 0
+                return  0
+            
+            dr , dc = directions[direction]
+            newR , newC = r + dr , c + dc
+            lenA = 0
+            lenB = 0
+            nextEl =  2 - grid[r][c]
+            lenA = 1 + dfs(newR , newC , direction, hasTurned, nextEl)
+            if not hasTurned:
+                (tdr , tdc) , newDir = rotate_clockwise(dr , dc)
+                tR , tC = r + tdr , c + tdc
+                lenB = 1 + dfs(tR , tC , newDir , True  , nextEl )
+            cache[state] = max(lenA, lenB) 
+            return cache[state] 
+
+        for i in range(ROWS):
+            for j in range(COLS):
+                if grid[i][j] == 1:
+                    for direction, (dr, dc) in directions.items():
+                        newI , newJ = i + dr , j + dc
+                        curRes = 1 + dfs(newI,newJ,direction,False,2)
+                        if curRes > res:
+                            res = curRes
+        return res
