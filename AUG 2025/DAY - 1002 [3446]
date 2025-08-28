@@ -1,0 +1,48 @@
+** 3446. Sort Matrix by Diagonals **
+
+# Approach 1:
+from collections import defaultdict
+
+class Solution:
+    def sortMatrix(self, grid: List[List[int]]) -> List[List[int]]:
+        n, m = len(grid), len(grid[0])
+        diag_map = defaultdict(list)
+        
+        for i in range(n):
+            for j in range(m):
+                key = i - j
+                diag_map[key].append(grid[i][j])
+        
+        for key in diag_map:
+            if key < 0:
+                diag_map[key].sort()  
+            else:
+                diag_map[key].sort(reverse=True)  
+        
+        for i in range(n):
+            for j in range(m):
+                key = i - j
+                grid[i][j] = diag_map[key].pop(0)  
+        
+        return grid
+
+# Approach 2:
+class Solution:
+    def sortMatrix(self, grid: list[list[int]]) -> list[list[int]]:
+        n = len(grid)
+        mp = {}
+        for i in range(n):
+            for j in range(n):
+                k = i-j
+                if k not in mp:
+                    mp[k] = []
+                mp[k].append(grid[i][j])
+        for k in mp:
+            mp[k].sort(reverse =(k>=0))
+        idx = {k:0 for k in mp}
+        for i in range(n):
+            for j in range(n):
+                k = i-j
+                grid[i][j] = mp[k][idx[k]]
+                idx[k] += 1
+        return grid
