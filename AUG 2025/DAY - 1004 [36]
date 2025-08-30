@@ -1,0 +1,49 @@
+** 36. Valid Sudoku **
+
+# Approach 1:
+class Solution:
+    def isValidSudoku(self, board: List[List[str]]) -> bool:
+        rows = defaultdict(set)
+        cols = defaultdict(set)
+        boxes = defaultdict(set)
+        
+        for r in range(9):
+            for c in range(9):
+                if board[r][c] == ".":
+                    continue
+                
+                if board[r][c] in rows[r] or board[r][c] in cols[c] or board[r][c] in boxes[(r // 3, c // 3)]:
+                    return False
+                
+                rows[r].add(board[r][c])
+                cols[c].add(board[r][c])
+                boxes[(r // 3, c // 3)].add(board[r][c])
+        
+        return True
+
+# Approach 2:
+class Solution:
+    def isValidSudoku(self, board: List[List[str]]) -> bool:
+        for row in range(9):
+            seen = set()
+            for i in range(9):
+                if board[row][i] == ".":    continue
+                if board[row][i] in seen:   return False
+                seen.add(board[row][i])
+
+        for col in range(9):
+            seen = set()
+            for i in range(9):
+                if board[i][col] == ".":    continue
+                if board[i][col] in seen:   return False
+                seen.add(board[i][col])
+
+        for square in range(9):
+            seen = set()
+            for r in range(3):
+                for c in range(3):
+                    row, col = (square//3) * 3 + r, (square % 3) * 3 + c
+                    if board[row][col] == ".":  continue
+                    if board[row][col] in seen: return False
+                    seen.add(board[row][col])
+        return True
