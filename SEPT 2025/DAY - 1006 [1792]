@@ -1,0 +1,39 @@
+** 1792. Maximum Average Pass Ratio **
+
+# Approach 1:
+class Solution:
+    def maxAverageRatio(self, classes: List[List[int]], extraStudents: int) -> float:
+
+        ratios = [(-(((x+1)/(y+1))-(x/y)), x, y) for x, y in classes]
+        
+        heapify(ratios)
+
+        for _ in range(extraStudents):
+            mn = heappop(ratios)
+            heappush(ratios, (-(((mn[1]+2)/(mn[2]+2)-(mn[1]+1)/(mn[2]+1))), mn[1] + 1, mn[2] + 1))
+        return sum([x/y for _, x, y in ratios]) / len(ratios)
+
+# Approach 2:
+import heapq
+
+class Solution:
+    def maxAverageRatio(self, classes: List[List[int]], extraStudents: int) -> float:
+        def gain(pass_, total):
+            return (pass_ + 1) / (total + 1) - pass_ / total
+
+        max_heap = []
+        sum_ = 0.0
+
+        for pass_, total in classes:
+            sum_ += pass_ / total
+            heapq.heappush(max_heap, (-gain(pass_, total), pass_, total))
+
+        for _ in range(extraStudents):
+            current_gain, pass_, total = heapq.heappop(max_heap)
+            sum_ -= pass_ / total
+            pass_ += 1
+            total += 1
+            sum_ += pass_ / total
+            heapq.heappush(max_heap, (-gain(pass_, total), pass_, total))
+
+        return sum_ / len(classes)
