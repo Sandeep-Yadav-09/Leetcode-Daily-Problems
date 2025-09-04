@@ -1,0 +1,39 @@
+** 3516. Find Closest Person **
+
+# Approach 1:
+class Solution:
+    def findClosest(self, x: int, y: int, z: int) -> int:
+        val1, val2 = abs(x-z), abs(y-z)
+        ans = 0
+        if val1<val2:
+            ans = 1
+        elif val1>val2:
+            ans = 2
+        return ans
+
+# Approach 2:
+from functools import lru_cache
+
+class Solution:
+    def findClosest(self, x: int, y: int, z: int) -> int:
+        choices = [x, y]
+
+        @lru_cache(None)
+        def dp(i: int):
+            if i == len(choices):
+                return (float('inf'), -1)
+
+            best_dist, best_idx = dp(i + 1)
+
+            dist = abs(choices[i] - z)
+
+            if dist < best_dist:
+                return (dist, i)
+            if dist == best_dist and best_idx != i:
+                return (dist, -1) 
+            return (best_dist, best_idx)
+
+        dist, idx = dp(0)
+        if idx == -1:
+            return 0 
+        return 1 if idx == 0 else 2
