@@ -1,0 +1,27 @@
+** 2749. Minimum Operations to Make the Integer Zero **
+
+# Approach 1:
+class Solution:
+    def makeTheIntegerZero(self, num1: int, num2: int) -> int:
+        res = 1
+        while True:
+            x = num1 - (num2 * res)
+            if x < res:
+                return -1
+            if x.bit_count() <= res:
+                return res
+            res += 1
+
+# Approach 2:
+class Solution:
+    def makeTheIntegerZero(self, num1: int, num2: int) -> int:
+        for k in range(1, 61):
+            target = num1 - k * num2
+            
+            min_powers = target.bit_count() if target > 0 else 0
+            max_powers = target
+            
+            if min_powers <= k <= max_powers:
+                return k
+                
+        return -1
