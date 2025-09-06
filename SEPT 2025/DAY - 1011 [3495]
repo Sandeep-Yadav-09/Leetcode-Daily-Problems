@@ -1,0 +1,40 @@
+** 3495. Minimum Operations to Make Array Elements Zero **
+
+# Approach 1:
+class Solution:
+    def ops(self, x: int) -> int:
+        i: int = 1
+        base: int = i
+        output: int = 0
+        while base <= x:
+            output += (i + 1) // 2 * (min(base * 2 - 1, x) - base + 1)
+            base <<= 1
+            i += 1
+        return output
+
+    def minOperations(self, queries: List[List[int]]) -> int:
+        output: int = 0
+        for x, y in queries:
+            output += (self.ops(y) - self.ops(x - 1) + 1) // 2
+        return output
+          
+# Approach 2:
+class Solution:
+    def minOperations(self, queries: List[List[int]]) -> int:
+        ans = 0
+        for query in queries:
+            part = 0
+            left = math.floor(log(query[0], 4)) + 1
+            if 4**left > query[1]:
+                part += (query[1] - query[0] + 1) * left
+                ans += math.ceil(part / 2)
+                continue
+            left_res = 4**left - query[0]
+            right = math.floor(log(query[1], 4)) 
+            right_res = query[1] - 4**right + 1
+            part += left_res * left
+            part += right_res * (right + 1)
+            for i in range(left+1, right+1):
+                part += (4**i - 4**(i-1)) * i
+            ans += math.ceil(part / 2)       
+        return int(ans)
