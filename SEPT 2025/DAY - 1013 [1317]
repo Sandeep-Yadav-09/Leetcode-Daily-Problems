@@ -1,0 +1,33 @@
+** 1317. Convert Integer to the Sum of Two No-Zero Integers **
+
+# Approach 1:
+class Solution:
+    def getNoZeroIntegers(self, n: int) -> List[int]:
+        for i in range(1, n):
+            left = i
+            right = n - i
+            if '0' not in str(left) and '0' not in str(right):
+                return [left, right]
+        return []
+
+# Approach 2:
+class Solution(object):
+    def getNoZeroIntegers(self, n: int) -> List[int]:
+        n1, n2 = 0, 0
+        pos = 1
+        while n > 0:
+            num = n % 10
+            if num == 0:
+                n1 += 1 * pos
+                n2 += 9 * pos
+                n -= 10
+            elif num == 1 and n >= 10:
+                n1 += 2 * pos
+                n2 += 9 * pos
+                n -= 10
+            else:
+                n1 += (num - 1) * pos
+                n2 += 1 * pos
+            pos *= 10
+            n //= 10
+        return [n1, n2]
