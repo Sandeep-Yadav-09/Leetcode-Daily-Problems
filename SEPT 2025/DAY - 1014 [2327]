@@ -1,0 +1,52 @@
+** 2327. Number of People Aware of a Secret **
+
+# Approach 1:
+class Solution:
+    def peopleAwareOfSecret(self, n: int, delay: int, forget: int) -> int:
+        active_person_counter = 1
+        active_spreader = 0
+        arr = [0] * n
+        arr[0] = 1
+        MOD = 10**9 + 7
+
+
+        for i in range(1,n):
+            if i - delay >= 0:
+                active_spreader += arr[i - delay]
+
+            if i - forget >= 0:
+                active_spreader -= arr[i - forget]
+                active_person_counter -= arr[i - forget]
+            
+            arr[i] = active_spreader
+            active_person_counter = (active_person_counter + active_spreader) % MOD
+            
+        return active_person_counter
+
+# Approach 2:
+class Solution:
+    def peopleAwareOfSecret(self, n: int, delay: int, forget: int) -> int:
+        mod = 1e9 + 7
+        duping = [0] * n
+        notduping = [0] * n
+
+        notduping[0] = 1
+        if (forget < n): 
+            duping[forget] = -1
+        if (delay < n): 
+            duping[delay] = 1
+            notduping[delay] = -1
+
+        dupsum = 0
+        notdupsum = 0
+        for i in range(n):
+            dupsum = (dupsum + duping[i]) % mod
+
+            notduping[i] = (notduping[i] + dupsum) % mod
+            if (i + delay < n):
+                duping[i + delay] = (duping[i + delay] + dupsum) % mod
+                notduping[i + delay] -= dupsum
+            if (i + forget < n):
+                duping[i + forget] -= dupsum
+                
+        return int((sum(duping) + sum(notduping)) % mod)
