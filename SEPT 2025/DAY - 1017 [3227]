@@ -1,0 +1,15 @@
+** 3227. Vowels Game in a String **
+
+# Approach 1:
+class Solution:
+    def doesAliceWin(self, s: str) -> bool:
+        return any(c in "aeiou" for c in s)
+
+# Approach 2:
+class Solution:
+    def doesAliceWin(self, s: str) -> bool:
+        vowels = {'a', 'e', 'i', 'o', 'u'}
+        for ch in s:
+            if ch in vowels:
+                return True
+        return False
