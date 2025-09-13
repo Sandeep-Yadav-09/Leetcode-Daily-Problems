@@ -1,0 +1,33 @@
+** 3541. Find Most Frequent Vowel and Consonant **
+
+# Approach 1:
+class Solution:
+    def maxFreqSum(self, s: str) -> int:
+        vowel='aeiou'
+        vowels=0
+        consonent=0
+        list1=[]
+        list2=[]
+        for i in set(s):
+            if i in vowel:
+                list1.append(s.count(i))
+            else:
+                list2.append(s.count(i))
+        if list1 and list2:
+            return (max(list1)+ max(list2))
+        elif list1:
+            return(max(list1))
+        else:
+            return(max(list2))
+
+# Approach 2:
+class Solution:
+    def maxFreqSum(self, s: str) -> int:
+        freq_map = Counter(s)
+        max_vowel = max_consonant = 0
+        for char, freq in freq_map.items():
+            if char in "aeiou":
+                max_vowel = max(max_vowel, freq)
+            else:
+                max_consonant = max(max_consonant, freq)
+        return max_vowel + max_consonant
