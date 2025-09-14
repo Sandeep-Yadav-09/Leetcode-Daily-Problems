@@ -1,0 +1,42 @@
+** 966. Vowel Spellchecker **
+
+# Approach 1:
+class Solution:
+    def spellchecker(self, wordlist: List[str], queries: List[str]) -> List[str]:
+        capital={i.lower():i for i in wordlist[::-1]}
+        vovel={''.join([j if j not in "aeiou" else '.' for j in i.lower()]):i for i in wordlist[::-1]}
+        wordlist=set(wordlist)
+        res=[]
+        for i in queries:
+            if i in wordlist:
+                res.append(i)
+            elif i.lower() in capital:
+                res.append(capital[i.lower()])
+            elif ''.join([j if j not in "aeiou" else '.' for j in i.lower()]) in vovel:
+                res.append(vovel[''.join([j if j not in "aeiou" else '.' for j in i.lower()])])
+            else:
+                res.append("")
+        return res
+
+# Approach 2:
+class Solution:
+    def spellchecker(self, wordlist: List[str], queries: List[str]) -> List[str]:
+
+        check_word, check_capitlization, check_vowels = {*wordlist}, {}, {}
+        for word in wordlist:
+            if (key_l := word.lower()) not in check_capitlization:
+                check_capitlization[key_l] = word
+            if (key_v := ''.join((ch, '*')[ch in 'aeiou'] for ch in key_l)) not in check_vowels:
+                check_vowels[key_v] = word
+
+        ans = []
+        for query in queries:
+            if query in check_word:
+                ans.append(query)
+            elif (key_l := query.lower()) in check_capitlization:
+                ans.append(check_capitlization[key_l])
+            elif (key_v := ''.join((ch, '*')[ch in 'aeiou'] for ch in key_l)) in check_vowels:
+                ans.append(check_vowels[key_v])
+            else:
+                ans.append('')
+        return ans
