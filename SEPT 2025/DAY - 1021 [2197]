@@ -1,0 +1,23 @@
+** 2197. Replace Non-Coprime Numbers in Array **
+
+# Approach 1:
+class Solution:
+    def replaceNonCoprimes(self, a: List[int]) -> List[int]:
+        st = []
+        for v in a:
+            while st and gcd(st[-1],v)>1: v = lcm(st.pop(),v)
+            st.append(v)
+
+        return st
+
+# Approach 2:
+class Solution:
+    def replaceNonCoprimes(self, nums: List[int]) -> List[int]:
+        st=[]
+        for i in nums:
+            temp=i
+            while(st and math.gcd(temp,st[-1])!=1):
+                temp=math.lcm(temp,st[-1])
+                st.pop()
+            st.append(temp)
+        return st
