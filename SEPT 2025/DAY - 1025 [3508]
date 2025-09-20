@@ -1,0 +1,80 @@
+** 3508. Implement Router **
+
+# Approach 1:
+class Router:
+
+    def __init__(self, memoryLimit: int):
+        self.limit = memoryLimit
+        self.dq = deque()
+        self.exist = set()
+        self.dl = defaultdict(deque)
+
+    def _removeOldest_(self):
+        oldest = self.dq.popleft()
+        self.exist.discard(oldest)
+        self.dl[oldest[1]].popleft()
+        return oldest
+
+    def addPacket(self, source: int, destination: int, timestamp: int) -> bool:
+        if (source, destination, timestamp) in self.exist:
+            return False
+        if len(self.dq) == self.limit:
+            self._removeOldest_()
+        self.dq.append((source, destination, timestamp))
+        self.exist.add((source, destination, timestamp))
+        self.dl[destination].append(timestamp)
+        return True
+        
+    def forwardPacket(self) -> List[int]:
+        if not self.dq: return []
+        return self._removeOldest_()
+
+    def getCount(self, destination: int, startTime: int, endTime: int) -> int:
+        tList = self.dl[destination]
+        l, r = 0, len(tList) - 1
+        while l <= r:
+            m = l + (r - l) // 2
+            if tList[m] >= startTime: r = m - 1
+            else: l = m + 1
+        leftMost = l
+
+        l, r = 0, len(tList) - 1
+        while l <= r:
+            m = l + (r - l) // 2
+            if tList[m] <= endTime: l = m + 1
+            else: r = m - 1
+        rightMost = r
+        return rightMost - leftMost + 1
+
+# Approach 2:
+class Router:
+    def __init__(self, memoryLimit: int):
+        self.limit = memoryLimit
+        self.packets = collections.OrderedDict()
+        self.destinations = collections.defaultdict(sortedcontainers.SortedList)
+
+    def addPacket(self, source: int, destination: int, timestamp: int) -> bool:
+        packet = (source, destination, timestamp) 
+        if packet in self.packets:
+            return False
+
+        if len(self.packets) == self.limit:
+            self.forwardPacket()
+
+        self.packets[packet] = True
+        self.destinations[destination].add(timestamp)
+        return True
+
+    def forwardPacket(self) -> List[int]:
+        if len(self.packets) == 0:
+            return []
+
+        (source, destination, timestamp), _ = self.packets.popitem(last=False)
+        self.destinations[destination].remove(timestamp)
+        return [source, destination, timestamp]
+
+    def getCount(self, destination: int, startTime: int, endTime: int) -> int:
+        timestamps = self.destinations[destination]
+        lo = timestamps.bisect_left(startTime)
+        hi = timestamps.bisect_right(endTime)
+        return hi - lo
