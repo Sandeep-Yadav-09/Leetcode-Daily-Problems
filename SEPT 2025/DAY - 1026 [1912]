@@ -1,0 +1,78 @@
+** 1912. Design Movie Rental System **
+
+# Approach 1:
+from sortedcontainers import SortedList
+
+class MovieRentingSystem:
+    def __init__(self, n: int, entries: list[list[int]]):
+        self.price = {(shop, movie): p for shop, movie, p in entries}
+        self.avail = {}
+        self.rented = SortedList()
+        
+
+        for shop, movie, p in entries:
+            if movie not in self.avail:
+                self.avail[movie] = SortedList()
+            self.avail[movie].add((p, shop))
+
+    def search(self, movie: int) -> list[int]:
+        return [shop for _, shop in self.avail.get(movie, [])[:5]]
+
+    def rent(self, shop: int, movie: int) -> None:
+        p = self.price[(shop, movie)]
+        self.avail[movie].remove((p, shop))
+        self.rented.add((p, shop, movie))
+
+    def drop(self, shop: int, movie: int) -> None:
+        p = self.price[(shop, movie)]
+        self.rented.remove((p, shop, movie))
+        self.avail[movie].add((p, shop))
+
+    def report(self) -> list[list[int]]:
+        return [[shop, movie] for _, shop, movie in self.rented[:5]]
+
+# Approach 2:
+from collections import defaultdict
+
+class MovieRentingSystem:
+    def __init__(self, n: int, entries: List[List[int]]):
+        self.dic = defaultdict(int)
+        self.movielist = defaultdict(list)
+        self.rentset = set()
+
+        for shop, movie, price in entries:
+            key = (shop, movie)
+            self.dic[key] = price
+            self.movielist[movie].append((price, shop))
+        
+        for movie in self.movielist.keys():
+            self.movielist[movie].sort(key=lambda x: (x[0], x[1]))
+
+    def search(self, movie: int) -> List[int]:
+        arr = []
+        for price, shop in self.movielist[movie]:
+            if (shop, movie) not in self.rentset:
+                arr.append(shop)
+            if len(arr) == 5:
+                break
+        return arr
+
+    def rent(self, shop: int, movie: int) -> None:
+        self.rentset.add((shop, movie))
+
+    def drop(self, shop: int, movie: int) -> None:
+        self.rentset.discard((shop, movie))
+
+    def report(self) -> List[List[int]]:
+        arr = []
+
+        for shop, movie in self.rentset:
+            price = self.dic[(shop, movie)]
+            arr.append((price, shop, movie))
+
+        arr.sort(key=lambda x: (x[0], x[1], x[2]))
+        ans = []
+        for i in range(min(5, len(arr))):
+            price, shop, movie = arr[i][0], arr[i][1], arr[i][2]
+            ans.append([shop, movie])
+        return ans 
