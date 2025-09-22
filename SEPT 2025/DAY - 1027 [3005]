@@ -1,0 +1,22 @@
+** 3005. Count Elements With Maximum Frequency **
+
+# Approach 1:
+class Solution:
+    def maxFrequencyElements(self, nums: List[int]) -> int:
+        SetNums = set(nums)
+        frequency = 0
+        count = 0
+
+        for i in SetNums:
+            temp_freq = nums.count(i)
+            if frequency == temp_freq:
+                count += 1
+            elif frequency < temp_freq:
+                frequency = temp_freq
+                count = 1
+        return frequency * count
+
+# Approach 2:
+class Solution:
+    def maxFrequencyElements(self, nums: List[int]) -> int:
+        return reduce(mul, max(Counter(Counter(nums).values()).items()))
