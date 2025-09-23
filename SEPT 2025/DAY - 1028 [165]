@@ -1,0 +1,45 @@
+** 165. Compare Version Numbers **
+
+# Approach 1:
+class Solution:
+    def compareVersion(self, version1: str, version2: str) -> int:
+        vs1, vs2 = version1.split("."), version2.split(".")
+        m, n = len(vs1), len(vs2)
+
+        for i in range(max(m, n)):
+            v1 = int(vs1[i]) if i < m else 0
+            v2 = int(vs2[i]) if i < n else 0
+
+            if v1 < v2:
+                return -1
+
+            if v1 > v2:
+                return 1
+
+        return 0
+
+# Approach 2:
+class Solution:
+    def compareVersion(self, version1: str, version2: str) -> int:
+        index1, index2 = 0, 0
+        length1, length2 = len(version1), len(version2)
+
+        while index1 < length1 or index2 < length2:
+            number1 = 0
+            while index1 < length1 and version1[index1] != '.':
+                number1 = number1 * 10 + int(version1[index1])
+                index1 += 1
+            index1 += 1  
+
+            number2 = 0
+            while index2 < length2 and version2[index2] != '.':
+                number2 = number2 * 10 + int(version2[index2])
+                index2 += 1
+            index2 += 1  
+
+            if number1 > number2:
+                return 1
+            elif number1 < number2:
+                return -1
+
+        return 0
