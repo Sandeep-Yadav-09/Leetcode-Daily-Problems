@@ -1,0 +1,56 @@
+** 166. Fraction to Recurring Decimal **
+
+# Approach 1:
+class Solution:
+    def fractionToDecimal(self, numerator: int, denominator: int) -> str:
+        if numerator == 0:
+            return "0"
+
+        res = []
+        if (numerator < 0) ^ (denominator < 0):
+            res.append("-")
+
+        num, den = abs(numerator), abs(denominator)
+        res.append(str(num // den))
+        remainder = num % den
+        if remainder == 0:
+            return "".join(res)
+
+        res.append(".")
+        seen = {}
+        while remainder:
+            if remainder in seen:
+                idx = seen[remainder]
+                res.insert(idx, "(")
+                res.append(")")
+                return "".join(res)
+            seen[remainder] = len(res)
+            remainder *= 10
+            res.append(str(remainder // den))
+            remainder %= den
+
+        return "".join(res)
+
+# Approach 2:
+class Solution:
+    def fractionToDecimal(self, numerator: int, denominator: int) -> str:
+        if numerator % denominator == 0:
+            return str(numerator // denominator)
+
+        sign = "-" if numerator * denominator < 0 else ""
+        num, den = abs(numerator), abs(denominator)
+
+        res = sign + str(num // den) + "."
+        num %= den
+        seen = {}
+
+        while num:
+            if num in seen:
+                i = seen[num]
+                return res[:i] + "(" + res[i:] + ")"
+            seen[num] = len(res)
+            num *= 10
+            res += str(num // den)
+            num %= den
+
+        return res
