@@ -1,0 +1,32 @@
+** 1039. Minimum Score Triangulation of Polygon **
+
+# Approach 1:
+class Solution:
+    def minScoreTriangulation(self, values: List[int]) -> int:
+        dp = {}
+        def solve(n,m):
+            if m - n < 2:
+                return 0
+            if (n,m) in dp:
+                return dp[(n,m)]
+            min_score = float('inf')
+            for k in range(n+1,m):
+                score = values[n] * values[k] * values[m]
+                min_score = min(min_score,score + solve(n,k) + solve(k,m))
+            dp[(n,m)] = min_score
+            return min_score
+
+        
+        return solve(0,len(values)-1)
+
+# Approach 2:
+class Solution:
+    def minScoreTriangulation(self, values: List[int]) -> int:
+        n = len(values)
+        dp = [[0] * n for _ in range(n)]
+        for gap in range(2, n):
+            for i in range(n - gap):
+                j = i + gap
+                dp[i][j] = min(dp[i][k] + dp[k][j] + values[i] * values[j] * values[k]
+                                for k in range(i + 1, j))
+        return dp[0][n - 1]
