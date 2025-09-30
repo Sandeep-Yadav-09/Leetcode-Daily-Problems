@@ -1,0 +1,27 @@
+** 2221. Find Triangular Sum of an Array **
+
+# Approach 1:
+class Solution:
+    def triangularSum(self, nums: List[int]) -> int:
+        l1 = []
+
+        while len(nums) != 1:
+            for i in range(len(nums)-1):
+                number = (nums[i] + nums[i+1]) % 10
+                l1.append(number)
+            nums = l1[:]
+            l1 = []
+        return nums[0]
+
+# Approach 2:
+from math import comb
+
+class Solution:
+    def triangularSum(self, nums: List[int]) -> int:
+        n = len(nums)
+        result = 0
+
+        for i in range(n):
+            result = (result + comb(n - 1, i) * nums[i]) % 10
+            
+        return result
