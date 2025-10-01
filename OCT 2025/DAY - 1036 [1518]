@@ -1,0 +1,23 @@
+** 1518. Water Bottles **
+
+# Approach 1:
+class Solution:
+    def numWaterBottles(self, numBottles: int, numExchange: int) -> int:
+        totalDrank = 0
+        empty = 0
+        while numBottles > 0:
+            totalDrank += numBottles
+            empty += numBottles
+            numBottles = empty // numExchange
+            empty %= numExchange
+        return totalDrank
+
+# Approach 2:
+class Solution:
+    def numWaterBottles(self, numBottles: int, numExchange: int) -> int:
+        extras = 0
+        numBottles_temp = numBottles
+        while(numBottles_temp >= numExchange):
+            extras += numBottles_temp // numExchange
+            numBottles_temp = (numBottles_temp // numExchange) + (numBottles_temp % numExchange)
+        return numBottles + extras
