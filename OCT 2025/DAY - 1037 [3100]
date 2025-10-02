@@ -1,0 +1,33 @@
+** 3100. Water Bottles II **
+
+# Approach 1:
+class Solution:
+    def maxBottlesDrunk(self, numBottles: int, numExchange: int) -> int:
+        res = numBottles
+        empty = numBottles
+        while empty >= numExchange:
+            empty -= numExchange
+            res += 1
+            empty += 1
+            numExchange += 1
+        return res
+
+# Approach 2:
+class Solution:
+    def maxBottlesDrunk(self, numBottles: int, numExchange: int) -> int:
+        full = numBottles
+        empty = 0
+        ans = 0
+        curEx = numExchange
+
+        while full > 0:
+            ans += full
+            empty += full
+            full = 0
+
+            while empty >= curEx:
+                empty -= curEx
+                full += 1
+                curEx += 1
+
+        return ans
