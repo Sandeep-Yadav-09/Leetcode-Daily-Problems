@@ -1,0 +1,83 @@
+** 417. Pacific Atlantic Water Flow **
+
+# Approach 1:
+class Solution:
+    def pacificAtlantic(self, heights: List[List[int]]) -> List[List[int]]:
+        m,n = len(heights),len(heights[0])
+        dp = [[0]*n for _ in range(m)]
+        def display(mat):
+            for row in mat:
+                print(row)
+            print('---------------')
+        directions = [(0,1),(1,0),(0,-1),(-1,0)]
+        def bfs(nums):
+            visited = set(nums)
+            q = deque(nums)
+            while q:
+                x,y = q.popleft()
+                dp[x][y]+=1
+                for dx,dy in directions:
+                    nx,ny = x+dx,y+dy
+                    if nx<0 or ny<0 or nx>=m or ny>=n or (nx,ny) in visited:
+                        continue
+                    if heights[x][y]<=heights[nx][ny]:
+                        q.append((nx,ny))
+                        visited.add((nx,ny))
+        pacific = [(0,i) for i in range(n)] + [(i,0) for i in range(m)]
+        atlantic = [(m-1,i) for i in range(n)] + [(i,n-1) for i in range(m)]
+        bfs(pacific)
+        bfs(atlantic)
+        dp[0][0]-=1
+        dp[-1][-1]-=1
+        res = []
+        for i in range(m):
+            for j in range(n):
+                if dp[i][j] == 2:
+                    res.append([i,j])
+        return res
+
+# Approach 2:
+from collections import deque
+from typing import List
+
+class Solution:
+    def pacificAtlantic(self, heights: List[List[int]]) -> List[List[int]]:
+        row = len(heights)
+        col = len(heights[0])
+
+        def check(x, y):
+            que = deque([(x, y)])
+            st = set()
+            is_p = False 
+            is_a = False
+
+            while que:
+                x, y = que.popleft()
+                if (x, y) in st:
+                    continue
+                st.add((x, y))
+
+                if x == 0 or y == 0:
+                    is_p = True
+                if x == row - 1 or y == col - 1:
+                    is_a = True
+                if is_p and is_a:
+                    return True
+
+                for dx, dy in [(0, 1), (1, 0), (-1, 0), (0, -1)]:
+                    nx, ny = x + dx, y + dy
+                    if (
+                        0 <= nx < row and
+                        0 <= ny < col and
+                        (nx, ny) not in st and
+                        heights[nx][ny] <= heights[x][y]
+                    ):
+                        que.append((nx, ny))
+            return False
+
+        ans = []
+        for i in range(row):
+            for j in range(col):
+                if check(i, j):
+                    ans.append((i, j))
+        return ans
