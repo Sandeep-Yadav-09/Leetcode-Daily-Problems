@@ -1,0 +1,45 @@
+** 2300. Successful Pairs of Spells and Potions **
+
+# Approach 1:
+class Solution:
+    def successfulPairs(self, spells: List[int], potions: List[int], success: int) -> List[int]:
+        potions.sort(reverse=True)
+        n = len(potions)
+        result = []
+        for num in spells:
+            l, r = 0, n - 1
+            while l <= r:
+                m = (l + r) // 2
+                if num * potions[m] < success:
+                    r = m - 1
+                else:
+                    l = m + 1
+            result.append(l)
+        return result
+
+# Approach 2:
+class Solution:
+    def successfulPairs(self, spells: List[int], potions: List[int], success: int) -> List[int]:
+        n = len(spells)
+        m = len(potions)
+        potions.sort()
+        pairs = [0]*n
+        
+        def bs(idx, potions):
+            l = 0
+            r = m-1
+            if spells[idx] * potions[-1] < success:
+                pairs[idx] = 0
+            else:
+                while (l < r):
+                    mid = (l + r)//2
+                    if potions[mid]*spells[idx] < success:
+                        l = mid + 1
+                    elif potions[mid]*spells[idx] >= success:
+                        r = mid
+                pairs[idx] = m - r
+
+        for i in range(n):
+            bs(i, potions)
+        
+        return pairs 
