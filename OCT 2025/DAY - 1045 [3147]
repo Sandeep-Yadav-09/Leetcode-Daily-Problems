@@ -1,0 +1,25 @@
+** 3147. Taking Maximum Energy From the Mystic Dungeon **
+
+# Approach 1:
+class Solution:
+    def maximumEnergy(self, energy: List[int], k: int) -> int:
+        ans = energy[-1]  
+
+        for i in range(len(energy) - 1, -1, -1):
+            
+            if(i + k < len(energy)):
+                energy[i] = energy[i] + energy[i + k]
+
+            if(energy[i] > ans):
+                ans = energy[i]
+        
+        return ans
+
+# Approach 2:
+class Solution:
+    def maximumEnergy(self, energy: List[int], k: int) -> int:
+        n = len(energy)
+        dp = [0] * n
+        for i in range(k): dp[i] = energy[i]
+        for i in range(k, n): dp[i] = max(energy[i], energy[i] + dp[i - k])
+        return max(dp[-k:])
