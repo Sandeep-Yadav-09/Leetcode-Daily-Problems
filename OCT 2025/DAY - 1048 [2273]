@@ -1,0 +1,42 @@
+** 2273. Find Resultant Array After Removing Anagrams **
+
+# Approach 1:
+class Solution:
+    def removeAnagrams(self, words: List[str]) -> List[str]:
+        res = [words[0]]  
+        n = len(words)
+
+        def compare(word1: str, word2: str) -> bool:
+            freq = [0] * 26
+            for ch in word1:
+                freq[ord(ch) - ord("a")] += 1
+            for ch in word2:
+                freq[ord(ch) - ord("a")] -= 1
+            return all(x == 0 for x in freq)
+
+        for i in range(1, n):
+            if compare(words[i], words[i - 1]):
+                continue
+            res.append(words[i])
+        return res
+
+# Approach 2:
+class Solution:
+    @staticmethod
+    def isAnagram(word1: str, word2: str) -> bool:
+        if len(word1) != len(word2): return False
+        if sorted(word1) != sorted(word2): return False
+        return True
+
+    def removeAnagrams(self, words: List[str]) -> List[str]:
+        keep = [0]
+        i, j = 0, 1
+        while j < len(words):
+            if Solution.isAnagram(words[i], words[j]):
+                j += 1
+            else:
+                keep.append(j)
+                i = j
+                j = i + 1            
+        return [words[x] for x in keep]
+        
