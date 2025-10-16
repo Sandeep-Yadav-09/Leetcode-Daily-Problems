@@ -1,0 +1,31 @@
+** 2598. Smallest Missing Non-negative Integer After Operations **
+
+# Approach 1:
+class Solution:
+    def findSmallestInteger(self, nums: List[int], value: int) -> int:
+        remainder_count = [0] * value
+        for num in nums:
+            remainder_count[num % value] += 1
+        
+        min_count = min(remainder_count)
+        min_index = remainder_count.index(min_count)
+        
+        return value * min_count + min_index
+
+# Approach 2:
+class Solution:
+    def findSmallestInteger(self, nums: List[int], value: int) -> int:
+        N = len(nums)
+        mods = [0]*value
+
+        for num in nums:
+            mods[num%value] += 1
+        
+        curr_val = 0
+        while curr_val < N:
+            if not mods[curr_val%value]:
+                return curr_val
+            mods[curr_val%value] -= 1
+            curr_val += 1
+        
+        return curr_val
