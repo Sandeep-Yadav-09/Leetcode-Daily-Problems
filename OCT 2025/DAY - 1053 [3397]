@@ -1,0 +1,36 @@
+** 3397. Maximum Number of Distinct Elements After Operations **
+
+# Approach 1:
+from typing import List
+
+class Solution:
+    def maxDistinctElements(self, nums: List[int], k: int) -> int:
+        nums.sort()
+        last_picked = -10**18
+        distinct_count = 0
+        for num in nums:
+            lower_bound = num - k
+            upper_bound = num + k
+            if last_picked < lower_bound:
+                last_picked = lower_bound
+            else:
+                last_picked += 1
+            if last_picked <= upper_bound:
+                distinct_count += 1
+            else:
+                last_picked -= 1
+
+        return distinct_count
+
+# Approach 2:
+class Solution:
+    def maxDistinctElements(self, nums: list[int], k: int) -> int:
+        nums.sort()
+        curr =float("-inf")
+        ans = 0
+        for x in nums:
+            v = max(x - k, curr + 1)
+            if v <= x + k:
+                ans += 1
+                curr = v
+        return ans
