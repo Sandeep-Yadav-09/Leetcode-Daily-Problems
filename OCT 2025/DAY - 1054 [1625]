@@ -1,0 +1,37 @@
+** 1625. Lexicographically Smallest String After Applying Operations **
+
+# Approach 1:
+class Solution:
+    def findLexSmallestString(self, s: str, a: int, b: int) -> str:
+        res,q = set(),deque([tuple(map(int,s))])
+        while q:
+            t = q.pop()
+            for t in tuple((d+a)%10 for d,a in zip(t,cycle((0,a)))),t[-b:]+t[:-b]:
+                if t not in res: res.add(t);q.append(t)
+        
+        return ''.join(map(str,min(res)))
+
+# Approach 2:
+class Solution:
+    def findLexSmallestString(self, s: str, a: int, b: int) -> str:
+        s = list(map(int, s))
+        n = len(s)
+        step = gcd(b, n)
+        g = gcd(a, 10)
+        ans = [10]
+
+        def modify(start: int) -> None:
+            ch = t[start]
+            inc = ch % g - ch
+            if inc:
+                for j in range(start, n, 2):
+                    t[j] = (t[j] + inc) % 10
+
+        for i in range(0, n, step):      
+            t = s[i:] + s[:i]
+            modify(1)
+            if step % 2:
+                modify(0)
+            ans = min(ans, t)
+
+        return ''.join(map(str, ans))
