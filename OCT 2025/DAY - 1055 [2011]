@@ -1,0 +1,17 @@
+** 2011. Final Value of Variable After Performing Operations **
+
+# Approach 1:
+class Solution:
+    def finalValueAfterOperations(self, operations: List[str]) -> int:
+        return sum(1 if op[1]=='+' else -1 for op in operations)
+
+# Approach 2:
+class Solution:
+    def finalValueAfterOperations(self, operations: List[str]) -> int:
+        count = 0
+        for op in operations:
+            if "-" in op:
+                count -= 1
+            else:
+                count += 1
+        return count
