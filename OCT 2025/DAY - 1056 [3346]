@@ -1,0 +1,61 @@
+** 3346. Maximum Frequency of an Element After Performing Operations I **
+
+# Approach 1:
+from collections import Counter
+
+class Solution:
+    def maxFrequency(self, nums: List[int], k: int, numOperations: int) -> int:
+        nums.sort()
+        n = len(nums)
+        r = i = j = 0
+        h = Counter()
+        
+        for a in nums:
+            while j < n and nums[j] <= a + k:
+                h[nums[j]] += 1
+                j += 1
+            
+            while i < n and nums[i] < a - k:
+                h[nums[i]] += 1
+                i += 1
+            
+            c = min(j - i, h[a] + numOperations)
+            r = max(r, c)
+        
+        i = 0
+        for j in range(n):
+            while nums[i] + k + k < nums[j]:
+                i += 1
+            r = max(r, min(j - i + 1, numOperations))
+        
+        return r
+
+# Approach 2:
+class Solution:
+    def maxFrequency(self, nums: List[int], k: int, numOperations: int) -> int:
+
+        max_value = max(nums) + 1
+        max_freq = 0
+
+        frequency = [0] * max_value
+        for number in nums:
+            frequency[number] += 1
+
+        curr = sum(frequency[:k])
+        prev = 0
+        target = 0
+        increment = 0
+
+        for target in range(max_value):
+
+            curr -= frequency[target]
+
+            if target < max_value - k: curr += frequency[target + k]
+            if target > 0: prev += frequency[target - 1]
+            if target > k + 1: prev -= frequency[target - (k + 1)]
+
+            increment = min(numOperations, curr + prev)
+
+            max_freq = max(max_freq, frequency[target] + increment)
+
+        return max_freq
