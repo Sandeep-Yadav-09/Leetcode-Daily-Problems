@@ -1,0 +1,34 @@
+** 3354. Make Array Elements Equal to Zero **
+
+# Approach 1:
+class Solution:
+    def countValidSelections(self, nums: List[int]) -> int:
+        prefix, cnt=0, 0
+        Sum=sum(nums)
+        for x in nums:
+            prefix+=x
+            if x==0:
+                cnt+=2*(2*prefix==Sum)
+                cnt+=(abs(2*prefix-Sum)==1)
+        return cnt
+
+# Approach 2:
+class Solution:
+    def countValidSelections(self, nums: List[int]) -> int:
+        indices = []
+        size = len(nums)
+        for i in range(size):
+            if nums[i] == 0:
+                indices.append(i)
+
+        ptr = 0
+        for i in indices:
+            sumLeft = sum(nums[:i])
+            sumRight = sum(nums[i+1:])
+            if sumLeft == sumRight:
+                ptr += 2
+            elif abs(sumLeft - sumRight) == 1:
+                ptr += 1
+        
+        return ptr
+        
