@@ -1,0 +1,14 @@
+** 3370. Smallest Number With All Set Bits **
+
+# Approach 1:
+class Solution:
+    def smallestNumber(self, n: int) -> int:
+        x = 1
+        while x < n:
+            x = x * 2 + 1
+        return x
+
+# Approach 2:
+class Solution:
+    def smallestNumber(self, n: int) -> int:
+        return (1<<(1+int(log2(n))))-1
