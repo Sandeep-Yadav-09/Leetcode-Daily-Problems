@@ -1,0 +1,30 @@
+** 3289. The Two Sneaky Numbers of Digitville **
+
+# Approach 1:
+from typing import List
+
+class Solution:
+    def getSneakyNumbers(self, nums: List[int]) -> List[int]:
+        maxelt = max(nums)
+        freq = [0] * (maxelt + 1)
+        res = []
+        
+        for n in nums:
+            freq[n] += 1
+        
+        for i in range(len(freq)):
+            if freq[i] == 2:
+                res.append(i)
+        
+        return res
+
+# Approach 2:
+class Solution:
+    def getSneakyNumbers(self, nums: List[int]) -> List[int]:
+        d=Counter(nums)
+        l=[]
+        for i,j in d.items():
+            if j==2:
+                l.append (i)
+        l.sort()
+        return l
