@@ -1,0 +1,62 @@
+** 2257. Count Unguarded Cells in the Grid **
+
+# Approach 1:
+class Solution:
+    def countUnguarded(self, m: int, n: int, guards: List[List[int]], walls: List[List[int]]) -> int:
+        guards_set = set(tuple(guard) for guard in guards)
+        walls_set = set(tuple(wall) for wall in walls)
+
+        positions = [[0 for _ in range(n)] for _ in range(m)]
+        for row in range(m):
+            for col in range(n):
+                if (row, col) in guards_set:
+                    positions[row][col] = 1
+                elif (row, col) in walls_set:
+                    positions[row][col] = 2
+
+        for row in range(m):
+            for col in range(n):
+                if positions[row][col] == 1: 
+                    curr_row = row - 1
+                    while curr_row >= 0 and positions[curr_row][col] not in (1, 2):
+                        positions[curr_row][col] = 3
+                        curr_row -= 1
+                    curr_row = row + 1
+                    while curr_row < m and positions[curr_row][col] not in (1, 2):
+                        positions[curr_row][col] = 3
+                        curr_row += 1
+                    curr_col = col - 1
+                    while curr_col >= 0 and positions[row][curr_col] not in (1, 2):
+                        positions[row][curr_col] = 3
+                        curr_col -= 1
+                    curr_col = col + 1
+                    while curr_col < n and positions[row][curr_col] not in (1, 2):
+                        positions[row][curr_col] = 3
+                        curr_col += 1
+
+        count = 0
+        for i in range(m):
+            count += positions[i].count(0)
+        return count
+
+# Approach 2:
+class Solution:
+    def solve(self, grid, r, c, m, n):
+        dirs = [(-1,0),(1,0),(0,-1),(0,1)]
+        for dr, dc in dirs:
+            x, y = r + dr, c + dc
+            while 0 <= x < m and 0 <= y < n and grid[x][y] not in (-1, 1):
+                if grid[x][y] == 0:
+                    grid[x][y] = 2
+                x += dr
+                y += dc
+
+    def countUnguarded(self, m, n, guards, walls):
+        grid = [[0]*n for _ in range(m)]
+        for r, c in guards: grid[r][c] = 1
+        for r, c in walls: grid[r][c] = -1
+
+        for r, c in guards:
+            self.solve(grid, r, c, m, n)
+
+        return sum(grid[i][j] == 0 for i in range(m) for j in range(n))
