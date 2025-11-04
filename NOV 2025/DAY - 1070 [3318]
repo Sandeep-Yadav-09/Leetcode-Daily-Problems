@@ -1,0 +1,45 @@
+** 3318. Find X-Sum of All K-Long Subarrays I **
+
+# Approach 1:
+class Solution:
+    def findXSum(self, nums: List[int], k: int, x: int) -> List[int]:
+        n = len(nums)
+        r = []
+        f = {}
+        
+        for i in range(k):
+            f[nums[i]] = f.get(nums[i], 0) + 1
+        
+        for i in range(n - k + 1):
+            s = sorted(f.items(), key=lambda j: (j[1], j[0]), reverse=True)
+            r.append(sum(p * q for p, q in s[:x]))
+            
+            if i + k < n:
+                f[nums[i]] -= 1
+                if f[nums[i]] == 0:
+                    del f[nums[i]]
+                f[nums[i + k]] = f.get(nums[i + k], 0) + 1
+        
+        return r
+
+# Approach 2:
+class Solution:
+    def findXSum(self, nums: List[int], k: int, x: int) -> List[int]:
+        ans = []
+        
+        def xsum(nums,k):
+            from collections import Counter
+            freq = Counter(nums)
+            heap = []
+            for key,val in freq.items():
+                heapq.heappush(heap,(val,key))
+                if len(heap) > k:
+                    heapq.heappop(heap)
+            total=0
+            for _ in range(len(heap)):
+                k,v = heapq.heappop(heap)
+                total += k*v
+            return total
+        for i in range(len(nums)-k+1):
+                ans.append(xsum(nums[i:k+i],x))
+        return ans
