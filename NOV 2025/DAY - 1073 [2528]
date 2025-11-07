@@ -1,0 +1,81 @@
+** 2528. Maximize the Minimum Powered City **
+
+# Approach 1:
+class Solution:
+    def maxPower(self, stations: List[int], r: int, k: int) -> int:
+        lo = min(stations)
+        hi = max(stations) * len(stations) + k
+        
+        stations = [0]*(r) + stations + [0]*r
+        res = lo
+        
+        def check(med):
+            available = k
+            ind = r                        
+            window = sum(stations[:2*r])   
+ 
+            added = defaultdict(int)        
+                                            
+            while ind < len(stations)-r:
+                window += stations[ind + r]
+                
+                if window < med:
+                    diff = med-window
+                    if diff>available:
+                        return False
+                    window+=diff
+                    added[ind+r]=diff 
+                    available-=diff
+					
+                window -= (stations[ind - r] + added[ind-r])
+                ind+=1
+            return True
+        
+        while lo<=hi:                   
+            m = (lo + hi )//2
+            if check(m):
+                res = m
+                lo = m + 1
+            else:
+                hi = m-1
+        return res
+
+# Approach 2:
+class Solution:
+    def check(self, bound: int, windows: list[int], r: int, k: int) -> bool:
+        used: int = 0
+        addition: int = 0
+        seen: list[tuple[int, int]] = deque()
+        for i in range(len(windows)):
+            while seen and seen[0][0] < i:
+                addition -= seen.popleft()[1]
+            needed: int = bound - (windows[i] + addition)
+            if needed <= 0: continue
+            if used + needed > k: return False
+            addition += needed
+            used += needed
+            seen.append((i + r + r, needed))
+        return True
+
+    def maxPower(self, stations: List[int], r: int, k: int) -> int:
+        windows: list[int] = []
+        window: int = 0
+        left: int = 0
+        right: int = 0
+        bound: int = float('inf')
+        for i in range(len(stations)):
+            while left + r < i:
+                window -= stations[left]
+                left += 1
+            while i + r >= right and right < len(stations):
+                window += stations[right]
+                right += 1
+            windows.append(window)
+            bound = min(bound, window)
+        left = 0
+        right = bound + k
+        while left <= right:
+            middle: int = left + ((right - left) >> 1)
+            if self.check(middle, windows, r, k): left = middle + 1
+            else: right = middle - 1
+        return right
