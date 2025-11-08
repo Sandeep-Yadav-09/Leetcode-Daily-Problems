@@ -1,0 +1,18 @@
+** 1611. Minimum One Bit Operations to Make Integers Zero **
+
+# Approach 1:
+class Solution:
+    def minimumOneBitOperations(self, n: int) -> int:
+        ans=0
+        while n:
+            ans=-ans-(n^(n-1))
+            n&=n-1
+        return abs(ans)
+
+# Approach 2:
+class Solution:
+    def minimumOneBitOperations(self, n: int) -> int:
+
+        for k in (1,2,4,8,16): n ^= n >> k
+        
+        return n
