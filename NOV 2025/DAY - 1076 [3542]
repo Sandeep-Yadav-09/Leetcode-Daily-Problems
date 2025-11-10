@@ -1,0 +1,70 @@
+** 3542. Minimum Operations to Convert All Elements to Zero **
+
+# Approach 1:
+class Solution:
+    def minOperations(self, a: List[int]) -> int:
+        res,st = 0,[]
+        for v in chain(a,[0]):
+            while st and st[-1]>=v: res += st.pop()>v
+            st.append(v)
+        return res
+
+# Approach 2:
+class SegmentTree:
+    def __init__(self, arr):
+        self.n = len(arr)
+        self.tree = [0] * (2 * self.n)
+        for i in range(self.n):
+            self.tree[self.n + i] = arr[i]
+        for i in range(self.n - 1, 0, -1):
+            self.tree[i] = min(self.tree[2 * i], self.tree[2 * i + 1])
+
+    def query(self, l, r):
+        l += self.n
+        r += self.n
+        res = sys.maxsize
+        while l <= r:
+            if l % 2 == 1:
+                res = min(res, self.tree[l])
+                l += 1
+            if r % 2 == 0:
+                res = min(res, self.tree[r])
+                r -= 1
+            l //= 2
+            r //= 2
+        return res
+
+
+class Solution:
+    def minOperations(self, nums: List[int]) -> int:
+        n = len(nums)
+
+        seg = SegmentTree(nums)
+
+        value_indices = {}
+        for i, num in enumerate(nums):
+            value_indices.setdefault(num, []).append(i)
+
+        def recurMinOperations(low, high):
+            if low > high:
+                return 0
+            elif low == high:
+                return int(nums[low] != 0)
+
+            min_num = seg.query(low, high)
+
+            idx_list = value_indices[min_num]
+            l = bisect.bisect_left(idx_list, low)
+            r = bisect.bisect_right(idx_list, high)
+            
+            indices_in_range = idx_list[l:r]
+
+            index_list = [low - 1] + indices_in_range + [high + 1]
+
+            sub_res = 1 if min_num != 0 else 0
+            for i in range(len(index_list) - 1):
+                sub_res += recurMinOperations(index_list[i] + 1, index_list[i + 1] - 1)
+
+            return sub_res
+
+        return recurMinOperations(0, n - 1)
