@@ -1,0 +1,51 @@
+** 2654. Minimum Number of Operations to Make All Array Elements Equal to 1 **
+
+# Approach 1:
+class Solution:
+    def minOperations(self, nums: List[int]) -> int:
+        n = len(nums)
+        num1 = 0
+        g = 0
+
+        for x in nums:
+            if x == 1:
+                num1 += 1
+            g = gcd(g, x)
+
+        if num1 > 0:
+            return n - num1
+        if g > 1:
+            return -1
+
+        min_len = n
+        for i in range(n):
+            g = 0
+            for j in range(i, n):
+                g = gcd(g, nums[j])
+                if g == 1:
+                    min_len = min(min_len, j - i + 1)
+                    break
+
+        return min_len + n - 2
+
+# Approach 2:
+class Solution:
+    def minOperations(self, nums: List[int]) -> int:
+        n = len(nums)
+        c = sum(v == 1 for v in nums)
+        if c > 0:
+            return n - c
+
+        def gcd(a: int, b: int) -> int:
+            while b:
+                a, b = b, a % b
+            return a
+        res = float('inf')
+        for i in range(n):
+            g = nums[i]
+            for j in range(i + 1, n):
+                g = gcd(g, nums[j])
+                if g == 1:
+                    res = min(res, j - i)
+                    break
+        return res + n - 1 if isfinite(res) else -1
