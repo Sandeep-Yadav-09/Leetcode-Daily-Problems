@@ -1,0 +1,31 @@
+** 3228. Maximum Number of Operations to Move Ones to the End **
+
+# Approach 1:
+class Solution:
+    def maxOperations(self, s: str) -> int:
+        ones = 0
+        res = 0
+        for i, c in enumerate(s):
+            if c == '1':
+                ones += 1
+            elif i > 0 and s[i - 1] == '1':
+                res += ones
+        return res
+
+# Approach 2:
+class Solution:
+    def maxOperations(self, s: str) -> int:
+        out = 0
+        oneCount = 0
+        firstZero = True
+        
+        for char in s:
+            if char == "1":
+                oneCount += 1
+                firstZero = True
+
+            elif firstZero == True:
+                firstZero = False
+                out += oneCount
+        
+        return out
