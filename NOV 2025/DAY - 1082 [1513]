@@ -1,0 +1,35 @@
+** 1513. Number of Substrings With Only 1s **
+
+# Approach 1:
+class Solution:
+    def numSub(self, s: str) -> int: 
+            res = 0
+            s = s.split("0")
+
+            for one in s:
+                if one == "":
+                    continue
+                    
+                n = len(one)
+                temp = (n / 2)*(2*n + (n-1)*-1)
+                    
+                if temp >= 1000000007:
+                    res += temp % 1000000007
+                else:
+                    res += temp
+            return int(res)
+
+# Approach 2:
+class Solution:
+    def numSub(self, s: str) -> int:
+        ans = 0
+        ones = 0
+        MOD = 10**9 + 7
+        for i in s:
+            if i == '1':
+                ones += 1
+            else:
+                ans = (ans + (ones *(ones + 1)// 2) % MOD)%MOD
+                ones = 0
+        ans = (ans + (ones *(ones + 1)// 2) % MOD)%MOD
+        return ans
