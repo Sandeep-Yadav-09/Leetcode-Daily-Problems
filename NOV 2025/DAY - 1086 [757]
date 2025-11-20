@@ -1,0 +1,36 @@
+** 757. Set Intersection Size At Least Two **
+
+# Approach 1:
+class Solution:
+    def intersectionSizeTwo(self, intervals: List[List[int]]) -> int:
+        if not intervals:
+            return 0
+        intervals.sort(key=lambda x: (x[1], x[0]))
+        first, second = -math.inf, -math.inf
+        count = 0
+
+        for interval in intervals:
+            start = interval[0]
+            end = interval[-1]
+            if not (start <= second <= end):
+                count += 2
+                first = end - 1
+                second = end
+            elif not (start <= first <= end): 
+                count += 1
+                first = min(second, end-1) 
+                second = end
+        return count
+
+# Approach 2:
+class Solution:
+    def intersectionSizeTwo(self, intervals: List[List[int]]) -> int:
+        intervals.sort(key=lambda x: (x[1], -x[0]))
+        res, p1, p2 = 0, -1, -1
+        for l, r in intervals:
+            res, p1, p2 = (
+                res + (2 if p2 < l else 1 if p1 < l else 0),
+                r - 1 if p2 < l else p2 if p1 < l else p1,
+                r if p2 < l or p1 < l else p2
+            )
+        return res
