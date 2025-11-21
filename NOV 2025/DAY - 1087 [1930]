@@ -1,0 +1,16 @@
+** 1930. Unique Length-3 Palindromic Subsequences **
+
+# Approach 1:
+class Solution:
+    def countPalindromicSubsequence(self, s: str) -> int:
+        return sum(len({*s[s.index(c)+1:s.rindex(c)]}) for c in {*s})
+
+# Approach 2:
+class Solution:
+    def countPalindromicSubsequence(self, s: str) -> int:
+        res = 0
+        for c in set(s):  
+            i, j = s.find(c), s.rfind(c)  
+            if j > i + 1:  
+                res += len(set(s[i+1:j]))  
+        return res
