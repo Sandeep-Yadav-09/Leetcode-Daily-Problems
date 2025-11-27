@@ -1,0 +1,43 @@
+** 3381. Maximum Subarray Sum With Length Divisible by K **
+
+# Approach 1:
+class Solution:
+    def maxSubarraySum(self, nums: List[int], k: int) -> int:
+        least_pre = [inf] * k
+        least_pre[-1] = 0
+        pre_sum = 0
+        max_sum = -inf
+        for i, num in enumerate(nums):
+            pre_sum += num
+            mod = i % k
+            old_pre = least_pre[mod]
+            sub_sum = pre_sum - old_pre
+            if max_sum < sub_sum:
+                max_sum = sub_sum
+            if old_pre > pre_sum:
+                least_pre[mod] = pre_sum
+        return max_sum
+
+# Approach 2:
+class Solution:
+    def maxSubarraySum(self, nums: List[int], k: int) -> int:
+        n = len(nums)
+        if n == k: return sum(nums)
+        if n < k * 2:
+            return max(sum(nums[i:i + k]) for i in range(n - k + 1))
+
+        cs = sum(nums[:k])
+        pref = [cs]
+        for i in range(k, n):
+            cs += nums[i]
+            cs -= nums[i - k]
+            pref.append(cs)
+        
+        ans = -(10 ** 18)
+        for i in range(k):
+            cur = pref[i]
+            ans = max(ans, cur)
+            for j in range(i + k, len(pref), k):
+                cur = max(cur, 0) + pref[j]
+                ans = max(ans, cur)
+        return ans
