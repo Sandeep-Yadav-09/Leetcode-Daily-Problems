@@ -1,0 +1,48 @@
+** 1590. Make Sum Divisible by P **
+
+# Approach 1:
+class Solution:
+    def minSubarray(self, nums: List[int], p: int) -> int:
+        s = sum(nums) % p
+        if s == 0:
+            return 0
+
+        cum_sum = 0
+        d = {0: -1}
+        result = len(nums)
+        for j, elem in enumerate(nums):
+            cum_sum = (cum_sum + elem) % p
+            i = d.get((cum_sum - s) % p)
+            if i is not None:
+                result = min(result, j - i)
+            d[cum_sum] = j
+        
+        if result == len(nums):
+            return -1
+        return result
+
+# Approach 2:
+class Solution:
+    def minSubarray(self, nums: List[int], p: int) -> int:
+        total_sum = sum(nums)
+        remainder = total_sum % p
+        if remainder == 0:
+            return 0
+
+        currSumMod = 0
+        res = len(nums)
+        prefix_map = {0: -1}
+
+        for i in range(0, len(nums)):
+            currSumMod = (currSumMod + nums[i]) % p
+            needMod = (currSumMod - remainder + p) % p
+
+            if needMod in prefix_map:
+                res = min(res, i - prefix_map[needMod])
+
+            prefix_map[currSumMod % p] = i
+
+        if res < len(nums):
+            return res
+        else:
+            return -1
