@@ -1,0 +1,46 @@
+** 3623. Count Number of Trapezoids I **
+
+# Approach 1:
+class Solution:
+    def countTrapezoids(self, points: List[List[int]]) -> int:
+        count = defaultdict(int)
+        store_comb = []
+        MOD = 10**9+7
+        for x,y in points:
+            count[y]+=1
+        for val in count.values():
+            if val<2:
+                continue
+            store_comb.append(val*(val-1)//2)
+        if len(store_comb)<2:
+            return 0
+        s_i = sum(store_comb)
+        s_i_2 = (s_i*s_i)%MOD
+        s_ii_2 = sum((n*n)%MOD for n in store_comb)%MOD
+        result = (s_i_2 - s_ii_2)%MOD
+        result = (result*pow(2,MOD-2,MOD))%MOD
+        return result
+
+# Approach 2:
+from collections import defaultdict
+
+class Solution:
+    def countTrapezoids(self, points: list[list[int]]) -> int:
+        MOD = 10**9 + 7
+
+        cnt = defaultdict(int)
+        for x, y in points:
+            cnt[y] += 1
+        segments = []
+        for y, c in cnt.items():
+            if c >= 2:
+                segments.append(c * (c - 1) // 2)
+
+        if not segments:
+            return 0
+
+        S = sum(segments)
+        SQ = sum(s * s for s in segments)
+
+        ans = (S * S - SQ) // 2
+        return ans % MOD
