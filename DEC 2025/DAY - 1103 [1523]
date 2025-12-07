@@ -1,0 +1,14 @@
+** 1523. Count Odd Numbers in an Interval Range **
+
+# Approach 1:
+class Solution:
+    def countOdds(self, low: int, high: int) -> int:
+        return (high//2) + (high%2) - (low//2)
+
+# Approach 2:
+class Solution:
+    def countOdds(self, low: int, high: int) -> int:
+        def odds_up_to(x: int) -> int:
+            return (x + 1) // 2
+        
+        return odds_up_to(high) - odds_up_to(low - 1)
