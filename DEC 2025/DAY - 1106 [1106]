@@ -1,0 +1,28 @@
+** 3577. Count the Number of Computer Unlocking Permutations **
+
+# Approach 1:
+class Solution:
+    def countPermutations(self, complexity: List[int]) -> int:
+        di=defaultdict(int)
+        for i in complexity:
+            di[i]+=1
+        k=len(complexity)
+        n= (10**9)+7
+        mi=min(complexity)
+        if di[mi]>1  or complexity[0]!=mi:
+            return 0
+        else:
+            return math.factorial(k-1)%n
+
+# Approach 2:
+class Solution:
+    def countPermutations(self, complexity: List[int]) -> int:
+        n = len(complexity)
+        f=1
+        for i in range(1,n):
+            if complexity[i]<=complexity[0]:
+                return 0
+
+        for i in range(1,n): 
+            f=(f*i)%(10**9 + 7)
+        return f
