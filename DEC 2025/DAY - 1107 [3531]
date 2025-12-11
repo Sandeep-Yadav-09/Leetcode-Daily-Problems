@@ -1,0 +1,37 @@
+** 3531. Count Covered Buildings **
+
+# Approach 1:
+class Solution:
+    def countCoveredBuildings(self, n: int, b: List[List[int]]) -> int:
+        u,d,r,l = ([q]*-~n for q in [0,n,0,n])
+        for x,y in b:
+            u[x],d[x],l[y],r[y] = max(u[x],y),min(d[x],y),min(l[y],x),max(r[y],x)
+        
+        return sum(d[x]<y<u[x] and l[y]<x<r[y] for x,y in b)
+
+# Approach 2:
+from collections import defaultdict
+from math import inf
+
+class Solution:
+    def countCoveredBuildings(self, n: int, buildings: List[List[int]]) -> int:
+        n = len(buildings)
+        dmn = defaultdict(lambda: inf)
+        dmx = defaultdict(lambda: -inf)
+
+        ymn = defaultdict(lambda: inf)
+        ymx = defaultdict(lambda: -inf)
+
+        for x, y in buildings:
+            if x < dmn[y]: dmn[y] = x
+            if x > dmx[y]: dmx[y] = x
+
+            if y < ymn[x]: ymn[x] = y
+            if y > ymx[x]: ymx[x] = y
+
+        c = 0
+        for x, y in buildings:
+            if dmn[y] < x < dmx[y] and ymn[x] < y < ymx[x]:
+                c += 1
+
+        return c
