@@ -1,0 +1,55 @@
+** 3433. Count Mentions Per User **
+
+# Approach 1:
+class Solution:
+    def countMentions(self, numberOfUsers: int, events: List[List[str]]) -> List[int]:
+        events.sort(key=lambda x: (int(x[1]), x[0] == "MESSAGE"))
+        off = deque()
+        point_c = [0] * numberOfUsers
+        all_c = 0
+        on_c = 0
+        for m, t, ids in events:
+            t = int(t)
+            while off and off[0][0] <= t:
+                _, id, l_on = off.popleft() 
+                point_c[id] -= on_c - l_on
+
+            if m == "MESSAGE":
+                for id in ids.split(' '):
+                    if id == "HERE":
+                        on_c += 1
+                    elif id == "ALL":
+                        all_c += 1
+                    else:
+                        point_c[int(id[2:])] += 1
+            else:
+                off.append((t+60, int(ids), on_c))
+        
+        while off:
+            _, id, l_on = off.popleft() 
+            point_c[id] -= on_c - l_on
+        return [c + all_c + on_c for c in point_c]     
+
+# Approach 2:
+class Solution:
+    def countMentions(self, numberOfUsers: int, events: List[List[str]]) -> List[int]:
+        events = [[x, int(y), z] for x, y, z in events]
+        events.sort(key= lambda x: (x[1], x[2]))
+        res = [0 for _ in range(numberOfUsers)]
+        offline_dict = [-1 for _ in range(numberOfUsers)]
+
+        for m, t, id in events:
+            if m == "OFFLINE":
+                offline_dict[int(id)] = t + 59
+            elif id == "ALL":
+                for i in range(numberOfUsers):
+                    res[i] += 1
+            elif id == "HERE":
+                for i in range(numberOfUsers):
+                    if offline_dict[i] < t:
+                        res[i] += 1
+            else:
+                for i_ in id.split():
+                    i = int(i_[2: ])
+                    res[i] += 1
+        return res
