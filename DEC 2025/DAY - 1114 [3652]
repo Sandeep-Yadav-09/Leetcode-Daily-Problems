@@ -1,0 +1,55 @@
+** 3652. Best Time to Buy and Sell Stock using Strategy **
+
+# Approach 1:
+class Solution:
+    def maxProfit(self, prices: List[int], strategy: List[int], k: int) -> int:
+        l = 0
+        r = k - 1
+        l_mod = k // 2
+        sum_org = 0
+        sum_mod = 0
+        sum_all = 0
+
+        for i in range(k):
+            sum_org += prices[i] * strategy[i]
+            if i >= l_mod:
+                sum_mod += prices[i]
+
+        for i in range(len(prices)):
+            sum_all += prices[i] * strategy[i]
+            
+        total = max(sum_all, sum_all + sum_mod - sum_org)
+        for _ in range(1, len(prices) - k + 1):
+            sum_org = sum_org - prices[l] * strategy[l] + prices[r + 1] * strategy[r + 1]
+            sum_mod = sum_mod - prices[l_mod] + prices[r + 1]
+            
+            total = max(total, sum_all + sum_mod - sum_org)
+            l += 1
+            r += 1
+            l_mod += 1
+
+        return total
+
+# Approach 2:
+class Solution:
+    def maxProfit(self, prices: List[int], strategy: List[int], k: int) -> int:
+        n=len(prices)
+        pft=0
+        dp=[0]*n
+        for i in range(n):
+            pft+=prices[i]*strategy[i]
+            dp[i]=pft
+        for i in range(1,n):
+            prices[i]+=prices[i-1]
+        if n==k:
+            return max(pft,prices[-1]-prices[k//2-1])
+        mx=float('-inf')
+        for i in range(n-k+1):
+            p=prices[i+k-1]-prices[i+k//2-1]
+            p+=dp[-1]
+            if i==0:                
+                p-=dp[i+k-1]
+            else:
+                p-=(dp[i+k-1]-dp[i-1])
+            pft=max(pft,p)
+        return pft
