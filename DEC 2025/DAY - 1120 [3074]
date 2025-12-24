@@ -1,0 +1,25 @@
+** 3074. Apple Redistribution into Boxes **
+
+# Approach 1:
+class Solution:
+    def minimumBoxes(self, apple: List[int], capacity: List[int]) -> int:
+        az=sum(apple)
+        for i, x in enumerate(sorted(capacity, reverse=True)):
+            az-=x
+            if az<=0: return i+1
+        return -1
+
+# Approach 2:
+class Solution:
+    def minimumBoxes(self, apple: List[int], capacity: List[int]) -> int:
+        total = sum(apple)
+        capacity.sort(reverse=True)
+        
+        ans = 0
+        for cap in capacity:
+            if total <= 0:
+                break
+            total -= cap
+            ans += 1
+        
+        return ans
