@@ -1,5 +1,36 @@
-** 2483 **
+** 2483. Minimum Penalty for a Shop **
 
 # Approach 1:
+class Solution:
+    def bestClosingTime(self, customers: str) -> int:
+        n = len(customers)
+        penalty = customers.count('Y')
+        if penalty == n: 
+            return n
+        min_, ans = n, 0
+        for index, value in enumerate(customers):
+            if min_ > penalty:
+                min_ = penalty
+                ans = index
+            if value == 'Y':
+                penalty -= 1
+            else:
+                penalty += 1
+        if min_ > penalty: return n
+        return ans
 
 # Approach 2:
+class Solution:
+    def bestClosingTime(self, customers: str) -> int:
+        bestTime = 0
+        minPenalty = 0
+        prefix = 0
+        
+        for i in range(len(customers)):
+            prefix += -1 if customers[i] == 'Y' else 1
+            
+            if prefix < minPenalty:
+                bestTime = i + 1
+                minPenalty = prefix
+        
+        return bestTime
