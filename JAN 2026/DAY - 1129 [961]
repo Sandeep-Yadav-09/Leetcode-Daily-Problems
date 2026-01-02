@@ -1,0 +1,17 @@
+** 961. N-Repeated Element in Size 2N Array **
+
+# Approach 1:
+class Solution:
+    def repeatedNTimes(self, nums: List[int]) -> int:
+        seen = set()
+
+        for i in nums:
+            if i not in seen:
+                seen.add(i)
+            else:
+                return i
+
+# Approach 2:
+class Solution:
+    def repeatedNTimes(self, a: List[int]) -> int:
+        return mode(a)
