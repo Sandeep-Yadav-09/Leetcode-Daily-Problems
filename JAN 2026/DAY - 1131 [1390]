@@ -1,0 +1,61 @@
+** 1390. Four Divisors **
+
+# Approach 1:
+class Solution:
+    def sumFourDivisors(self, nums: List[int]) -> int:
+        ans = 0
+
+        for x in nums:
+            n = x
+            p = q = cnt = 0
+
+            i = 2
+            while i * i <= n and cnt <= 2:
+                if n % i == 0:
+                    cnt += 1
+                    if cnt == 1:
+                        p = i
+                    else:
+                        q = i
+                    while n % i == 0:
+                        n //= i
+                i += 1
+
+            if n > 1:
+                cnt += 1
+                if cnt == 1:
+                    p = n
+                else:
+                    q = n
+
+            if cnt == 2 and p * q == x:
+                ans += 1 + p + q + x
+            elif cnt == 1 and p * p * p == x:
+                ans += 1 + p + p * p + x
+
+        return ans
+
+# Approach 2:
+class Solution:
+    def sumFourDivisors(self, nums: List[int]) -> int:
+        def divisors(x):
+            count = 0
+            z = 0
+            l = int(x**0.5)
+            for j in range(1,l+1):
+                if x%j==0:
+                    if j == x//j:
+                        count += 1
+                        z += j
+                    else:
+                        count += 2
+                        z += j
+                        z += x//j
+            if count == 4:
+                return z
+            return 0
+        
+        sum = 0
+        for i in nums:
+            sum += divisors(i)
+        return sum
