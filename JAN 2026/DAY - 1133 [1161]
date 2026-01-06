@@ -1,0 +1,40 @@
+** 1161. Maximum Level Sum of a Binary Tree **
+
+# Approach 1:
+class Solution:
+    def maxLevelSum(self, root: Optional[TreeNode]) -> int:
+        levels = defaultdict(int)
+
+        def bfs(root,level):
+            if not root:
+                return
+            levels[level] += root.val
+            bfs(root.left,level+1)
+            bfs(root.right,level+1)
+            return
+        bfs(root,1)
+        return max(levels,key=levels.get)
+
+# Approach 2:
+class Solution:
+    def maxLevelSum(self, root: Optional[TreeNode]) -> int:
+        res = -1
+        max_sum = float('-inf')
+        curr_idx = 0
+        que = deque([root])
+        while que:
+            curr_idx += 1
+            curr_sum = 0
+            tmp = deque()
+            for node in que:
+                curr_sum += node.val
+                if node.right is not None:
+                    tmp.append(node.right)
+                if node.left is not None:
+                    tmp.append(node.left)
+            if curr_sum > max_sum:
+                max_sum = curr_sum
+                res = curr_idx
+            que = tmp
+
+        return res
