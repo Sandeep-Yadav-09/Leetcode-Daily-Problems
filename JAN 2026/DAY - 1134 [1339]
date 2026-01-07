@@ -1,0 +1,44 @@
+** 1339. Maximum Product of Splitted Binary Tree **
+
+# Approach 1:
+class Solution:
+    def maxProduct(self, root: Optional[TreeNode]) -> int:
+        def prefix(node):
+            if not node: return 0
+            left = prefix(node.left)
+            right = prefix(node.right)
+            node.val += left + right
+            return node.val
+        prefix(root)
+        ans = [0]
+        def dfs(node, total):
+            if node.left:
+                ans[0]= max(ans[0], (total - node.left.val) * node.left.val)
+                dfs(node.left, total)
+            if node.right:
+                ans[0] = max(ans[0], (total - node.right.val) * node.right.val)
+                dfs(node.right, total)
+        dfs(root, root.val)
+        return ans[0] % 1000_000_007
+
+# Approach 2:
+class Solution:
+    def maxProduct(self, root: Optional[TreeNode]) -> int:
+        MOD  = 10**9 + 7
+        def dfs(node):
+            if not node:
+                return 0
+            return dfs(node.left) + node.val + dfs(node.right)
+        totalSum = dfs(root)
+
+        globMax = [0]
+
+        def dfs(node):
+            if not node:
+                return 0
+            currSum = dfs(node.left) + node.val + dfs(node.right)
+            globMax[0] = max(globMax[0], currSum* (totalSum - currSum))
+            return currSum
+
+        dfs(root)
+        return globMax[0]%MOD
