@@ -1,0 +1,27 @@
+** 865. Smallest Subtree with all the Deepest Nodes **
+
+# Approach 1:
+class Solution:
+    def subtreeWithAllDeepest(self, r: Optional[TreeNode]) -> Optional[TreeNode]:
+        def f(n):
+            if not n: return 0,None
+            ld,ln,rd,rn = *f(n.left),*f(n.right)
+            return ((ld+1,n),(ld+1,ln),(rd+1,rn))[(ld>rd)-(ld<rd)]
+
+        return f(r)[1]
+
+# Approach 2:
+class Solution:
+    def subtreeWithAllDeepest(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
+        def dfs(node):
+            if not node:
+                return (0, None)
+            ld, ln = dfs(node.left)
+            rd, rn = dfs(node.right)
+            if ld > rd:
+                return (ld + 1, ln)
+            elif rd > ld:
+                return (rd + 1, rn)
+            else:
+                return (ld + 1, node)
+        return dfs(root)[1]
