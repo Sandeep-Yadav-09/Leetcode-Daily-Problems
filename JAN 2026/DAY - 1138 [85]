@@ -1,0 +1,59 @@
+** 85. Maximal Rectangle **
+
+# Approach 1:
+class Solution:
+    def maximalRectangle(self, matrix: List[List[str]]) -> int:
+        row,col=len(matrix),len(matrix[0])
+        height = [0] *col
+        maxi=0
+
+        def solve(arr):
+            s=len(arr)
+            st=[]
+            maxi_hist = 0
+            for i,h in enumerate(arr):
+                start=i
+                while st and st[-1][1]>h:
+                    ind,hei=st.pop()
+                    maxi_hist=max(maxi_hist,hei * (i-ind))
+                    start = ind
+                st.append((start,h))
+            
+            for i ,h in st:
+                maxi_hist=max(maxi_hist,h * (s-i))
+            
+            return maxi_hist
+
+        for i in range(row):
+            for j in range(col):
+                if matrix[i][j]=='1':
+                    height[j]+=1
+                else:
+                    height[j]=0
+        
+            maxi = max(maxi,solve(height))
+        
+        return maxi
+
+# Approach 2:
+mx = lambda x, y: x if x > y else y
+
+class Solution:
+    def maximalRectangle(self, matrix: list[list[str]], ans = 0) -> int:
+
+        m, n = len(matrix), len(matrix[0])
+        dp = [0]*(n+1)
+        
+        for i in range(m):
+            stk = deque([-1])
+
+            for j in range(n+1):
+                if j < n and matrix[i][j] == '1': dp[j]+= 1
+                else: dp[j] = 0
+
+                while(dp[stk[0]] > dp[j]):
+                    ans = mx(ans,dp[stk.popleft()]*(j-stk[0]-1))
+
+                stk.appendleft(j)
+
+        return ans
