@@ -1,0 +1,42 @@
+** 2943. Maximize Area of Square Hole in Grid **
+
+# Approach 1:
+class Solution:
+    def maximizeSquareHoleArea(self, n: int, m: int, hBars: List[int], vBars: List[int]) -> int:
+        def longest_consecutive(arr):
+            arr.sort()
+            longest = curr = 1
+            for i in range(1, len(arr)):
+                if arr[i] == arr[i - 1] + 1:
+                    curr += 1
+                else:
+                    curr = 1
+                longest = max(longest, curr)
+            return longest
+
+        max_h = longest_consecutive(hBars)
+        max_v = longest_consecutive(vBars)
+
+        side = min(max_h, max_v) + 1
+        return side * side
+
+# Approach 2:
+class Solution:
+    def maximizeSquareHoleArea(self, n: int, m: int, hBars: List[int], vBars: List[int]) -> int:
+        def count_seq(bars):
+            curr_num = 0
+            all_num = set(bars)
+            ans = 1
+            for i in bars:
+                if i - 1 not in all_num:
+                    curr_num = i
+                    curr_count = 1
+                    while curr_num + 1 in all_num:
+                        curr_num += 1
+                        curr_count += 1
+                    ans = max(ans, curr_count)
+            return ans
+        
+        longest_h = count_seq(hBars)
+        longest_v = count_seq(vBars)
+        return (min(longest_h, longest_v) + 1) ** 2
