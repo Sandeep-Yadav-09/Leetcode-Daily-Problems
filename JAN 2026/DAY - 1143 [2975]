@@ -1,0 +1,53 @@
+** 2975. Maximum Square Area by Removing Fences From a Field **
+
+# Approach 1:
+class Solution:
+    def maximizeSquareArea(self, m: int, n: int, hFences: List[int], vFences: List[int]) -> int:
+        hFences.extend([1, m])
+        vFences.extend([1, n])
+        hFences.sort() 
+        vFences.sort()
+        
+        if len(hFences) > len(vFences):
+            hFences, vFences = vFences, hFences
+
+        hs = set()
+        for i in range(1, len(hFences)):
+            e = hFences[i]
+            hs.update(e - s for s in hFences[:i])
+
+        ans = 0
+        for i in range(1, len(vFences)):
+            e = vFences[i]
+            if e < ans:
+                break
+            for j in range(i):
+                s = e - vFences[j]
+                if s in hs:
+                    ans = max(ans, s)
+                    break
+
+        if not ans:
+            return -1
+        return pow(ans, 2, 10**9 + 7)
+
+# Approach 2:
+class Solution:
+    def maximizeSquareArea(self, m: int, n: int, hFences: List[int], vFences: List[int]) -> int:
+        deltas, mxDelta = set(), 0
+        hFences = sorted(chain(hFences, [1, m]))
+        vFences = sorted(chain(vFences, [1, n]))
+
+        for i, top in enumerate(hFences):
+            for bot in hFences[i+1:]:
+                deltas.add(bot - top)
+    
+        for i, lft in enumerate(vFences):
+            for rgt in vFences[i+1:][::-1]:
+                delta = rgt - lft
+                if delta <= mxDelta or delta not in deltas: continue
+                mxDelta = delta
+                break
+
+        if mxDelta == 0: return -1
+        return pow(mxDelta, 2, 1_000_000_007)
