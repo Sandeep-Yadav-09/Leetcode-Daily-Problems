@@ -1,0 +1,44 @@
+** 3047. Find the Largest Area of Square Inside Two Rectangles **
+
+# Approach 1:
+class Solution:
+    def largestSquareArea(self, bottomLeft: List[List[int]], topRight: List[List[int]]) -> int:
+        n = len(bottomLeft)
+        res = 0
+
+        for i in range(n):
+            for j in range(i + 1, n):
+                xl1, yb1 = bottomLeft[i]
+                xr1, yt1 = topRight[i]
+                xl2, yb2 = bottomLeft[j]
+                xr2, yt2 = topRight[j]
+                
+                if (xl2 < xr1 and xl1 < xr2) and (yb2 < yt1 and yb1 < yt2):
+                    l = max(xl2, xl1)
+                    r = min(xr1, xr2)
+                    t = min(yt2, yt1)
+                    d = max(yb2, yb1)
+                    
+                    res = max(res, min(r - l, t - d) ** 2)
+            
+        return res
+
+# Approach 2:
+class Solution:
+    def largestSquareArea(self, bottomLeft: List[List[int]], topRight: List[List[int]]) -> int:
+        n = len(bottomLeft)
+        ans = 0
+
+        for i in range(n):
+            for j in range(i + 1, n):
+
+                left   = max(bottomLeft[i][0], bottomLeft[j][0])
+                right  = min(topRight[i][0], topRight[j][0])
+                bottom = max(bottomLeft[i][1], bottomLeft[j][1])
+                top    = min(topRight[i][1], topRight[j][1])
+
+                if right > left and top > bottom:
+                    side = min(right - left, top - bottom)
+                    ans = max(ans, side * side)
+
+        return ans
