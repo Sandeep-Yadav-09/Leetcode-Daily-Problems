@@ -1,0 +1,59 @@
+** 1895. Largest Magic Square **
+
+# Approach 1:
+class Solution:
+    def largestMagicSquare(self, grid: List[List[int]]) -> int:
+        m, n = len(grid), len(grid[0])
+
+        row = [[0] * (n + 1) for _ in range(m)]
+        col = [[0] * n for _ in range(m + 1)]
+
+        for i in range(m):
+            for j in range(n):
+                row[i][j + 1] = row[i][j] + grid[i][j]
+                col[i + 1][j] = col[i][j] + grid[i][j]
+
+        def isMagic(r, c, k):
+            target = row[r][c + k] - row[r][c]
+
+            for i in range(r, r + k):
+                if row[i][c + k] - row[i][c] != target:
+                    return False
+
+            for j in range(c, c + k):
+                if col[r + k][j] - col[r][j] != target:
+                    return False
+
+            d1 = d2 = 0
+            for i in range(k):
+                d1 += grid[r + i][c + i]
+                d2 += grid[r + i][c + k - 1 - i]
+            return d1 == target and d2 == target
+
+        max_size = min(m, n)
+
+        for k in range(max_size, 1, -1):
+            for i in range(m - k + 1):
+                for j in range(n - k + 1):
+                    if isMagic(i, j, k):
+                        return k
+        return 1
+
+# Approach 2:
+class Solution:
+    def largestMagicSquare(self, grid: List[List[int]]) -> int:
+        ans,n,m = 1, len(grid), len(grid[0])
+        hprf = [list(accumulate(grid[i]))+[0] for i in range(n)]
+        vprf = [list(accumulate(list(zip(*grid))[j]))+[0] for j in range(m)]
+        d1,d2= [[0]*(m+1) for i in range(n+1)], [[0]*(m+1) for i in range(n+1)]
+        for i in range(n):
+            for j in range(m): d1[i][j]=grid[i][j]+d1[i-1][j-1]; d2[i][j]=grid[i][j]+d2[i-1][j+1]
+        for i in range(n-1):
+            for j in range(m-1):
+                for k in range(min(n-1-i, m-1-j), 0, -1):
+                    k1,good = k, (s:= d1[i+k][j+k]-d1[i-1][j-1]) == d2[i+k][j]-d2[i-1][j+k+1]
+                    while good and k1>=0: 
+                        good = (s == hprf[i+k1][j+k]-hprf[i+k1][j-1] == vprf[j+k1][i+k]-vprf[j+k1][i-1])
+                        k1  -= 1
+                    if  good:  ans = max(ans, k+1); break
+        return  ans
