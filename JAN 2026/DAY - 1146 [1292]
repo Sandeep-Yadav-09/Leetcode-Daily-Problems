@@ -1,0 +1,77 @@
+** 1292. Maximum Side Length of a Square with Sum Less than or Equal to Threshold **
+
+# Approach 1:
+from typing import List
+
+class Solution:
+    def maxSideLength(self, mat: List[List[int]], threshold: int) -> int:
+        n = len(mat)
+        m = len(mat[0])
+        px = [[0]*m for _ in range(n)]
+        for i in range(n):
+            for j in range(m):
+                px[i][j] = mat[i][j]
+        
+        for i in range(n):
+            for j in range(m):
+                px[i][j] = mat[i][j]
+                if i > 0:
+                    px[i][j] += px[i-1][j]
+                if j > 0:
+                    px[i][j] += px[i][j-1]
+                if i > 0 and j > 0:
+                    px[i][j] -= px[i-1][j-1]
+
+        maxi = 0
+
+        for i in range(n):
+            for j in range(m):
+                x = i + maxi
+                y = j + maxi
+                while x < n and y < m:
+                    sum = px[x][y]
+                    if i-1 >= 0:
+                        sum -= px[i-1][y]
+                    if j-1 >= 0:
+                        sum -= px[x][j-1]
+                    if i-1 >= 0 and j-1 >= 0:
+                        sum += px[i-1][j-1]
+                    if sum <= threshold:
+                        maxi = x - i + 1
+                    x += 1
+                    y += 1
+
+        return maxi
+
+# Approach 2:
+class Solution:
+    def maxSideLength(self, mat: List[List[int]], threshold: int) -> int:
+        rows = len(mat)
+        cols = len(mat[0])
+
+        maximum = 0
+
+        for i in range(rows):
+            for j in range(cols):
+                max_side_possible = min(rows - i, cols - j)
+
+                if maximum >= max_side_possible:
+                    continue
+
+                summation = 0
+                for x in range(maximum):
+                    summation += sum(mat[i + x][j:j + maximum])
+
+                for side in range(maximum + 1, max_side_possible + 1):
+                    for x in range(side - 1):
+                        summation += mat[i + side - 1][j + x]
+                        summation += mat[i + x][j + side - 1]
+
+                    summation += mat[i + side - 1][j + side - 1]
+
+                    if summation <= threshold:
+                        maximum = side
+                    else:
+                        break
+
+        return maximum
