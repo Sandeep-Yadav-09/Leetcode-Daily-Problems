@@ -1,0 +1,26 @@
+** 3315. Construct the Minimum Bitwise Array II **
+
+# Approach 1:
+class Solution:
+    def minBitwiseArray(self, nums: List[int]) -> List[int]:
+        ans = []
+        for n in nums:
+            if n != 2:
+                ans.append(n - ((n + 1) & (-n - 1)) // 2)
+            else:
+                ans.append(-1)
+        return ans
+
+# Approach 2:
+class Solution:
+    def minBitwiseArray(self, nums: List[int]) -> List[int]:
+        r = []
+        for num in nums:
+            if num % 2 == 0:
+                r.append(-1)
+            else:
+                p = 0
+                while num & (1 << p):
+                    p += 1
+                r.append(num ^ (1 << (p - 1)))
+        return r
