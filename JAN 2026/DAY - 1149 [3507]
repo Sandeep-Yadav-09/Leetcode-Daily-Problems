@@ -1,0 +1,51 @@
+** 3507. Minimum Pair Removal to Sort Array I **
+
+# Approach 1:
+class Solution:
+    def minimumPairRemoval(self, nums: List[int]) -> int:
+        c=0
+        while nums!=sorted(nums):
+            min_val =[]
+            m =float('inf') 
+            for i in range(1,len(nums)):
+                min_val.append(nums[i-1]+nums[i])
+            m = min(min_val)
+            n = min_val.index(m)
+            nums[n] = m
+            nums.pop(n+1)
+            c+=1
+        return c
+
+# Approach 2:
+from typing import List
+
+class Solution:
+    def isNondecreasing(self, nums: List[int]) -> bool:
+        for i in range(1, len(nums)):
+            if nums[i] < nums[i - 1]:
+                return False
+        return True
+
+    def minimumPairRemoval(self, nums: List[int]) -> int:
+        ops = 0
+        while not self.isNondecreasing(nums):
+            min_sum = float('inf')
+            index = -1
+            for i in range(len(nums) - 1):
+                sum_pair = nums[i] + nums[i + 1]
+                if sum_pair < min_sum:
+                    min_sum = sum_pair
+                    index = i
+
+            temp = []
+            i = 0
+            while i < len(nums):
+                if i == index:
+                    temp.append(nums[i] + nums[i + 1])
+                    i += 2  
+                else:
+                    temp.append(nums[i])
+                    i += 1
+            nums = temp
+            ops += 1
+        return ops
