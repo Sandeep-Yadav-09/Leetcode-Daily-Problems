@@ -1,0 +1,23 @@
+** 1984. Minimum Difference Between Highest and Lowest of K Scores **
+
+# Approach 1:
+class Solution:
+    def minimumDifference(self, nums: List[int], k: int) -> int:
+        nums.sort()
+        ans , j = float('inf'), k - 1
+        for i in range(len(nums) - j):
+            ans = min(ans, nums[i + j] - nums[i])
+        return ans
+
+# Approach 2:
+mn = lambda x, y: x if x < y else y
+
+class Solution:
+    def minimumDifference(self, nums: list[int], k: int) -> int:
+        nums.sort()
+        ans = inf
+
+        for lft, rgt in zip(nums, nums[k-1:]):
+            ans = mn(ans, rgt - lft)
+
+        return ans 
