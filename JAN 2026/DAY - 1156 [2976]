@@ -1,0 +1,56 @@
+** 2976. Minimum Cost to Convert String I **
+
+# Approach 1:
+ctoi = lambda c: ord(c) - ord('a')
+
+class Solution:
+    def minimumCost(self, source: str, target: str, original: List[str], changed: List[str], cost: List[int]) -> int:
+        adj = [[float('inf')]*26 for _ in range(26)]
+        for u,v,w in zip(original, changed, cost):
+            adj[ctoi(u)][ctoi(v)] = min(adj[ctoi(u)][ctoi(v)],w)
+
+        for k in range(26):
+            for i in range(26):
+                for j in range(26):
+                    if adj[i][k] != float('inf') and adj[k][j] != float('inf'):
+                        adj[i][j] = min(adj[i][j], adj[i][k] + adj[k][j])
+        
+        res = 0
+        for a,b in zip(source,target):
+            if a == b: continue
+            v = adj[ctoi(a)][ctoi(b)]
+            if v == float('inf'): return -1
+            res += v
+        return res
+
+# Approach 2:
+class Solution:
+    def minimumCost(self, source: str, target: str, original: List[str], changed: List[str], cost: List[int]) -> int:
+        chars=defaultdict(list)
+        for i in range(26):
+            chars[i]=[float('inf')]*26
+        adj=defaultdict(list)
+        n=len(original)
+        for i in range(n):
+            adj[ord(original[i])-97].append((ord(changed[i])-97,cost[i]))
+        def shortestpath(s):
+            q=[(0,s)]
+            chars[s][s]=0
+            while q:
+                d,n=heapq.heappop(q)
+                for nei,cst in adj[n]:
+                    if d+cst<chars[s][nei]:
+                        chars[s][nei]=d+cst
+                        heapq.heappush(q,(d+cst,nei))
+        for i in range(26):
+            shortestpath(i)
+        str_len=len(source)
+        res=0
+        for i in range(str_len):
+            if source[i]!=target[i]:
+                cst=chars[ord(source[i])-97][ord(target[i])-97]
+                if cst!=float('inf'):
+                    res+=cst
+                else:
+                    return -1
+        return res
