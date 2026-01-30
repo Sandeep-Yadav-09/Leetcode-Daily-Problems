@@ -1,0 +1,118 @@
+** 2977. Minimum Cost to Convert String II **
+
+# Approach 1:
+class Solution:
+    def minimumCost(self, source: str, target: str, original: List[str], changed: List[str], cost: List[int]) -> int:
+        mod = 1<<32
+        base = 27
+        mask = (1<<32)-1
+        INF = 10**10
+        def hash(s):
+            H = 0
+            m = len(s)
+            for i in range(m):
+                ch = ord(s[i])-96
+                H = (H * base + ch) & mask
+            return H
+            
+        graph = {hash(chr(i+97)):{hash(chr(i+97)):0} for i in range(26)}
+        all_items = set()
+        for i in range(len(cost)):
+            u = hash(original[i])
+            v = hash(changed[i])
+            all_items.add(u);all_items.add(v)
+            graph.setdefault(u, {})
+            graph[u][v] = min(graph[u].get(v, INF), cost[i])
+
+        graph_keys = list(graph.keys())
+        all_items = list(all_items)
+        for k in all_items:
+            if k not in graph: continue
+            for i in graph_keys:
+                if k not in graph[i]: continue
+                for j in graph[k]:
+                    if j in graph[i]:
+                        graph[i][j] = min(graph[i][j], graph[i][k]+graph[k][j])
+                    else:
+                        graph[i][j] = graph[i][k]+graph[k][j]
+
+        n = len(source)
+        powB = [1] * (n + 1)
+        for i in range(1, n + 1):
+            powB[i] = (powB[i - 1] * base) & mask
+        ps = [0] * (n + 1) 
+        pt = [0] * (n + 1) 
+        for i in range(1, n + 1):
+            ps[i] = (ps[i - 1] * base + (ord(source[i - 1]) - 96)) & mask
+            pt[i] = (pt[i - 1] * base + (ord(target[i - 1]) - 96)) & mask
+        def subhash(p, l, r):
+            L = r - l
+            return (p[r] - p[l] * powB[L]) & mask
+
+        dp = [INF]*(n+1)
+        dp[0] = 0
+        lens = sorted({len(s) for s in original} | {1})
+        for j in range(1, n + 1):
+            for L in lens:
+                i = j - L
+                if i < 0:
+                    break
+                u = subhash(ps, i, j)
+                v = subhash(pt, i, j)
+                if u == v:
+                    dp[j] = min(dp[j], dp[i])
+                elif u in graph and v in graph[u]:
+                    dp[j] = min(dp[j], dp[i] + graph[u][v])
+
+        return dp[n] if dp[n] != INF else -1
+
+# Approach 2:
+from typing import List
+import math
+
+class Solution:
+    def minimumCost(
+        self,
+        source: str,
+        target: str,
+        original: List[str],
+        changed: List[str],
+        cost: List[int],
+    ) -> int:
+        n = len(source)
+        strings = set(original) | set(changed)
+        idx = {s: i for i, s in enumerate(strings)}
+        m = len(strings)
+        dist = [[math.inf] * m for _ in range(m)]
+        for i in range(m):
+            dist[i][i] = 0
+        for o, c, w in zip(original, changed, cost):
+            dist[idx[o]][idx[c]] = min(dist[idx[o]][idx[c]], w)
+        for k in range(m):
+            for i in range(m):
+                for j in range(m):
+                    if dist[i][k] + dist[k][j] < dist[i][j]:
+                        dist[i][j] = dist[i][k] + dist[k][j]
+        length_map = {}
+        for o, c in zip(original, changed):
+            length_map.setdefault(len(o), []).append((o, c))
+        dp = [math.inf] * (n + 1)
+        dp[n] = 0
+
+        for i in range(n - 1, -1, -1):
+            if source[i] == target[i]:
+                dp[i] = dp[i + 1]
+            else:
+                if source[i] in idx and target[i] in idx:
+                    dp[i] = dp[i + 1] + dist[idx[source[i]]][idx[target[i]]]
+            for L, pairs in length_map.items():
+                if i + L > n:
+                    continue
+
+                s = source[i:i + L]
+                t = target[i:i + L]
+
+                if s in idx and t in idx:
+                    dp[i] = min(dp[i], dp[i + L] + dist[idx[s]][idx[t]])
+
+        return -1 if dp[0] == math.inf else dp[0]
