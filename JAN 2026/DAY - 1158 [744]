@@ -1,0 +1,15 @@
+** 744. Find Smallest Letter Greater Than Target **
+
+# Approach 1:
+class Solution:
+    def nextGreatestLetter(self, letters: List[str], target: str) -> str:
+        return (letters*2)[bisect_right(letters,target)]
+
+# Approach 2:
+class Solution:
+    def nextGreatestLetter(self, l: List[str], t: str) -> str:
+        a=ord(t)
+        for i in range(len(l)):
+            if ord(l[i])>a:
+                return l[i]
+        return l[0]
