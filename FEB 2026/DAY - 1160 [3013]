@@ -1,0 +1,141 @@
+** 3013. Divide an Array Into Subarrays With Minimum Cost II **
+
+# Approach 1:
+class Window:
+    def __init__(self, k: int):
+        self.k = k
+        self.minheap = []  
+        self.maxheap = []  
+        self.cost = 0 
+
+        self.del_min = defaultdict(int)
+        self.del_max = defaultdict(int)
+
+        self.sz_min = 0
+        self.sz_max = 0
+
+    def __len__(self):
+        return self.sz_min + self.sz_max
+
+    def prune(self):
+        def _prune(heap, vals, sign):
+            while heap:
+                x = sign * heap[0]
+                if vals[x] == 0:
+                    break
+                
+                heapq.heappop(heap)
+                vals[x] -= 1
+
+        _prune(self.maxheap, self.del_max, sign=-1)
+        _prune(self.minheap, self.del_min, sign=1)
+
+    def rebalance(self):
+        self.prune()
+
+        target = min(self.k, len(self))
+
+        while self.sz_max > target:
+            x = -heapq.heappop(self.maxheap)
+            self.sz_max -= 1
+            self.cost -= x
+
+            heapq.heappush(self.minheap, x)
+            self.sz_min += 1
+            
+            self.prune()
+
+        while self.minheap and self.sz_max < target:
+            x = heapq.heappop(self.minheap)
+            self.sz_min -= 1
+
+            heapq.heappush(self.maxheap, -x)
+            self.sz_max += 1
+            self.cost += x
+
+            self.prune()
+
+    def add(self, x):
+        if not self.maxheap or x <= -self.maxheap[0]:
+            heapq.heappush(self.maxheap, -x)
+            self.sz_max += 1
+            self.cost += x
+        else:
+            heapq.heappush(self.minheap, x)
+            self.sz_min += 1
+
+        self.rebalance()
+
+    def remove(self, x):
+        if self.maxheap and x <= -self.maxheap[0]:
+            self.del_max[x] += 1
+            self.sz_max -= 1
+            self.cost -= x
+        else:
+            self.del_min[x] += 1
+            self.sz_min -= 1
+
+        self.rebalance()
+
+
+class Solution:
+    def minimumCost(self, nums: List[int], k: int, dist: int) -> int:
+        n = len(nums)
+
+        window = Window(k - 1)
+        for i in range(1, dist + 2):
+            window.add(nums[i])
+
+        result = window.cost
+        for i in range(2, n - dist):
+            window.remove(nums[i - 1])
+            window.add(nums[i + dist])
+            result = min(result, window.cost)
+
+        return nums[0] + result
+
+# Approach 2:
+from sortedcontainers import SortedList
+
+class Solution:
+    def minimumCost(self, nums: List[int], k: int, dist: int) -> int:
+        n = len(nums)
+        m = k - 1  
+        window_size = dist + 1
+        
+        low = SortedList()  
+        high = SortedList() 
+        current_sum = 0
+        
+        def add(val):
+            nonlocal current_sum
+            low.add(val)
+            current_sum += val
+            if len(low) > m:
+                removed = low.pop()
+                current_sum -= removed
+                high.add(removed)
+                
+        def remove(val):
+            nonlocal current_sum
+            if val in high:
+                high.remove(val)
+            else:
+                low.remove(val)
+                current_sum -= val
+                if high:
+                    added = high.pop(0)
+                    low.add(added)
+                    current_sum += added
+
+        for i in range(1, window_size + 1):
+            add(nums[i])
+            
+        min_total_cost = current_sum
+        
+        for i in range(window_size + 1, n):
+            remove(nums[i - window_size])
+            add(nums[i])
+            min_total_cost = min(min_total_cost, current_sum)
+            
+        return nums[0] + min_total_cost
