@@ -1,0 +1,41 @@
+** 3637. Trionic Array I **
+
+# Approach 1:
+class Solution:
+    def isTrionic(self, nums: List[int], k: int = 3) -> bool:
+        if nums[0] >= nums[1]:
+            return False
+
+        n = len(nums)
+
+        sign, switches = 1, 0
+        for i in range(1, n):
+            delta = nums[i] - nums[i - 1]
+            if delta == 0:  
+                return False
+            elif delta * sign < 0: 
+                sign *= -1
+                switches += 1
+
+        return switches == k - 1
+
+# Approach 2:
+class Solution:
+    def isTrionic(self, nums: List[int]) -> bool:
+        n = len(nums)
+        index = 0
+        while index < n - 1 and nums[index] < nums[index+1]:
+            index+=1
+        if index == 0:
+            return False
+        isup = index
+        while index  < n - 1 and nums[index] > nums[index+1]:
+            index+=1
+        if isup == index:
+            return False
+        isdown = index
+        while index + 1 < n and nums[index] < nums[index+1]:
+            index+=1
+        if isdown == index:
+            return False
+        return index == n-1
