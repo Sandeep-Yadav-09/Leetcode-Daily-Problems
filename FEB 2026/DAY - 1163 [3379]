@@ -1,0 +1,19 @@
+** 3379. Transformed Array **
+
+# Approach 1:
+class Solution:
+    def constructTransformedArray(self, nums: List[int]) -> List[int]:
+        n = len(nums)
+        return [nums[(i + x) % n] for i, x in enumerate(nums)]
+
+# Approach 2:
+class Solution:
+    def constructTransformedArray(self, nums: List[int]) -> List[int]:
+        n = len(nums)
+        result = [0] * n
+        
+        for i in range(n):
+            target_idx = (i + nums[i]) % n
+            result[i] = nums[target_idx]
+            
+        return result
