@@ -1,0 +1,30 @@
+** 1653. Minimum Deletions to Make String Balanced **
+
+# Approach 1:
+class Solution:
+    def minimumDeletions(self, s: str) -> int:
+        countB = 0
+        deletions = 0
+
+        for ch in s:
+            if ch == 'b':
+                countB += 1
+            else:
+                deletions = min(deletions + 1, countB)
+
+        return deletions
+
+# Approach 2:
+class Solution:
+    def minimumDeletions(self, s: str) -> int:
+        stack = []
+        count = 0
+
+        for char in s:
+            if stack and stack[-1] == 'b' and char == 'a':
+                stack.pop()
+                count += 1
+            else:
+                stack.append(char)
+
+        return count
