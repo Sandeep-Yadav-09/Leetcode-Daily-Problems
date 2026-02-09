@@ -1,0 +1,53 @@
+** 1382. Balance a Binary Search Tree**
+
+# Approach 1:
+class Solution:
+    def inorder(self, root, nodes):
+        if not root:
+            return
+        self.inorder(root.left, nodes)
+        nodes.append(root.val)
+        self.inorder(root.right, nodes)
+
+    def buildBST(self, left, right, nodes):
+        if left > right:
+            return None
+
+        mid = (left + right) // 2 
+        root = TreeNode(nodes[mid])
+
+        root.left = self.buildBST(left, mid - 1, nodes)
+        root.right = self.buildBST(mid + 1, right, nodes)
+
+        return root
+
+    def balanceBST(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
+        nodes = []
+        self.inorder(root, nodes)
+        return self.buildBST(0, len(nodes) - 1, nodes)
+
+# Approach 2:
+class Solution:
+    def balanceBST(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
+        arr = []
+
+        def inorder(node):
+            if not node:
+                return
+            inorder(node.left)
+            arr.append(node.val)
+            inorder(node.right)
+
+        def build(left, right):
+            if left > right:
+                return None
+
+            mid = (left + right) // 2
+            node = TreeNode(arr[mid])
+            node.left = build(left, mid - 1)
+            node.right = build(mid + 1, right)
+
+            return node
+
+        inorder(root)
+        return build(0, len(arr) - 1)
