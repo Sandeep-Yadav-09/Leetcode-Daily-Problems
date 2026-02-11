@@ -1,0 +1,112 @@
+** 3721. Longest Balanced Subarray II **
+
+# Approach 1:
+class Solution:
+    def longestBalanced(self, nums: list[int]) -> int:
+        def ctz(x):
+            return (x & -x).bit_length() - 1
+
+        def add(i, v):
+            x = i | m
+            while x:
+                x = (x >> ctz(x)) - 1
+                tg[x] += v
+            x = i | m
+            while x:
+                x >>= 1
+                mx[x] = max(mx[x << 1] + tg[x << 1], mx[x << 1 | 1] + tg[x << 1 | 1])
+                mn[x] = min(mn[x << 1] + tg[x << 1], mn[x << 1 | 1] + tg[x << 1 | 1])
+
+        def q():
+            x, d = 1, 0
+            while x < m:
+                d -= tg[x]
+                x <<= 1
+                if not mn[x] <= d - tg[x] <= mx[x]:
+                    x |= 1
+            return x ^ m
+
+        n = len(nums)
+        m = 1 << n.bit_length()
+        last = [0] * (max(nums) + 1)
+        mn = [0] * (m << 1)
+        mx = [0] * (m << 1)
+        tg = [0] * (m << 1)
+        ans = 0
+        for i, v in enumerate(nums, 1):
+            x = 1 if v & 1 else -1
+            if pi := last[v]:
+                add(pi, -x)
+            add(i, x)
+            last[v] = i
+            ans = max(ans, i - q())
+        return ans
+
+# Approach 2:
+from typing import List
+
+class SegmentTree:
+    def __init__(self, N):
+        self.N = N
+        self.minv = [0] * (4 * N)
+        self.maxv = [0] * (4 * N)
+        self.push = [0] * (4 * N)
+
+    def _apply(self, node, val):
+        self.minv[node] += val
+        self.maxv[node] += val
+        self.push[node] += val
+
+    def _push_down(self, node):
+        if self.push[node] != 0:
+            self._apply(node * 2 + 1, self.push[node])
+            self._apply(node * 2 + 2, self.push[node])
+            self.push[node] = 0
+
+    def range_add(self, left, right, incr, node=0, nodel=0, noder=None):
+        if noder is None: noder = self.N - 1
+        if right < nodel or left > noder:
+            return
+        if left <= nodel and noder <= right:
+            self._apply(node, incr)
+            return
+        self._push_down(node)
+        mid = (nodel + noder) // 2
+        self.range_add(left, right, incr, node * 2 + 1, nodel, mid)
+        self.range_add(left, right, incr, node * 2 + 2, mid + 1, noder)
+        self.minv[node] = min(self.minv[node * 2 + 1], self.minv[node * 2 + 2])
+        self.maxv[node] = max(self.maxv[node * 2 + 1], self.maxv[node * 2 + 2])
+
+    def find_leftmost_zero(self, node, nodel, noder):
+        if self.minv[node] > 0 or self.maxv[node] < 0:
+            return -1
+        if nodel == noder:
+            return nodel
+        self._push_down(node)
+        mid = (nodel + noder) // 2
+        res = self.find_leftmost_zero(node * 2 + 1, nodel, mid)
+        if res == -1:
+            res = self.find_leftmost_zero(node * 2 + 2, mid + 1, noder)
+        return res
+
+class Solution:
+    def longestBalanced(self, nums: List[int]) -> int:
+        N = len(nums)
+        st = SegmentTree(N)
+        last_occurrence = {}
+        max_len = 0
+        
+        for r in range(N):
+            val = nums[r]
+            prev_idx = last_occurrence.get(val, -1)
+            
+            incr = 1 if val % 2 == 0 else -1
+            st.range_add(prev_idx + 1, r, incr)
+            
+            last_occurrence[val] = r
+            
+            l = st.find_leftmost_zero(0, 0, N - 1)
+            if l != -1 and l <= r:
+                max_len = max(max_len, r - l + 1)
+                
+        return max_len
