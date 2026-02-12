@@ -1,0 +1,42 @@
+** 3713. Longest Balanced Substring I **
+
+# Approach 1:
+class Solution:
+    def longestBalanced(self, s: str) -> int:
+        n = len(s)
+        m = float('-inf')
+        for i in range(n):
+            freq = {}
+            for j in range(i, n):
+                freq[s[j]] = freq.get(s[j], 0) + 1
+
+                values = freq.values()
+                if len(set(values)) == 1:
+                    m = max(m, j - i + 1)
+                    
+        return m
+
+# Approach 2:
+class Solution:
+    def longestBalanced(self, s: str) -> int:
+        n = len(s)
+        s = [ord(x) - ord('a') for x in s]
+
+        res = 0
+        for l in range(n):
+            if n - l <= res:
+                break
+
+            c = [0] * 26
+            uniq = mx = 0
+            for r, i in enumerate(s[l:]):
+                if c[i] == 0:
+                    uniq += 1
+                c[i] += 1
+                mx = max(mx, c[i])
+
+                sz = r + 1
+                if uniq * mx == sz:
+                    res = max(res, sz)
+
+        return res
