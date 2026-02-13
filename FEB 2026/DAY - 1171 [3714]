@@ -1,0 +1,78 @@
+** 3714. Longest Balanced Substring II **
+
+# Approach 1:
+class Solution:
+    def longestBalanced(self, s: str) -> int:
+        N = len(s)
+        a = [[0, 0, 0]]
+        for c in s:
+            a.append(a[-1][:])
+            a[-1]["abc".index(c)] += 1
+
+        ans = 0
+        d = {}
+        for i, (a, b, c) in enumerate(a):
+            for key in [
+                ("abc", a - b, a - c),
+                ("ab", a - b, c),
+                ("bc", b - c, a),
+                ("ca", c - a, b),
+                ("a", b, c),
+                ("b", c, a),
+                ("c", a, b),
+            ]:
+                ans = max(ans, i - d.get(key, i))
+                d.setdefault(key, i)
+
+        return ans
+
+# Approach 2:
+class Solution:
+    def longestBalanced(self, s: str) -> int:
+        def two(u, v):
+            nonlocal ans
+            i = 0
+            while i < n:
+                if s[i] != u and s[i] != v:
+                    i += 1
+                    continue
+                j = i
+                t = 0
+                mp = {0:i-1}
+                while j < n and (s[j]==u or s[j]==v):
+                    t += 1 if s[j]==u else -1
+                    if t in mp:
+                        ans = max(ans, j-mp[t])
+                    else:
+                        mp[t] = j
+                    j += 1
+                i = j
+
+        n = len(s)
+        ans = 0
+        c = [0,0,0]
+        d = {(0,0):-1}
+        for i, x in enumerate(s):
+            if x == 'a':
+                c[0] += 1
+            elif x == 'b':
+                c[1] += 1
+            else:
+                c[2]+=1
+            key = (c[1]-c[0],c[2]-c[0])
+            if key in d:
+                ans = max(ans, i-d[key])
+            else:
+                d[key] = i
+        two('a','b')
+        two('a','c')
+        two('b','c')
+        run = 1
+        for i in range(1, n):
+            if s[i]==s[i-1]:
+                run += 1
+            else:
+                ans = max(ans, run)
+                run = 1
+        ans = max(ans, run)
+        return ans
