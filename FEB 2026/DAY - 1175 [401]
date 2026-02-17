@@ -1,0 +1,53 @@
+** 401. Binary Watch **
+
+# Approach 1:
+class Solution:
+    def readBinaryWatch(self, turnedOn: int) -> List[str]:
+        times = []
+        for hour in range(12):
+            for minute in range(60):
+                if (bin(hour).count('1') + bin(minute).count('1')) == turnedOn:
+                    times.append(f"{hour}:{minute:02d}")
+        return times
+
+# Approach 2:
+class Solution:
+    def readBinaryWatch(self, turnedOn: int) -> List[str]:
+        ans = set()
+        a, b = [8, 4, 2, 1], [32, 16, 8, 4, 2, 1]
+        n = turnedOn
+
+        def rec(s, i, c, limit, total):
+            if c == total:
+                if limit == 6:
+                    minutes.add(s)
+                else:
+                    hours.add(s)
+                return
+
+            if i >= limit:
+                return
+
+            if limit == 4:
+                rec(s, i+1, c, limit, total)
+                rec(s+a[i], i+1, c+1, limit, total)
+            else:
+                rec(s, i+1, c, limit, total)
+                rec(s+b[i], i+1, c+1, limit, total)
+
+        for i in range(n+1):
+            hn, mn = i, n-i
+            if hn > 4 or mn > 6:
+                continue
+            hours = set()
+            minutes = set()
+            rec(0,0,0,4,hn)
+            rec(0,0,0,6,mn)
+            for x in hours:
+                for y in minutes:
+                    if x <= 11 and y <= 59:
+                        xs = str(x)
+                        ys = str(y).zfill(2)
+                        ans.add(xs + ":" + ys)
+
+        return list(ans)
