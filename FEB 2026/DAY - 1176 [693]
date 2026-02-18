@@ -1,0 +1,19 @@
+** 693. Binary Number with Alternating Bits **
+
+# Approach 1:
+class Solution:
+    def hasAlternatingBits(self, n: int) -> bool:
+        val = n & 1
+
+        while n != 0:
+            n >>= 1
+            if val == (n & 1):
+                return False
+            val = n & 1
+
+        return True
+
+# Approach 2:
+class Solution:
+    def hasAlternatingBits(self, n: int) -> bool:
+        return "11" not in bin(n) and "00" not in bin(n)
