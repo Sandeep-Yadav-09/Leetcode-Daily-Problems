@@ -1,0 +1,38 @@
+** 761. Special Binary String **
+
+# Approach 1:
+class Solution:
+    def makeLargestSpecial(self, s: str) -> str:
+        if not s:
+            return ""
+        
+        results = []
+        count = 0
+        i = 0
+        
+        for j, char in enumerate(s):
+            count += 1 if char == '1' else -1
+            if count == 0:
+                inner_part = self.makeLargestSpecial(s[i + 1:j])
+                results.append(f"1{inner_part}0")
+                i = j + 1
+        
+        results.sort(reverse=True)
+
+        return "".join(results)
+
+# Approach 2:
+class Solution:
+    def makeLargestSpecial(self, s: str) -> str:
+        balance = 0
+        last = 0
+        group = []
+        for i in range(len(s)):
+            balance += 1 if s[i] == '1' else -1
+            if not balance:
+                group.append(
+                    '1'+
+                    self.makeLargestSpecial(s[last+1:i])+
+                    '0')
+                last = i+1
+        return ''.join(sorted(group, reverse= True))
