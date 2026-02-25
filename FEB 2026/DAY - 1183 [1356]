@@ -1,0 +1,30 @@
+** 1356. Sort Integers by The Number of 1 Bits **
+
+# Approach 1:
+class Solution:
+    def find1(self, n: int) -> int:
+        sum = 0
+        while n > 0:
+            sum += n % 2
+            n //= 2
+        return sum
+
+    def sortByBits(self, arr: List[int]) -> List[int]:
+        v = [[] for _ in range(15)]
+
+        for i in range(len(arr)):
+            v[self.find1(arr[i])].append(arr[i])
+
+        ans = []
+
+        for bucket in v:
+            bucket.sort()  
+            for num in bucket:
+                ans.append(num)
+
+        return ans
+
+# Approach 2:
+class Solution:
+    def sortByBits(self, arr: List[int]) -> List[int]:
+        return sorted(arr, key=lambda x: (bin(x).count('1'), x))
