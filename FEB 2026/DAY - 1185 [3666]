@@ -1,0 +1,46 @@
+** 3666. Minimum Operations to Equalize Binary String **
+
+# Approach 1:
+class Solution:
+    def minOperations(self, s: str, k: int) -> int:
+        n = len(s)
+        z = s.count('0')
+
+        if z == 0:
+            return 0
+        if n == k:
+            return 1 if z == n else -1
+
+        w = n - z  
+        b = n - k  
+        candidates = []
+
+        if k % 2 == z % 2:
+            m_odd = max(math.ceil(z / k), math.ceil(w / b))
+            m_odd += ~m_odd & 1  
+            candidates.append(m_odd)
+
+        if z % 2 == 0:
+            m_even = max(math.ceil(z / k), math.ceil(z / b))
+            m_even += m_even & 1 
+            candidates.append(m_even)
+
+        return min(candidates) if candidates else -1
+
+# Approach 2:
+class Solution:
+    def minOperations(self, s: str, k: int) -> int:
+        n: int = len(s)
+        ones: int = 0
+        zeros: int = 0
+        for ch in s:
+            if ch == '1': ones += 1
+            else: zeros += 1
+        if ones == n: return 0
+        for i in range(1, n + 1):
+            flips: int = k * i
+            if (flips < zeros) or ((flips - zeros) & 1): continue
+            elif i & 1:
+                if zeros <= flips <= zeros * i + ones * (i - 1): return i
+            elif zeros <= flips <= zeros * (i - 1) + ones * i: return i
+        return -1
