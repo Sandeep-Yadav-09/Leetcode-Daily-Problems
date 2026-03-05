@@ -1,0 +1,30 @@
+** 1758. Minimum Changes To Make Alternating Binary String **
+
+# Approach 1:
+class Solution:
+    def minOperations(self, s: str) -> int:
+        curr1 = 0
+        curr2 = 0
+        
+        for i in range(len(s)):
+            expected1 = '0' if i % 2 == 0 else '1'
+            expected2 = '1' if i % 2 == 0 else '0'
+            
+            if s[i] != expected1:
+                curr1 += 1
+            if s[i] != expected2:
+                curr2 += 1
+        
+        return min(curr1, curr2)
+
+# Approach 2:
+class Solution:
+    def minOperations(self, s: str) -> int:
+        z, o, cnt_z, cnt_o = 0, 1, 0, 0
+        for ch in s:
+            x = 0 if ch=='0' else 1
+            cnt_z += x ^ z
+            cnt_o += x ^ o
+            z = 1-z
+            o = 1-o
+        return min(cnt_z, cnt_o)
