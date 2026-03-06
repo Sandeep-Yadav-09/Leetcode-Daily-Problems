@@ -1,0 +1,32 @@
+** 1784. Check if Binary String Has at Most One Segment of Ones **
+
+# Approach 1:
+class Solution:
+    def checkOnesSegment(self, s: str) -> bool:
+        idx = 0
+
+        for i in range(len(s)):
+            if s[i] == '1':
+                if i - idx > 1:
+                    return False
+                idx = i
+
+        return True
+
+# Approach 2:
+class Solution:
+    def checkOnesSegment(self, s: str) -> bool:
+        idx = 0
+        n = len(s)
+        flag = True
+
+        while idx < n:
+            if not flag and s[idx] == '1':
+                return False
+
+            if s[idx] == '0':
+                flag = False
+
+            idx += 1
+
+        return True
