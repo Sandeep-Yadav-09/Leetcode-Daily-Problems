@@ -1,0 +1,27 @@
+** 1009. Complement of Base 10 Integer **
+
+# Approach 1:
+class Solution:
+    def bitwiseComplement(self, n: int) -> int:
+        b = bin(n)[2:]
+        l = len(b)
+        c = "1"*l
+        c = int(c, 2)
+        ans = c - n
+        return ans
+
+# Approach 2:
+class Solution:
+    def bitwiseComplement(self, n: int) -> int:
+
+        if n == 0:
+            return 1
+
+        mask = 0
+        temp = n
+
+        while temp > 0:
+            mask = (mask << 1) | 1
+            temp >>= 1
+
+        return n ^ mask
