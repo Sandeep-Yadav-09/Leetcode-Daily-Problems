@@ -1,0 +1,146 @@
+** 3600. Maximize Spanning Tree Stability with Upgrades **
+
+# Approach 1:
+class DSU:
+    def __init__(self, n):
+        self.parent = list(range(n))
+        self.rank = [0]*n
+
+    def find(self, x):
+        if self.parent[x] != x:
+            self.parent[x] = self.find(self.parent[x])
+        return self.parent[x]
+
+    def union(self, a, b):
+        pa, pb = self.find(a), self.find(b)
+        if pa == pb:
+            return False
+        if self.rank[pa] < self.rank[pb]:
+            pa, pb = pb, pa
+        self.parent[pb] = pa
+        if self.rank[pa] == self.rank[pb]:
+            self.rank[pa] += 1
+        return True
+
+class Solution:
+    def maxStability(self, n: int, edges: List[List[int]], k: int) -> int:
+
+        must_edges = []
+        optional_edges = []
+
+        for u, v, s, m in edges:
+            if m == 1:
+                must_edges.append((u, v, s))
+            else:
+                optional_edges.append((u, v, s))
+
+        def can(x):
+            dsu = DSU(n)
+            upgrades = 0
+            used = 0
+
+            for u, v, s in must_edges:
+                if s < x:
+                    return False
+                if not dsu.union(u, v):
+                    return False
+                used += 1
+
+            good = []
+            need_upgrade = []
+
+            for u, v, s in optional_edges:
+                if s >= x:
+                    good.append((u, v))
+                elif 2*s >= x:
+                    need_upgrade.append((u, v))
+
+            for u, v in good:
+                if dsu.union(u, v):
+                    used += 1
+
+            for u, v in need_upgrade:
+                if used == n-1:
+                    break
+                if upgrades == k:
+                    break
+                if dsu.union(u, v):
+                    upgrades += 1
+                    used += 1
+
+            return used == n-1
+
+        lo, hi = 1, 2*10**5
+        ans = -1
+
+        while lo <= hi:
+            mid = (lo + hi)//2
+            if can(mid):
+                ans = mid
+                lo = mid + 1
+            else:
+                hi = mid - 1
+
+        return ans
+
+# Approach 2:
+from heapq import heappush, heappop
+
+class DisjointSet:
+    def __init__(self, size: int):
+        self.parent = [i for i in range(size)]
+    
+    def find(self, node: int) -> int:
+        if node == self.parent[node]:
+            return node
+        
+        self.parent[node] = self.find(self.parent[node])
+        return self.parent[node]
+    
+    def union(self, node1: int, node2: int):
+        root1 = self.find(node1)
+        root2 = self.find(node2)
+
+        self.parent[root1] = self.parent[root2] = min(root1, root2)
+
+class Solution:
+    def maxStability(self, n: int, edges: List[List[int]], k: int) -> int:
+        disjoint_set = DisjointSet(n)
+
+        tree_size = 0
+        res = float("inf")
+
+        eligible = []
+        for node1, node2, strength, must in edges:
+            if must == 1:
+                if disjoint_set.find(node1) == disjoint_set.find(node2):
+                    return -1 
+                
+                res = min(res, strength)
+                disjoint_set.union(node1, node2)
+                tree_size += 1
+            
+                continue
+            
+            heappush(eligible, (-strength, node1, node2))
+
+        strengths = []
+        while eligible and tree_size < n - 1:
+            neg_str, node1, node2 = heappop(eligible)
+
+            if disjoint_set.find(node1) == disjoint_set.find(node2):
+                continue
+            
+            strength = -neg_str
+            heappush(strengths, strength)
+            tree_size += 1
+            disjoint_set.union(node1, node2)
+
+        if tree_size != n - 1:
+            return -1
+
+        while strengths and strengths[0] < res and k > 0:
+            k -= 1
+            res = min(res, heappop(strengths) * 2)
+
+        return res if not strengths else min(res, strengths[0])     
