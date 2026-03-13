@@ -1,0 +1,83 @@
+** 3296. Minimum Number of Seconds to Make Mountain Height Zero **
+
+# Approach 1:
+from typing import List
+
+class Solution:
+    def minNumberOfSeconds(self, mountainHeight: int, workerTimes: List[int]) -> int:
+        workerTimes.sort()
+        
+        low_time = 0
+        high_time = 10**16
+        min_required_time = high_time
+        
+        while low_time <= high_time:
+            mid_time = low_time + (high_time - low_time) // 2
+            total_height_reduced = 0
+            
+            for base_time in workerTimes:
+                low_height = 0
+                high_height = mountainHeight
+                max_worker_height = 0
+                
+                while low_height <= high_height:
+                    mid_height = low_height + (high_height - low_height) // 2
+                    
+                    time_needed = base_time * mid_height * (mid_height + 1) // 2
+                    
+                    if time_needed <= mid_time:
+                        max_worker_height = mid_height
+                        low_height = mid_height + 1
+                    else:
+                        high_height = mid_height - 1
+                
+                total_height_reduced += max_worker_height
+                
+                if total_height_reduced >= mountainHeight:
+                    break
+            
+            if total_height_reduced >= mountainHeight:
+                min_required_time = mid_time
+                high_time = mid_time - 1
+            else:
+                low_time = mid_time + 1
+                
+        return min_required_time
+
+# Approach 2:
+import math
+
+class Solution:
+    
+    def possible(self, T, H, wt):
+        total = 0
+        
+        for t in wt:
+            val = 1 + (8 * T) / t
+            x = int((math.sqrt(val) - 1) // 2)
+            
+            total += x
+            if total >= H:
+                return True
+        
+        return False
+
+    def minNumberOfSeconds(self, H, wt):
+        
+        low = 0
+        mn = min(wt)
+        high = mn * H * (H + 1) // 2
+        
+        ans = high
+        
+        while low <= high:
+            
+            mid = (low + high) // 2
+            
+            if self.possible(mid, H, wt):
+                ans = mid
+                high = mid - 1
+            else:
+                low = mid + 1
+        
+        return ans
