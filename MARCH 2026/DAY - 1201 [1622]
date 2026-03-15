@@ -1,0 +1,59 @@
+** 1622. Fancy Sequence **
+
+# Approach 1:
+class Fancy:
+
+    def __init__(self):
+        self.arr = []
+        self.MOD = 10**9 + 7
+
+    def append(self, val: int) -> None:
+        self.arr.append(val)
+
+    def addAll(self, inc: int) -> None:
+        for i in range(len(self.arr)):
+            self.arr[i] = (self.arr[i] + inc) % self.MOD
+
+    def multAll(self, m: int) -> None:
+        for i in range(len(self.arr)):
+            self.arr[i] = (self.arr[i] * m) % self.MOD
+
+    def getIndex(self, idx: int) -> int:
+        if idx >= len(self.arr):
+            return -1
+        return self.arr[idx] % self.MOD
+
+# Approach 2:
+class Fancy:
+
+    def __init__(self):
+        self.mod = 10**9 + 7
+        self.val = []
+        self.a = 1
+        self.b = 0
+
+    def modPow(self, x, y):
+        res = 1
+        x %= self.mod
+        while y > 0:
+            if y % 2 == 1:
+                res = (res * x) % self.mod
+            x = (x * x) % self.mod
+            y //= 2
+        return res
+
+    def append(self, v):
+        x = (v - self.b + self.mod) % self.mod
+        self.val.append((x * self.modPow(self.a, self.mod-2)) % self.mod)
+
+    def addAll(self, inc):
+        self.b = (self.b + inc) % self.mod
+
+    def multAll(self, m):
+        self.a = (self.a * m) % self.mod
+        self.b = (self.b * m) % self.mod
+
+    def getIndex(self, idx):
+        if idx >= len(self.val):
+            return -1
+        return (self.a * self.val[idx] + self.b) % self.mod
