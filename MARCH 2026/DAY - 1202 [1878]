@@ -1,0 +1,134 @@
+** 1878. Get Biggest Three Rhombus Sums in a Grid **
+
+# Approach 1:
+class Solution:
+    def getBiggestThree(self, grid: List[List[int]]) -> List[int]:
+        n: int = len(grid)
+        m: int = len(grid[0])
+        left_diag: list[list[int]] = [[0] * (m + 2) for _ in range(n + 2)]
+        right_diag: list[list[int]] = [[0] * (m + 2) for _ in range(n + 2)]
+        i: int = 0
+        j: int = 0
+        while j < m:
+            tmpi: int = 1
+            tmpj: int = j + 1
+            while tmpi <= n and tmpj > 0:
+                left_diag[tmpi][tmpj] += left_diag[tmpi - 1][tmpj + 1] + grid[tmpi - 1][tmpj - 1]
+                tmpi += 1
+                tmpj -= 1
+            j += 1
+        i = 1
+        j = m - 1
+        while i < n:
+            tmpi: int = i + 1
+            tmpj: int = m
+            while tmpi <= n and tmpj > 0:
+                left_diag[tmpi][tmpj] += left_diag[tmpi - 1][tmpj + 1] + grid[tmpi - 1][tmpj - 1]
+                tmpi += 1
+                tmpj -= 1
+            i += 1
+        i = 0
+        j = m
+        while j > 0:
+            tmpi: int = i + 1
+            tmpj: int = j
+            while tmpi <= n and tmpj <= m:
+                right_diag[tmpi][tmpj] += right_diag[tmpi - 1][tmpj - 1] + grid[tmpi - 1][tmpj - 1]
+                tmpi += 1
+                tmpj += 1
+            j -= 1
+        i = 1
+        j = 0
+        while i < n:
+            tmpi: int = i + 1
+            tmpj: int = j + 1
+            while tmpi <= n and tmpj <= m:
+                right_diag[tmpi][tmpj] += right_diag[tmpi - 1][tmpj - 1] + grid[tmpi - 1][tmpj - 1]
+                tmpi += 1
+                tmpj += 1
+            i += 1
+        seen: set[int] = set()
+        for i in range(1, n + 1):
+            for j in range(1, m + 1):
+                bound: int = min(j - 1, m - j)
+                bound = min(bound, (n - i) >> 1)
+                for k in range(bound + 1):
+                    rhombus_sum: int = (
+                        (left_diag[i + k][j - k] - left_diag[i - 1][j + 1])
+                        + (right_diag[i + k][j + k] - right_diag[i - 1][j - 1])
+                        - grid[i - 1][j - 1]
+                        + (left_diag[i + k + k][j] - left_diag[i + k][j + k])
+                        + (right_diag[i + k + k][j] - right_diag[i + k][j - k])
+                        - (0 if not k else grid[i - 1 + k + k][j - 1])
+                    )
+                    seen.add(rhombus_sum)
+        return sorted(seen, reverse=True)[:3]
+
+# Approach 2:
+import heapq
+
+
+class Solution:
+    def getBiggestThree(self, grid: List[List[int]]) -> List[int]:
+
+        m, n = len(grid), len(grid[0])
+        diagonalPrefixSum = [[0] * (n + 2) for _ in range(m + 2)]
+        antiDiagonalPrefixSum = [[0] * (n + 2) for _ in range(m + 2)]
+
+        ans = []
+
+        for r in range(m):
+            for c in range(n):
+                ur, uc = r + 1, c + 1
+                diagonalPrefixSum[ur][uc] = (
+                    grid[r][c] + diagonalPrefixSum[ur - 1][uc - 1]
+                )
+                antiDiagonalPrefixSum[ur][uc] = (
+                    grid[r][c] + antiDiagonalPrefixSum[ur - 1][uc + 1]
+                )
+
+        for r in range(m):
+            for c in range(n):
+
+                # find largest rhombus with this at bottom
+                largest_horizontal = min(c, n - 1 - c)
+                largest_vertical = r // 2
+                largest = min(largest_horizontal, largest_vertical)
+
+                ur, uc = r + 1, c + 1
+
+                for _ in range(3):
+
+                    if largest < 0:
+                        break
+                    elif largest == 0:
+                        rhombus = grid[r][c]
+                    else:
+                        rhombus = 0
+
+                        rhombus += diagonalPrefixSum[ur][uc]
+                        rhombus += antiDiagonalPrefixSum[ur][uc]
+                        rhombus += diagonalPrefixSum[ur - largest][uc + largest]
+                        rhombus += antiDiagonalPrefixSum[ur - largest][uc - largest]
+
+                        rhombus -= diagonalPrefixSum[ur - largest - 1][uc - largest - 1]
+                        rhombus -= antiDiagonalPrefixSum[ur - largest - 1][
+                            uc + largest + 1
+                        ]
+                        rhombus -= diagonalPrefixSum[ur - 2 * largest - 1][uc - 1]
+                        rhombus -= antiDiagonalPrefixSum[ur - 2 * largest - 1][uc + 1]
+
+                        rhombus -= grid[r][c]
+                        rhombus -= grid[r - largest][c - largest]
+                        rhombus -= grid[r - 2 * largest][c]
+                        rhombus -= grid[r - largest][c + largest]
+
+                    if rhombus not in ans:
+                        if len(ans) < 3:
+                            heapq.heappush(ans, rhombus)
+                        else:
+                            heapq.heappushpop(ans, rhombus)
+
+                    largest -= 1
+
+        return sorted(ans, reverse=True)
