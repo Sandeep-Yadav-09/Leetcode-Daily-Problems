@@ -1,0 +1,45 @@
+** 1727. Largest Submatrix With Rearrangements **
+
+# Approach 1:
+class Solution:
+    def largestSubmatrix(self, matrix: List[List[int]]) -> int:
+        m, n = len(matrix), len(matrix[0])
+        height = [[0]*n for _ in range(m)]
+
+        for j in range(n):
+            height[0][j] = matrix[0][j]
+
+        for i in range(1, m):
+            for j in range(n):
+                if matrix[i][j] == 1:
+                    height[i][j] = height[i-1][j] + 1
+                else:
+                    height[i][j] = 0
+
+        area = 0
+
+        for i in range(m):
+            temp = sorted(height[i], reverse=True)
+            for j in range(n):
+                width = j + 1
+                area = max(area, temp[j] * width)
+
+        return area
+
+# Approach 2:
+class Solution:
+    def largestSubmatrix(self, matrix: List[List[int]]) -> int:
+        m,n = len(matrix),len(matrix[0])
+
+        for i in range(1,m):
+            for j in range(n):
+                if matrix[i][j] != 0:
+                    matrix[i][j] += matrix[i-1][j]
+        result = 0
+        for row in matrix:
+            row.sort(reverse=True)
+
+            for i in range(n):
+                res = row[i] * (i+1)
+                result = max(result,res)
+        return result
