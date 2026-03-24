@@ -1,0 +1,48 @@
+** 2906. Construct Product Matrix **
+
+# Approach 1:
+class Solution:
+    def constructProductMatrix(self, grid: List[List[int]]) -> List[List[int]]:
+        MOD = 12345
+        n = len(grid)
+        m = len(grid[0])
+
+        prefix = [0] * (n * m + 1)
+        prefix[0] = 1
+        for i in range(n):
+            for j in range(m):
+                prefix[i * m + j + 1] = prefix[i * m + j] * grid[i][j] % MOD
+
+        suffix = [0] * (n * m + 1)
+        suffix[n * m] = 1
+        for i in range(n - 1, -1, -1):
+            for j in range(m - 1, -1, -1):
+                suffix[i * m + j] = suffix[i * m + j + 1] * grid[i][j] % MOD
+
+        ans = [[0] * m for _ in range(n)]
+        for i in range(n):
+            for j in range(m):
+                ans[i][j] = prefix[i * m + j] * suffix[i * m + j + 1] % MOD
+
+        return ans
+
+# Approach 2:
+class Solution:
+    def constructProductMatrix(self, grid: List[List[int]]) -> List[List[int]]:
+        MOD = 12345
+        n, m = len(grid), len(grid[0])
+        p = [[0] * m for _ in range(n)]
+
+        suffix = 1
+        for i in range(n - 1, -1, -1):
+            for j in range(m - 1, -1, -1):
+                p[i][j] = suffix
+                suffix = (suffix * grid[i][j]) % MOD
+
+        prefix = 1
+        for i in range(n):
+            for j in range(m):
+                p[i][j] = (p[i][j] * prefix) % MOD
+                prefix = (prefix * grid[i][j]) % MOD
+
+        return p
