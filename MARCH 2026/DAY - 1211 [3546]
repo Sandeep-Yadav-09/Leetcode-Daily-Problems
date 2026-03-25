@@ -1,0 +1,40 @@
+** 3546. Equal Sum Grid Partition I **
+
+# Approach 1:
+class Solution:
+    def canPartitionGrid(self, grid: List[List[int]]) -> bool:
+        n=len(grid)
+        m=len(grid[0])
+        row=[0]*n
+        col=[0]*m
+        for i in range(n):
+            for j in range(m):
+                row[i]+=grid[i][j]
+                col[j]+=grid[i][j]
+        sum_col=0
+        sum_row=0
+        for i in row:
+            sum_row+=i
+        for i in col:
+            sum_col+=i
+        cur_sum=0
+        for i in row:
+            cur_sum+=i
+            if(cur_sum==(sum_row-cur_sum)):
+                return True
+        cur_sum=0
+        for i in col:
+            cur_sum+=i
+            if(cur_sum==(sum_col-cur_sum)):
+                return True
+        return False
+
+# Approach 2:
+class Solution:
+    def canPartitionGrid(self, grid: List[List[int]]) -> bool:
+        rows = [*map(sum, grid)]
+        total = sum(rows)
+        if total & 1: 
+            return False
+        goal = total >> 1
+        return goal in accumulate(rows) or goal in accumulate(map(sum, zip(*grid)))
