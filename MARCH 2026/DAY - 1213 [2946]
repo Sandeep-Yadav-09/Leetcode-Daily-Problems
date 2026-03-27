@@ -1,0 +1,28 @@
+** 2946. Matrix Similarity After Cyclic Shifts **
+
+# Approach 1:
+class Solution:
+    def areSimilar(self, mat: List[List[int]], k: int) -> bool:
+        n = len(mat)
+        m = len(mat[0])
+        k %= m
+        if not k:
+            return True
+        for i in range(n):
+            row = mat[i][(-1) ** (i) * k:] + mat[i][:(-1) ** (i) * k]
+            if mat[i] != row:
+                return False
+        return True
+
+# Approach 2:
+class Solution:
+    def areSimilar(self, mat: List[List[int]], k: int) -> bool:
+        n = len(mat[0])
+        k %= n
+        
+        for i, row in enumerate(mat):
+            shift = k if i % 2 == 0 else -k
+            for j in range(n):
+                if row[j] != row[(j + shift) % n]:
+                    return False
+        return True
