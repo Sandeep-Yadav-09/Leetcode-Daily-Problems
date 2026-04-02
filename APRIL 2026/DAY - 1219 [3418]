@@ -1,0 +1,64 @@
+** 3418. Maximum Amount of Money Robot Can Earn **
+
+# Approach 1:
+class Solution:
+    def maximumAmount(self, coins: List[List[int]]) -> int:
+        m, n = len(coins), len(coins[0])
+
+        dp = [[-inf] * 3 for _ in range(n+1)]
+        dp[1] = [0] * 3
+
+        for i in range(m):
+            for j in range(n):
+                x = coins[i][j]
+                up0, up1, up2 = dp[j+1]
+                left0, left1, left2 = dp[j]
+                dp[j+1][0] = max(up0, left0) + x
+                dp[j+1][1] = max(up1+x, left1+x, up0, left0) 
+                dp[j+1][2] = max(up2+x, left2+x, up1, left1) 
+
+        return dp[n][2]
+
+# Approach 2:
+class Solution:
+    def maximumAmount(self, coins: List[List[int]]) -> int:
+        m, n = len(coins), len(coins[0])
+        dp = [[-float('inf')] * 3 for _ in range(n)]
+        
+        dp[0][0] = coins[0][0]
+        if coins[0][0] < 0:
+            dp[0][1] = 0 
+        
+        for j in range(1, n):
+            for k in range(3):
+                if dp[j-1][k] == -float('inf'):
+                    continue
+                    
+                val = coins[0][j]
+                dp[j][k] = max(dp[j][k], dp[j-1][k] + val)
+                
+                if val < 0 and k < 2:
+                    dp[j][k+1] = max(dp[j][k+1], dp[j-1][k])
+        
+        for i in range(1, m):
+            new_dp = [[-float('inf')] * 3 for _ in range(n)]
+            
+            for j in range(n):
+                for k in range(3):
+                    val = coins[i][j]
+                    
+                    if dp[j][k] != -float('inf'):
+                        new_dp[j][k] = max(new_dp[j][k], dp[j][k] + val)
+                        
+                        if val < 0 and k < 2:
+                            new_dp[j][k+1] = max(new_dp[j][k+1], dp[j][k])
+                    
+                    if j > 0 and new_dp[j-1][k] != -float('inf'):
+                        new_dp[j][k] = max(new_dp[j][k], new_dp[j-1][k] + val)
+                        
+                        if val < 0 and k < 2:
+                            new_dp[j][k+1] = max(new_dp[j][k+1], new_dp[j-1][k])
+            
+            dp = new_dp
+        
+        return max(dp[n-1])
