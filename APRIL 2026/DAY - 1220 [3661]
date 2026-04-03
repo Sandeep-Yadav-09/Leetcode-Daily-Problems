@@ -1,0 +1,106 @@
+** 3661. Maximum Walls Destroyed by Robots**
+
+# Approach 1:
+from typing import List
+
+class Solution:
+    def maxWalls(self, robots: List[int], distance: List[int], walls: List[int]) -> int:
+        n = len(robots)
+        rob = sorted(zip(robots, distance))
+        p = [r[0] for r in rob]
+        d = [r[1] for r in rob]
+
+        robot_set = set(p)
+        ans0 = 0
+        walls_filtered = []
+        for w in walls:
+            if w in robot_set:
+                ans0 += 1
+            else:
+                walls_filtered.append(w)
+        walls_filtered.sort()
+        m = len(walls_filtered)
+
+        if m == 0:
+            return ans0
+
+        left_count = 0
+        j = 0
+        while j < m and walls_filtered[j] < p[0]:
+            if walls_filtered[j] >= p[0] - d[0]:
+                left_count += 1
+            j += 1
+
+        left_only = [0] * (n - 1)
+        right_only = [0] * (n - 1)
+        both = [0] * (n - 1)
+
+        for i in range(n - 1):
+            start = p[i]
+            end = p[i + 1]
+            while j < m and walls_filtered[j] < end:
+                if walls_filtered[j] > start:
+                    distL = walls_filtered[j] - start
+                    distR = end - walls_filtered[j]
+                    if distL <= d[i] and distR <= d[i + 1]:
+                        both[i] += 1
+                    elif distL <= d[i]:
+                        left_only[i] += 1
+                    elif distR <= d[i + 1]:
+                        right_only[i] += 1
+                j += 1
+
+        right_count = 0
+        while j < m and walls_filtered[j] <= p[-1] + d[-1]:
+            right_count += 1
+            j += 1
+
+        dpL = left_count   
+        dpR = 0            
+
+        for i in range(1, n):
+            idx = i - 1
+            A = left_only[idx] + both[idx]      
+            B = right_only[idx] + both[idx]    
+            C = left_only[idx] + right_only[idx] + both[idx]  
+
+            new_dpL = max(dpL + B, dpR + C)   
+            new_dpR = max(dpL, dpR + A)      
+            dpL, dpR = new_dpL, new_dpR
+
+        result = ans0 + max(dpL, dpR + right_count)
+        return result
+
+# Approach 2:
+class Solution:
+    def maxWalls(self, robots: List[int], distance: List[int], walls: List[int]) -> int:
+        A = sorted(zip(robots, distance))
+        N = len(A)
+        walls.sort()
+
+        def count(L, R):
+            if L > R:
+                return 0
+            return bisect_right(walls, R) - bisect_left(walls, L)
+
+        avail = 0
+        used = count(A[0][0] - A[0][1], A[0][0] - 1)
+        A.append([inf, 0])
+        for i in range(N):
+            l, dl = A[i]
+            r, dr = A[i + 1]
+
+            l1, r1 = l + 1, min(l + dl, r - 1)
+            l2, r2 = max(r - dr, l + 1), r - 1
+            
+            left = count(l1, r1)
+            right = count(l2, r2)
+            both = left + right - count(max(l1, l2), min(r1, r2))
+
+            navail = max(avail + left, used)
+            nused = max(avail + both, used + right)
+            avail, used = navail, nused
+
+        for x in set(x for x,_ in A):
+            used += count(x, x)
+        return used
