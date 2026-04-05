@@ -1,0 +1,28 @@
+** 657. Robot Return to Origin **
+
+# Approach 1:
+class Solution:
+    def judgeCircle(self, moves: str) -> bool:
+        l = r = u = d = 0
+        for c in moves:
+            if c == 'L':
+                l += 1
+            elif c == 'R':
+                r += 1
+            elif c == 'U':
+                u += 1
+            else:
+                d += 1
+        return l == r and u == d
+
+# Approach 2:
+class Solution:
+    def judgeCircle(self, moves: str) -> bool:
+        
+        position  = 0
+        d = {'R': 1, "L": -1, 'U': 1j, 'D': -1j}
+
+        for ch in moves:
+            position+= d[ch]
+
+        return position == 0
