@@ -1,0 +1,34 @@
+** 3653. XOR After Range Multiplication Queries I **
+
+# Approach 1:
+class Solution:
+    def xorAfterQueries(self, nums: List[int], queries: List[List[int]]) -> int:
+        MOD = 10**9 + 7
+
+        for l, r, k, v in queries:
+            idx = l
+            while idx <= r:
+                nums[idx] = (nums[idx] * v) % MOD
+                idx += k
+
+        res = 0
+        for num in nums:
+            res ^= num
+
+        return res
+
+# Approach 2:
+class Solution:
+    def xorAfterQueries(self, nums: List[int], queries: List[List[int]]) -> int:
+        for q in queries:
+            idx=q[0]
+            ri=q[1]
+            ki=q[2]
+            vi=q[3]
+            while idx<=ri:
+                nums[idx]=(nums[idx]*vi)%(10**9+7)
+                idx+=ki
+        r = 0
+        for num in nums:
+            r ^=num
+        return r
