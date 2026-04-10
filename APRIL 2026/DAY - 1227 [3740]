@@ -1,0 +1,30 @@
+** 3740. Minimum Distance Between Three Equal Elements I **
+
+# Approach 1:
+class Solution:
+    def minimumDistance(self, nums: List[int]) -> int:
+        ans,cnt = 1000, defaultdict(list)
+        for i,n in enumerate(nums): cnt[n].append(i)
+        for lst in cnt.values():
+            for i in range(len(lst)-2): ans = min(ans, lst[i+2]-lst[i])
+        return  ans*2  if ans<1000  else -1
+
+# Approach 2:
+from collections import defaultdict
+
+class Solution:
+    def minimumDistance(self, nums: List[int]) -> int:
+        mp = defaultdict(list)
+
+        for i, num in enumerate(nums):
+            mp[num].append(i)
+
+        ans = float('inf')
+
+        for arr in mp.values():
+            if len(arr) >= 3:
+                for i in range(len(arr) - 2):
+                    dist = 2 * (arr[i + 2] - arr[i])
+                    ans = min(ans, dist)
+
+        return -1 if ans == float('inf') else ans
