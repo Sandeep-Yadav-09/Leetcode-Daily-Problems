@@ -1,0 +1,24 @@
+** 1848. Minimum Distance to the Target Element **
+
+# Approach 1:
+class Solution:
+    def getMinDistance(self, nums: List[int], target: int, start: int) -> int:
+        idxLft, idxRgt = inf, inf
+        numsLft, numsRgt = nums[:start+1][::-1], nums[start:]   
+
+        if target in numsLft:                               
+            idxLft = numsLft.index(target)
+        if target in numsRgt:
+            idxRgt = numsRgt.index(target)
+
+        return idxLft if idxLft < idxRgt else idxRgt            
+
+# Approach 2:
+class Solution:
+    def getMinDistance(self, nums: List[int], target: int, start: int) -> int:
+        n=len(nums)
+        ans=float('inf')
+        for i in range(n):
+            if nums[i] == target:
+                ans=min(ans,abs(i-start))
+        return ans        
