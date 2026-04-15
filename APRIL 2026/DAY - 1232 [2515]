@@ -1,0 +1,37 @@
+** 2515. Shortest Distance to Target String in a Circular Array **
+
+# Approach 1:
+class Solution:
+    def closestTarget(self, words: List[str], target: str, startIndex: int) -> int:
+        n = len(words)
+        ans = float('inf')
+
+        for i in range(n):
+            if words[i] == target:
+                dist = abs(i - startIndex)
+                ans = min(ans, min(dist, n - dist))
+
+        return -1 if ans == float('inf') else ans
+
+# Approach 2:
+class Solution:
+    def closestTarget(self, words: List[str], target: str, startIndex: int) -> int:
+        if target not in words:
+            return -1
+        i1=i2 = startIndex
+        c1=0
+        c2=0
+        while words[i1]!=target:
+            
+            c1+=1
+            i1+=1
+            if i1==len(words):
+                i1=0
+
+        while words[i2]!=target:
+            
+            c2+=1
+            i2-=1
+            if i2==-1:
+                i2=len(words)-1
+        return min(c1,c2)
