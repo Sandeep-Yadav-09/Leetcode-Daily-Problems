@@ -1,0 +1,64 @@
+** 3488. Closest Equal Element Queries **
+
+# Approach 1:
+class Solution:
+    def solveQueries(self, nums: List[int], queries: List[int]) -> List[int]:
+        hashed = defaultdict(list)
+        for i, num in enumerate(nums):
+            hashed[num].append(i)
+        res = []
+        n = len(nums)
+        for i in queries:
+            indexes = hashed[nums[i]]
+            m = len(indexes)
+            if m < 2: 
+                res.append(-1) 
+                continue
+            
+            pos = bisect.bisect_left(indexes, i)
+            left = indexes[(pos - 1) % m]
+            right = indexes[(pos + 1) % m]
+
+            toAppend = float('inf')
+            leftD = abs(i - left)
+            leftC = (n - abs(i - left))
+            bestLeft = min(leftD, leftC)
+            
+            rightD = abs(i - right)
+            rightC = (n - abs(i - right))
+            bestRight = min(rightD, rightC)
+            
+            toAppend = min(bestLeft, bestRight)
+            res.append(toAppend)
+ 
+        return res
+
+# Approach 2:
+class Solution:
+    def solveQueries(self, nums: List[int], queries: List[int]) -> List[int]:
+
+        n = len(nums)
+        indices_map = defaultdict(list)
+        
+        for i, num in enumerate(nums):
+            indices_map[num].append(i)
+            
+        ans_map = [-1] * n
+        
+        def get_dist(i, j):
+            d = abs(i - j)
+            return min(d, n - d)
+            
+        for indices in indices_map.values():
+            k = len(indices)
+            if k > 1:
+                for i in range(k):
+                    prev_idx = indices[i - 1]
+                    next_idx = indices[(i + 1) % k]
+                    
+                    d1 = get_dist(indices[i], prev_idx)
+                    d2 = get_dist(indices[i], next_idx)
+                    
+                    ans_map[indices[i]] = min(d1, d2)
+                    
+        return [ans_map[q] for q in queries]
