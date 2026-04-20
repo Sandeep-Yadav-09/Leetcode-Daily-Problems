@@ -1,0 +1,23 @@
+** 2078. Two Furthest Houses With Different Colors **
+
+# Approach 1:
+class Solution:
+    def maxDistance(self, colors: List[int]) -> int:
+        return next(max(i, len(colors)-i-1) 
+            for i in range((len(colors)+1)//2)
+            if  colors[i] != colors[-1]  or  colors[0] != colors[-1-i])
+
+# Approach 2:
+class Solution:
+    def maxDistance(self, colors: List[int]) -> int:
+        maxDist = 0
+
+        for i in range(len(colors)):
+                
+            if colors[i] != colors[0] :
+                maxDist = max(maxDist , i)
+
+            if colors[i] != colors[len(colors) - 1]:
+                maxDist = max(maxDist , len(colors) - 1 - i)
+
+        return maxDist
