@@ -1,0 +1,60 @@
+** 2615. Sum of Distances **
+
+# Approach 1:
+class Solution:
+    def distance(self, nums: List[int]) -> List[int]:
+        groups = {}
+
+        for i, x in enumerate(nums):
+            if x not in groups:
+                groups[x] = []
+            groups[x].append(i)
+
+        ans = [0] * len(nums)
+
+        for x, idxs in groups.items():
+            tsum = sum(idxs)
+            pre = 0
+            m = len(idxs)
+
+            for k, i in enumerate(idxs):
+                diff = k - (m - k - 1)
+                ans[i] = (diff - 1) * i - (2 * pre - tsum)
+                pre += i
+
+        return ans
+
+# Approach 2:
+from collections import defaultdict
+
+class Solution:
+    def distance(self, nums: List[int]) -> List[int]:
+
+        indices_map = defaultdict(list)
+        for i, num in enumerate(nums):
+            indices_map[num].append(i)
+            
+        n = len(nums)
+        arr = [0] * n
+        
+        for indices in indices_map.values():
+            k = len(indices)
+            if k == 1:
+                continue
+                
+            suffix_sum = sum(indices)
+            prefix_sum = 0
+            
+            for m, idx in enumerate(indices):
+                suffix_sum -= idx
+                
+                left_count = m
+                right_count = k - m - 1
+                
+                left_dist = (left_count * idx) - prefix_sum
+                right_dist = suffix_sum - (right_count * idx)
+                
+                arr[idx] = left_dist + right_dist                
+                prefix_sum += idx
+                
+        return arr
