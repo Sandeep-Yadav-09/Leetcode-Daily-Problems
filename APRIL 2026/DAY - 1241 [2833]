@@ -1,0 +1,23 @@
+** 2833. Furthest Point From Origin **
+
+# Approach 1:
+class Solution:
+    def furthestDistanceFromOrigin(self, moves: str) -> int:
+        left = 0
+        right = 0
+        extra = 0
+
+        for m in moves:
+            if m == 'L':
+                left += 1
+            elif m == 'R':
+                right += 1
+            else:
+                extra += 1
+
+        return abs(left - right) + extra
+
+# Approval 2:
+class Solution:
+    def furthestDistanceFromOrigin(self, moves: str) -> int:
+        return abs(moves.count('L') - moves.count('R')) + moves.count('_')
