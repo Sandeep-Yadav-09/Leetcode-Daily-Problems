@@ -1,0 +1,91 @@
+** 3464. Maximize the Distance Between Points on a Square **
+
+# Approach 1:
+class Solution:
+    def maxDistance(self, side: int, points: List[List[int]], k: int) -> int:
+        flat = []
+        for x, y in points:
+            if y == 0: flat.append(x)
+            elif x == side: flat.append(side + y)
+            elif y == side: flat.append(2 * side + (side - x))
+            else: flat.append(3 * side + (side - y))
+        
+        flat.sort()
+        n = len(flat)
+        total_len = 4 * side
+        
+        def check(dist):
+            for start_idx in range(n):
+                if flat[start_idx] > flat[0] + dist: break
+                
+                count = 1
+                curr_pos = flat[start_idx]
+                first_pos = flat[start_idx]
+                
+                last_idx = start_idx
+                for _ in range(k - 1):
+                    target = curr_pos + dist
+                    idx = bisect_left(flat, target)
+                    if idx == n: return False 
+                    curr_pos = flat[idx]
+                    last_idx = idx
+                
+                if total_len - (flat[last_idx] - first_pos) >= dist:
+                    return True
+            return False
+
+        low, high = 0, total_len // k
+        ans = 0
+        while low <= high:
+            mid = (low + high) // 2
+            if check(mid):
+                ans = mid
+                low = mid + 1
+            else:
+                high = mid - 1
+        return ans
+
+# Approach 2:
+class Solution:
+    def maxDistance(self, side: int, points: List[List[int]], k: int) -> int:
+        arr = []
+
+        for x, y in points:
+            if x == 0:
+                arr.append(y)
+            elif y == side:
+                arr.append(side + x)
+            elif x == side:
+                arr.append(side * 3 - y)
+            else:
+                arr.append(side * 4 - x)
+
+        arr.sort()
+
+        def check(limit: int) -> bool:
+            perimeter = side *4
+            for start in arr:
+                end = start + perimeter - limit
+                cur = start
+                for _ in range (k - 1):
+                    idx = bisect_left(arr, cur + limit)
+                    if idx == len(arr) or arr[idx] > end:
+                        cur = -1
+                        break
+                    cur = arr[idx]
+                if cur >= 0:
+                    return True
+            return False
+
+        lo, hi = 1, side
+        ans = 0
+
+        while lo <= hi:
+            mid = (lo + hi) // 2
+            if check(mid):
+                lo = mid + 1
+                ans = mid
+            else:
+                hi = mid - 1
+
+        return ans
