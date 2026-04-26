@@ -1,0 +1,58 @@
+** 1559. Detect Cycles in 2D Grid **
+
+# Approach 1:
+class Solution:
+    def containsCycle(self, grid: List[List[str]]) -> bool:
+        dirs = [(0,1), (0, -1), (1,0), (-1,0)]
+        m = len(grid)
+        n = len(grid[0])
+        visited = [[False for _ in range(n)] for _ in range(m)]
+        def detect(x1, y1, p1, p2, prev):
+            visited[x1][y1] = True
+            for x2, y2 in dirs:
+                x = x1+x2
+                y = y1+y2
+                if (x2 != (-1*p1) or y2 != (-1*p2)) and x >= 0 and x < m and y >=0 and y < n and prev == grid[x][y]:
+                    if visited[x][y] or detect(x,y,x2,y2, prev):
+                        return True
+            return False
+
+            
+        for i in range(m):
+            for j in range(n):
+                if not visited[i][j]:
+                    if detect(i, j, -1, -1, grid[i][j]):
+                        return True 
+        return False
+
+# Approach 2:
+class Solution:
+    def containsCycle(self, grid: List[List[str]]) -> bool:
+        def cycle_detection(i,j,n,m,vis,par,v,c):
+            if i<0 or i>=n or j<0 or j>=m or v!=grid[i][j]:
+                return False
+            if vis[i][j]:
+                if c>=4 and (i!=par[0] or j!=par[1]):
+                    return True
+                return False
+            vis[i][j]=True
+            new_par=[i,j]
+            a=False
+            if (i+1)!=par[0] or j!=par[1]:
+                a=cycle_detection(i+1,j,n,m,vis,new_par,v,c+1)
+            if (i-1)!=par[0] or j!=par[1]:
+                a=a or cycle_detection(i-1,j,n,m,vis,new_par,v,c+1)
+            if i!=par[0] or (j+1)!=par[1]:
+                a=a or cycle_detection(i,j+1,n,m,vis,new_par,v,c+1)
+            if i!=par[0] or (j-1)!=par[1]:
+                a=a or cycle_detection(i,j-1,n,m,vis,new_par,v,c+1)
+            return a
+
+        n,m=len(grid),len(grid[0])
+        vis=[[False for j in range(m)]for i in range(n)]
+        for i in range(n):
+            for j in range(m):
+                ans=cycle_detection(i,j,n,m,vis,[-1,-1],grid[i][j],0)
+                if ans:
+                    return True
+        return False
