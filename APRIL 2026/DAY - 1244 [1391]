@@ -1,0 +1,52 @@
+** 1391. Check if There is a Valid Path in a Grid **
+
+# Approach 1:
+class Solution:
+    def hasValidPath(self, grid: List[List[int]]) -> bool:
+        dirs = {
+            1: [(0,-1), (0,1)],
+            2: [(1,0), (-1,0)],
+            3: [(0,-1), (1,0)],
+            4: [(1,0), (0,1)],
+            5: [(-1,0), (0,-1)],
+            6: [(-1,0), (0,1)]
+        }
+
+        m,n = len(grid), len(grid[0])
+        visited = set()
+
+        stack = [(0,0)]
+        while stack:
+            i,j = stack.pop()
+            if i == m-1 and j == n-1:
+                return True
+            visited.add((i,j))
+            for di, dj in dirs[grid[i][j]]:
+                ni = i + di
+                nj = j + dj
+                if ni < 0 or nj < 0 or ni == m or nj == n or (ni, nj) in visited:
+                    continue
+                if (di * -1, dj * -1) in dirs[grid[ni][nj]]:
+                    stack.append((ni, nj))
+        return False
+
+# Approach 2:
+class Solution:
+    def hasValidPath(self, grid: List[List[int]]) -> bool:
+
+        def dsu_find(dsu,x):
+            dsu[x] = x if x==dsu[x]  else dsu_find(dsu,dsu[x])
+            return   dsu[x]
+        def dsu_join(dsu,x,y):
+            mn,mx = (x,y) if x%2==0  else (y,x)
+            dsu[dsu_find(dsu,mx)] = dsu_find(dsu,mn)
+        
+        m,n = len(grid), len(grid[0])
+        dsu = [i*n +j  for i,j in product(range(m), range(n))]
+        up  = {1:{}, 2:{2,3,4}, 3:{}, 4:{}, 5:{2,3,4}, 6:{2,3,4}}
+        lf  = {1:{1,4,6}, 2:{}, 3:{1,4,6}, 4:{}, 5:{1,4,6}, 6:{}}
+
+        for i,j in product(range(m), range(n)):
+            if  i and grid[i-1][j] in up[grid[i][j]]: dsu_join(dsu,i*n+j, (i-1)*n+j)
+            if  j and grid[i][j-1] in lf[grid[i][j]]: dsu_join(dsu,i*n+j, i*n+(j-1))
+        return  dsu_find(dsu,0) == dsu_find(dsu, len(dsu)-1)
