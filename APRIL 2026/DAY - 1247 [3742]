@@ -1,0 +1,79 @@
+** 3742. Maximum Path Score in a Grid **
+
+# Approach 1:
+class Solution:
+    def maxPathScore(self, grid: List[List[int]], k: int) -> int:
+        m, n = len(grid), len(grid[0])
+        def get_cost(val):
+            return 0 if val == 0 else 1
+        def get_score(val):
+            return val
+        dp = [[dict() for _ in range(n)] for _ in range(m)]
+        start_cost = get_cost(grid[0][0])
+        if start_cost > k:
+            return -1
+        dp[0][0][start_cost] = get_score(grid[0][0])
+        for i in range(m):
+            for j in range(n):
+                for cost, score in list(dp[i][j].items()):
+                    for di, dj in [(0,1),(1,0)]:
+                        ni, nj = i+di, j + dj
+                        if ni <m and nj <n :
+                            val = grid[ni][nj]
+                            new_cost = cost + get_cost(val)
+                            if new_cost <= k:
+                                new_score = score + get_score(val)
+                                if new_cost not in dp[ni][nj] or dp[ni][nj][new_cost] < new_score:
+                                    dp[ni][nj][new_cost] = new_score
+        if not dp[m-1][n-1]:
+            return -1
+        return max(dp[m-1][n-1].values())
+
+# Approach 2:
+class Solution:
+    def __init__(self):
+        self.pathExists = False
+
+    def getMaxScore(self, row, col, grid, rows, cols, remainingCost, dp):
+        if row >= rows or col >= cols:
+            return -10**9
+        if remainingCost < 0:
+            return -10**9
+
+        if row == rows - 1 and col == cols - 1:
+            cell = grid[row][col]
+            if cell == 0:
+                self.pathExists = True
+                return 0
+            if cell == 1 and remainingCost >= 1:
+                self.pathExists = True
+                return 1
+            if cell == 2 and remainingCost >= 1:
+                self.pathExists = True
+                return 2
+            return -10**9
+
+        if dp[row][col][remainingCost] is not None:
+            return dp[row][col][remainingCost]
+
+        cell = grid[row][col]
+
+        if cell == 0:
+            right = self.getMaxScore(row, col + 1, grid, rows, cols, remainingCost, dp)
+            down = self.getMaxScore(row + 1, col, grid, rows, cols, remainingCost, dp)
+        elif cell == 1:
+            right = 1 + self.getMaxScore(row, col + 1, grid, rows, cols, remainingCost - 1, dp)
+            down = 1 + self.getMaxScore(row + 1, col, grid, rows, cols, remainingCost - 1, dp)
+        else:
+            right = 2 + self.getMaxScore(row, col + 1, grid, rows, cols, remainingCost - 1, dp)
+            down = 2 + self.getMaxScore(row + 1, col, grid, rows, cols, remainingCost - 1, dp)
+
+        dp[row][col][remainingCost] = max(right, down)
+        return dp[row][col][remainingCost]
+
+    def maxPathScore(self, grid, k):
+        rows, cols = len(grid), len(grid[0])
+        self.pathExists = False
+        dp = [[[None for _ in range(k + 1)] for _ in range(cols)] for _ in range(rows)]
+        ans = self.getMaxScore(0, 0, grid, rows, cols, k, dp)
+        return ans if self.pathExists else -1
