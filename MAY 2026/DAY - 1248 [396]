@@ -1,0 +1,27 @@
+** 396. Rotate Function **
+
+# Approach 1:
+class Solution:
+    def maxRotateFunction(self, nums: List[int]) -> int:
+        n=len(nums)
+        Sum=sum(nums)
+        ans=F=sum(i*x for i, x in enumerate(nums))
+        for k in range(1, n):
+            F+=Sum-n*nums[n-k]
+            ans=max(ans, F)
+        return ans
+
+# Approach 2:
+class Solution:
+    def maxRotateFunction(self, nums: List[int]) -> int:
+        n=len(nums)
+        curr=0
+        given=0
+        for i in range(0,n):
+            curr+=nums[i]*i
+            given+=nums[i]
+        res=curr
+        for i in range(n-1,-1,-1):
+            curr+=given-(nums[i]*(n))
+            res=max(res,curr)
+        return res
