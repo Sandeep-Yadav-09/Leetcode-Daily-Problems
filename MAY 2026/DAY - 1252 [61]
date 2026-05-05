@@ -1,0 +1,38 @@
+** 61. Rotate List **
+
+# Approach 1:
+class Solution:
+    def rotateRight(self, head: Optional[ListNode], k: int) -> Optional[ListNode]:
+        if not head or not head.next or k == 0:
+            return head
+
+        length = 1
+        cur = head
+        while cur.next:
+            cur = cur.next
+            length += 1
+
+        k %= length
+        if k == 0:
+            return head
+
+        cur.next = head
+
+        cur = head
+        for _ in range(length - k - 1):
+            cur = cur.next
+
+        new_head = cur.next
+        cur.next = None
+        return new_head
+
+# Approach 2:
+class Solution:
+    def rotateRight(self, head: Optional[ListNode], k: int) -> Optional[ListNode]:
+        cur,n = head, 1
+        while cur and cur.next: cur,n = cur.next, n+1
+        if  n<2 or k%n==0:  return head
+        last,cur = cur,head
+        for _ in range(n-k%n -1): cur = cur.next
+        last.next,head,cur.next = head, cur.next, None
+        return head
