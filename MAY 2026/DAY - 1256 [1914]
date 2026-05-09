@@ -1,0 +1,80 @@
+** 1914. Cyclically Rotating a Grid **
+
+# Approach 1:
+class Solution:
+    def rotateGrid(self, grid: List[List[int]], k: int) -> List[List[int]]:
+        n , m , s , e = len(grid) , len(grid[0]) , 0 , 0
+        def layer(grid , n , m , s):
+            newarr = []
+            for i in range(s , m):
+                newarr.append(grid[s][i])
+            for j in range(s+1 , n):
+                newarr.append(grid[j][m-1])
+            for k in range(m-2 , s-1 , -1):
+                newarr.append(grid[n-1][k])
+            for l in range(n-2 , s , -1):
+                newarr.append(grid[l][s])
+            
+            return newarr
+            
+        def kshift(k , arr):
+            k = k % len(arr)
+            newarr = []
+            for i in range(k , len(arr)):
+                newarr.append(arr[i])
+            for j in range(0 , k):
+                newarr.append(arr[j])
+            
+            return newarr
+
+        def assign(arr , grid , n , m , s):
+            l = 0
+
+            for i in range(s , m):
+                grid[s][i] = arr[l]
+                l+=1
+            for j in range(s+1 , n):
+                grid[j][m-1] = arr[l]
+                l+=1 
+            for k in range(m-2 , s-1 , -1):
+                grid[n-1][k] = arr[l]
+                l+=1 
+            for x in range(n-2 , s , -1):
+                grid[x][s] = arr[l]
+                l+=1 
+            
+            return grid
+        while (n-s) >= 2 and (m-s) >= 2:
+            newarr = layer(grid , n ,m , s)
+            print(newarr , n , m)
+            arr = kshift(k , newarr)
+            assign(arr , grid ,n ,m , s)
+            n -= 1
+            m -= 1
+            s += 1
+        
+        return grid
+
+# Approach 2:
+class Solution:
+    def rotateGrid(self, grid: List[List[int]], k: int) -> List[List[int]]:
+  
+        m, n = len(grid), len(grid[0])
+        MN = min(m, n)//2
+ 
+        for i in range(MN):
+
+            XO, X1, YO, Y1 = i, m-i-1, i, n-i-1
+            rot  = k%(2*(X1+Y1-XO-YO))      
+
+            layerXY = list(chain( [(XO, y) for y in range(YO,  Y1)],
+                                  [(x, Y1) for x in range(XO,  X1)],
+                                  [(X1, y) for y in range(YO+1,Y1+1)][::-1],
+                                  [(x, YO) for x in range(XO+1,X1+1)][::-1]))
+
+            layer = [grid[a][b] for (a,b) in layerXY]
+            layer = zip(layer[rot:]+layer[:rot], layerXY)
+
+            for num, (a,b) in layer: grid[a][b] = num
+
+        return grid
