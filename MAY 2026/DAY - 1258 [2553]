@@ -1,0 +1,17 @@
+** 2553. Separate the Digits in an Array **
+
+# Approach 1:
+class Solution:
+    def separateDigits(self, nums: List[int]) -> List[int]:
+        return [ ord(c)-ord('0')  for x in nums for c in str(x)]
+
+# Approach 2:
+class Solution:
+    def separateDigits(self, nums: List[int]) -> List[int]:
+        ans = []
+        
+        for num in nums:
+            for digit in str(num):
+                ans.append(int(digit))
+        
+        return ans
