@@ -1,0 +1,25 @@
+** 1665. Minimum Initial Energy to Finish Tasks **
+
+# Approach 1:
+class Solution:
+    def minimumEffort(self, tasks: List[List[int]]) -> int:
+        tasks.sort(key =lambda x:(x[1]-x[0]), reverse = True)
+        energy = 0
+        ans = 0
+        for actual, minimum in tasks:
+            if energy < minimum:
+                extra = minimum - energy
+                ans += extra
+                energy += extra
+            energy -= actual
+        return ans
+
+# Approach 2:
+class Solution:
+    def minimumEffort(self, tasks: List[List[int]]) -> int:
+        tasks.sort(key=lambda x: x[1]-x[0], reverse=True)
+        res=spent=0
+        for i, j in tasks:
+            res=max(res, spent+j)
+            spent+=i
+        return res  
