@@ -1,0 +1,45 @@
+** 1306. Jump Game III **
+
+# Approach 1:
+class Solution:
+    def canReach(self, arr: List[int], start: int) -> bool:
+        n=len(arr)
+        q=deque()
+        q.append(start)
+        while q:
+            i=q.pop()
+            x=arr[i]
+            if x==-1: continue 
+            if x==0: return True
+            arr[i]=-1
+            if (l:=i-x)>=0 and arr[l]>=0: 
+                q.append(l)
+            if (r:=i+x)<n and arr[r]>=0: 
+                q.append(r)
+        return False
+
+# Approach 2:
+class Solution:
+    def canReach(self, arr: List[int], start: int) -> bool:
+        n = len(arr)
+        q = deque([start])
+        visited = set()
+        visited.add(start)
+        while q:
+            i = q.popleft()
+
+            if arr[i] == 0:
+                return True
+
+            left = i + arr[i]
+            right = i - arr[i]
+
+            if 0<= left < n and left not in visited:
+                visited.add(left)
+                q.append(left)
+
+            if 0<= right < n and right not in visited:
+                visited.add(right)
+                q.append(right)
+
+        return False
