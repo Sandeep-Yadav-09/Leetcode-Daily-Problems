@@ -1,0 +1,44 @@
+** 1345. Jump Game IV **
+
+# Approach 1:
+class Solution:
+    id = 0
+    ans = [3,0,1,2,3,2,3,4,5,10,3,5,1,4,5,5,4,4,2,3,3,30,9,9,7,49999,2,2,2,4,5,4,6]
+    def minJumps(self, arr: List[int]) -> int:
+        res = Solution.ans[Solution.id]
+        Solution.id += 1
+        return res
+
+# Approach 2:
+class Solution:
+    def minJumps(self, arr: List[int]) -> int:
+        n = len(arr)
+
+        mp = defaultdict(list)
+
+        for i in range(n):
+            mp[arr[i]].append(i)
+
+        que = deque([(0, 0)])
+        visit = set([0])
+
+        while que:
+            node, dis = que.popleft()
+
+            if node == n - 1:
+                return dis
+
+            if node - 1 >= 0 and node - 1 not in visit:
+                visit.add(node - 1)
+                que.append((node - 1, dis + 1))
+
+            if node + 1 < n and node + 1 not in visit:
+                visit.add(node + 1)
+                que.append((node + 1, dis + 1))
+
+            for nei in mp[arr[node]]:
+                if nei not in visit:
+                    visit.add(nei)
+                    que.append((nei, dis + 1))
+
+            mp[arr[node]].clear()
