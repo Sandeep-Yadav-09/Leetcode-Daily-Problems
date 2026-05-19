@@ -1,0 +1,28 @@
+** 2540. Minimum Common Value **
+
+# Approach 1:
+class Solution:
+    def getCommon(self, nums1: List[int], nums2: List[int]) -> int:
+        i, j = 0, 0
+
+        while i < len(nums1) and j < len(nums2):
+            if nums1[i] == nums2[j]:
+                return nums1[i]
+
+            if nums1[i] < nums2[j]:
+                i += 1
+            else:
+                j += 1
+
+        return -1
+
+# Approach 2:
+class Solution:
+    def getCommon(self, nums1: List[int], nums2: List[int]) -> int:
+        a=set(nums1)
+        b=set(nums2)
+        c=sorted(list(a.intersection(b)))
+      
+        if c:
+            return c[0]
+        return -1
