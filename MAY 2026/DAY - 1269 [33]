@@ -1,0 +1,33 @@
+** 33. Search in Rotated Sorted Array **
+
+# Approach 1:
+class Solution:
+    def search(self, nums: List[int], target: int) -> int:
+        start, end = 0, len(nums) - 1
+
+        while start <= end:
+            mid = start + (end - start) // 2
+
+            if nums[mid] == target:
+                return mid
+
+            if nums[start] <= nums[mid]:
+                if nums[start] <= target < nums[mid]:
+                    end = mid - 1
+                else:
+                    start = mid + 1
+
+            else:
+                if nums[mid] < target <= nums[end]:
+                    start = mid + 1
+                else:
+                    end = mid - 1
+
+        return -1
+
+# Approach 2:
+class Solution:
+    def search(self, nums: List[int], tg: int) -> int:
+        imn = bisect_left(nums, True, key=lambda x: x<nums[0])
+        itg = bisect_left(nums, tg, lo=(imn if tg<nums[0] else 0), hi=(None if tg<nums[0] else imn-1))
+        return  itg  if tg == nums[itg%len(nums)]  else -1
