@@ -1,0 +1,68 @@
+** 1340. Jump Game V **
+
+# Approach 1:
+class Solution:
+    def maxJumps(self, arr: List[int], d: int) -> int:
+        n = len(arr)
+        graph = defaultdict(list)
+        indegree = defaultdict(int)
+        increasing_stack = []
+        for i in range(n):
+            num = arr[i]
+            while increasing_stack:
+                if arr[increasing_stack[-1]] < num and i-increasing_stack[-1] <= d:
+                    index = increasing_stack.pop()
+                    graph[i].append(index)
+                    indegree[index] += 1
+                else:
+                    break
+            increasing_stack.append(i)
+        increasing_stack = []
+        for j in range(n-1, -1, -1):
+            num = arr[j]
+            while increasing_stack:
+                if arr[increasing_stack[-1]] < num and increasing_stack[-1]-j <= d:
+                    index = increasing_stack.pop()
+                    graph[j].append(index)
+                    indegree[index] += 1
+                else:
+                    break
+            increasing_stack.append(j)
+        queue = deque()
+        for i in range(n):
+            if i not in indegree:
+                queue.append((i, 0))
+        max_jump = 0
+        while queue:
+            for _ in range(len(queue)):
+                curr_index, jump = queue.popleft()
+                for neighbor in graph[curr_index]:
+                    indegree[neighbor] -= 1
+                    if indegree[neighbor] == 0:
+                        queue.append((neighbor, jump+1))
+            max_jump += 1
+        return max_jump
+          
+# Approach 2:
+          class Solution:
+    def maxJumps(self, arr: List[int], d: int) -> int:
+        n = len(arr)
+
+        new_arr = [[num, idx] for idx, num in enumerate(arr)]
+        new_arr.sort()
+
+        dp = [1] * n
+        for num, i in new_arr:
+            for j in range(i + 1, min(i + d + 1, n)):
+                if arr[i] <= arr[j]:
+                    break
+
+                dp[i] = max(dp[i], dp[j] + 1)
+
+            for j in range(i - 1, max(-1, i - d - 1), -1):
+                if arr[i] <= arr[j]:
+                    break
+
+                dp[i] = max(dp[i], dp[j] + 1)
+
+        return max(dp)
