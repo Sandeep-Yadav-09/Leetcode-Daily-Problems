@@ -1,0 +1,42 @@
+** 1871. Jump Game VII **
+
+# Approach 1:
+class Solution:
+    def canReach(self, s, m, M):
+        q,k,n = [0],1,len(s)
+        for i in q:
+            q += [j for j in range(max(i+m,k),min(i+M+1,n)) if s[j]=='0']
+            k = i+M+1
+
+        return q[-1]==n-1
+
+# Approach 2:
+from collections import deque
+from bisect import bisect_left, bisect_right
+
+class Solution:
+    def canReach(self, s: str, minJump: int, maxJump: int) -> bool:
+        n = len(s)
+
+        zeros = [i for i in range(n) if s[i] == '0']
+        queue = deque([0])
+
+        zeros.pop(0)
+
+        while queue:
+            i = queue.popleft()
+
+            if i == n - 1:
+                return True
+
+            l = bisect_left(zeros, i + minJump)
+            r = bisect_right(zeros, i + maxJump)
+
+            reachable = zeros[l:r]
+
+            for j in reachable:
+                queue.append(j)
+
+            del zeros[l:r]
+
+        return False
