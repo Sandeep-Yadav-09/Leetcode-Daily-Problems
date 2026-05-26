@@ -1,0 +1,17 @@
+** 3120. Count the Number of Special Characters I **
+
+# Approach 1:
+class Solution:
+    def numberOfSpecialChars(self, word: str) -> int:
+        a: set[str] = {c for c in word if c.islower()}
+        b: set[str] = {c.lower() for c in word if c.isupper()}
+        return len(a & b)
+
+# Approach 2:
+class Solution:
+    def numberOfSpecialChars(self, word: str) -> int:
+        special=0
+        for ch in 'abcdefghijklmnopqrstuvwxyz':
+            if word.count(ch)>0 and word.count(ch.upper())>0:
+                special+=1
+        return special
