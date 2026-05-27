@@ -1,0 +1,25 @@
+** 3121. Count the Number of Special Characters II **
+
+# Approach 1:
+class Solution:
+    def numberOfSpecialChars(self, word: str) -> int:
+        n = len(word)
+        last, first = {}, {}
+        for i in range(n):
+            if word[i].isupper() and word[i] not in first:
+                first[word[i]] = i
+            last[word[i]] = i
+            
+        return sum(first.get(u, -1) > last.get(l, n) for u, l in zip(ascii_uppercase, ascii_lowercase))
+
+# Approach 2:
+class Solution:
+    def numberOfSpecialChars(self, word: str) -> int:
+        c = 0
+        for i in "abcdefghijklmnopqrstuvwxyz":
+            if i in word and i.upper() in word:
+                ilower = word.rfind(i)
+                iupper = word.find(i.upper())
+                if ilower < iupper:
+                    c += 1
+        return c
