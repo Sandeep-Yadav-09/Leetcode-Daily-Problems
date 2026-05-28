@@ -1,0 +1,80 @@
+** 3093. Longest Common Suffix Queries **
+
+# Approach 1:
+class Solution:
+    def stringIndices(self, wC: List[str], wQ: List[str]) -> List[int]:
+        trie,wCr = dict(), [w[::-1] for w in wC]
+        idxs,ans = sorted(range(len(wC)), key=lambda i: len(wCr[i])), []
+        trie['#']= idxs[0]
+
+        for idx in idxs:
+            node = trie
+            for c in wCr[idx]:
+                if  not c in node: node[c] = {'#': idx}
+                node = node[c]
+
+        for query in wQ:
+            node = trie
+            for c in query[::-1]:
+                if  c in node: node = node[c]
+                else:          break
+            ans.append(node['#'])
+        return  ans
+
+# Approach 2:
+class TrieNode():
+    def __init__(self):
+        self.child = [None]*26
+        self.idx = -1
+        self.isEnd = False
+class Trie():
+    def __init__(self):
+        self.root = TrieNode()
+
+    def insert(self,key,i):
+        curr = self.root
+
+        for c in key:
+            idx = ord(c) - ord('a')
+            if curr.child[idx] is None:
+                curr.child[idx] = TrieNode()
+                curr.child[idx].idx = i
+            curr = curr.child[idx]
+
+
+        curr.isEnd = True
+        
+    def search(self,key):
+        curr = self.root
+        i = -1
+
+        for c in key:
+            j = ord(c) - ord('a')
+            if curr.child[j] is None:
+                return i
+            
+            curr = curr.child[j]
+            i = curr.idx
+
+        return i
+
+class Solution:
+    def stringIndices(self, wordsContainer: List[str], wordsQuery: List[str]) -> List[int]:
+
+        words = [(wordsContainer[i][::-1],i) for i in range(len(wordsContainer))]
+
+        words = sorted(words,key = lambda x : len(x[0]))
+
+        trie = Trie()
+
+        for w , i in words:
+            trie.insert(w,i)
+
+        ans = [words[0][1]]*len(wordsQuery)
+
+        for i in range(len(wordsQuery)):
+            q = wordsQuery[i]
+            idx = trie.search(q[::-1])
+            if idx != -1:
+                ans[i] = idx
+        return ans
