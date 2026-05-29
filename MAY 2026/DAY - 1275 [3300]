@@ -1,0 +1,22 @@
+** 3300. Minimum Element After Replacement With Digit Sum **
+
+# Approach 1:
+class Solution:
+    def minElement(self, nums: List[int]) -> int:
+        for i in range(len(nums)):
+            n = 0
+            for j in str(nums[i]):
+                n += int(j)
+            nums[i] = n
+        return min(nums)
+
+# Approach 2:
+class Solution:
+    def minElement(self, nums: List[int]) -> int:
+        res=[]
+        for v in nums:
+            v=list(str(v))
+            v=[int(i) for i in v]
+            
+            res.append(sum(v))
+        return min(res)
