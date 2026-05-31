@@ -1,0 +1,31 @@
+** 2126. Destroying Asteroids **
+
+# Approach 1:
+class Solution:
+    def asteroidsDestroyed(self, mass: int, asteroids: List[int]) -> bool:
+        asteroids.sort()
+
+        m = mass
+        last = asteroids[-1]
+
+        for a in asteroids:
+            if m < a:
+                return False
+
+            if m > last: 
+                return True
+
+            m += a
+
+        return True
+
+# Approach 2:
+class Solution:
+    def asteroidsDestroyed(self, mass: int, asteroids: List[int]) -> bool:
+        asteroids.sort()
+        for ms in asteroids:
+            if ms<=mass:
+                mass+=ms
+            else:
+                return False
+        return True
