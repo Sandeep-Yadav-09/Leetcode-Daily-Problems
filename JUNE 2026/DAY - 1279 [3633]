@@ -1,0 +1,46 @@
+** 3633. Earliest Finish Time for Land and Water Rides I **
+
+# Approach 1:
+class Solution:
+    def earliestFinishTime(self, landStartTime: List[int], landDuration: List[int], waterStartTime: List[int], waterDuration: List[int]) -> int:
+        ans = float('inf')
+
+        for i in range(len(landStartTime)):
+            for j in range(len(waterStartTime)):
+
+                # Land -> Water
+                land_finish = landStartTime[i] + landDuration[i]
+                water_start = max(land_finish, waterStartTime[j])
+                finish1 = water_start + waterDuration[j]
+
+                # Water -> Land
+                water_finish = waterStartTime[j] + waterDuration[j]
+                land_start = max(water_finish, landStartTime[i])
+                finish2 = land_start + landDuration[i]
+
+                ans = min(ans, finish1, finish2)
+
+        return ans
+
+# Approach 2:
+class Solution:
+    def earliestFinishTime(self, landStartTime: List[int], landDuration: List[int], waterStartTime: List[int], waterDuration: List[int]) -> int:
+
+        def solve(start1, duration1, start2, duration2):
+
+            earliest_finish = float("inf")
+
+            for s, d in zip(start1, duration1):
+                earliest_finish = min(earliest_finish, s + d)
+
+            ans = float("inf")
+
+            for s, d in zip(start2, duration2):
+                ans = min(ans, max(s, earliest_finish) + d)
+
+            return ans
+
+        return min(
+            solve(landStartTime, landDuration, waterStartTime, waterDuration),
+            solve(waterStartTime, waterDuration, landStartTime, landDuration)
+        )
