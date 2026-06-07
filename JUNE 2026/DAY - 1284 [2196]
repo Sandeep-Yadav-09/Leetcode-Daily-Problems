@@ -1,0 +1,66 @@
+** 2196. Create Binary Tree From Descriptions **
+
+# Approach 1:
+class Solution:
+    def createBinaryTree(self, descriptions: List[List[int]]) -> Optional[TreeNode]:
+        nodes = {}
+        children = set()
+
+        for parent, child, isLeft in descriptions:
+            if parent not in nodes:
+                nodes[parent] = TreeNode(parent)
+            if child not in nodes:
+                nodes[child] = TreeNode(child)
+
+            if isLeft == 1:
+                nodes[parent].left = nodes[child]
+            else:
+                nodes[parent].right = nodes[child]
+
+            children.add(child)
+
+        for val in nodes:
+            if val not in children:
+                return nodes[val]
+
+# Approach 2:
+class Solution:
+    def createBinaryTree(self, descriptions: List[List[int]]) -> Optional[TreeNode]:
+        nodes_map: dict[int, Optional[TreeNode]] = dict()
+        root_map: dict[int, bool] = dict()
+        size: int = len(desp)
+
+        for i in range(0, size):
+            parent, child, _ = desp[i]
+            root_map[parent] = True
+            root_map[child] = True
+
+        for i in range(0, size):
+            parent, child, is_left = desp[i]
+
+            parent_node: Optional[TreeNode] = nodes_map.get(parent)
+            if nodes_map.get(parent) is None:
+                new_node: TreeNode = TreeNode(parent)
+                parent_node = new_node
+
+            child_node: Optional[TreeNode] = nodes_map.get(child)
+            if nodes_map.get(child) is None:
+                new_node: TreeNode = TreeNode(child)
+                child_node = new_node
+
+            if is_left == 1:
+                parent_node.left = child_node
+            else:
+                parent_node.right = child_node
+
+            nodes_map[parent] = parent_node
+            nodes_map[child] = child_node
+
+            root_map[child] = False
+
+        root: TreeNode = None
+        for key, value in root_map.items():
+            if value is True:
+                root = nodes_map.get(key)
+
+        return root 
