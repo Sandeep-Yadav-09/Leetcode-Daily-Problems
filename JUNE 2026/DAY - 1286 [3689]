@@ -1,0 +1,17 @@
+** 3689. Maximum Total Subarray Value I **
+
+# Approach 1:
+class Solution:
+    def maxTotalValue(self, nums: List[int], k: int) -> int:
+        return (max(nums) - min(nums)) * k
+
+# Approach 2:
+class Solution:
+    def maxTotalValue(self, nums: List[int], k: int) -> int:
+        mini = nums[0]
+        maxi = nums[0]
+        for i in range(len(nums)):
+            maxi = max(maxi, nums[i])
+            mini = min(mini, nums[i])
+        
+        return (maxi - mini) * k
