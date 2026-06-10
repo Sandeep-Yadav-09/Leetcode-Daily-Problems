@@ -1,0 +1,81 @@
+** 3691. Maximum Total Subarray Value II **
+
+# Approach 1:
+class Solution:
+    def maxTotalValue(self, A: List[int], K: int) -> int:
+        N = len(A)
+        smin = SparseTableOp(A, min)
+        smax = SparseTableOp(A, max)
+        
+        pq = []
+        for i in range(N):
+            v = smax.query(i, N-1) - smin.query(i, N-1)
+            pq.append([-v, i, N-1])
+        heapify(pq)
+
+        ans = 0
+        for _ in range(K):
+            nv, i, j = heappop(pq)
+            ans -= nv
+            if j - 1 >= i:
+                v2 = smax.query(i, j-1) - smin.query(i, j-1)
+                heappush(pq, [-v2, i, j-1])
+
+        return ans
+
+class SparseTableOp:
+    def __init__(self, arr, op):
+        self.n = len(arr)
+        self.k = int(math.log2(self.n)) + 1
+        self.table = [[0] * self.k for _ in range(self.n)]
+        self.op = op
+
+        for i in range(self.n):
+            self.table[i][0] = arr[i]
+
+        for j in range(1, self.k):
+            for i in range(self.n - (1 << j) + 1):
+                self.table[i][j] = op(
+                    self.table[i][j - 1], self.table[i + (1 << (j - 1))][j - 1]
+                )
+
+    def query(self, left, right):
+        length = right - left + 1
+        k = int(math.log2(length))
+        return self.op(self.table[left][k], self.table[right - (1 << k) + 1][k])
+
+# Approach 2:
+class Solution:
+    def maxTotalValue(self, nums: List[int], k: int) -> int:
+        n=len(nums)
+        tree=defaultdict(lambda:[inf,-inf])
+        def build(l,r,node):
+            if(l==r):
+                tree[node]=[nums[l],nums[l]]
+                return tree[node]
+            mid=(l+r)//2
+            left=build(l,mid,node*2)
+            right=build(mid+1,r,node*2+1)
+            tree[node]=[min(left[0],right[0]),max(left[1],right[1])]
+            return tree[node]
+        def find(l,r,node,s,e):
+            if(l<=s and e<=r):return tree[node]
+            if(r<s) or (l>e):return [inf,-inf]
+            mid=(s+e)//2
+            left=find(l,r,node*2,s,mid)
+            right=find(l,r,node*2+1,mid+1,e)
+            return [min(left[0],right[0]),max(left[1],right[1])]
+        build(0,n-1,1)
+        h=[]
+        for i in range(0,n,1):
+            c=find(i,n-1,1,0,n-1)
+            heappush(h,(c[0]-c[1],i,n-1))
+        ans=0
+        while(k):
+            cur,i,j=heappop(h)
+            if(i<j):
+                c=find(i,j-1,1,0,n-1)
+                heappush(h,(c[0]-c[1],i,j-1))
+            ans+=cur
+            k-=1
+        return abs(ans)
