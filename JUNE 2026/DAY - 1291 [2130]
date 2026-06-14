@@ -1,0 +1,40 @@
+** 2130. Maximum Twin Sum of a Linked List **
+
+# Approach 1:
+class Solution:
+    def pairSum(self, head: Optional[ListNode]) -> int:
+        fast=head
+        slow=fast
+        rev=None
+        while fast:
+            fast=fast.next.next
+            nextNode=slow.next
+            slow.next=rev
+            rev=slow
+            slow=nextNode
+        ans=0
+        while slow:
+            ans=max(ans, rev.val+slow.val)
+            rev=rev.next
+            slow=slow.next
+        return ans
+
+# Approach 2:
+class Solution:
+    def pairSum(self, head: Optional[ListNode]) -> int:
+        nums: list[int] = []
+
+        self.fill_nums(head, nums)
+
+        size: int = len(nums)
+        maxi: int = 0
+        for i in range(0, size // 2):
+            sum_: int = nums[i] + nums[size -i -1]
+            maxi = max(maxi, sum_)
+
+        return maxi
+
+    def fill_nums(self, head: ListNode, nums: list[int]) -> None:
+        while head is not None:
+            nums.append(head.val)
+            head = head.next
