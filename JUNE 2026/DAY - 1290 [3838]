@@ -1,0 +1,23 @@
+** 3838. Weighted Word Mapping **
+
+# Approach 1:
+class Solution:
+    def mapWordWeights(self, words: List[str], wt: List[int]) -> str:
+        res = []
+
+        for word in words:
+            s = 0
+            for ch in word:
+                s += wt[(ord(ch) & (1 << 5) - 1) - 1]
+            res.append(chr(122 - (s - ((s * 2521) >> (1 << 4)) * len(wt))))
+
+        return "".join(res)
+        
+# Approach 2:
+class Solution:
+    def mapWordWeights(self, words: List[str], weights: List[int]) -> str:
+        ans=[]
+        for w in words:
+            Sum=sum( weights[ord(c)-97] for c in w)
+            ans.append(chr(97+25-Sum%26))
+        return "".join(ans)
