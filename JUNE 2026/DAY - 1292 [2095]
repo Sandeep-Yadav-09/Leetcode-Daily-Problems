@@ -1,0 +1,29 @@
+** 2095. Delete the Middle Node of a Linked List **
+
+# Approach 1:
+class Solution:
+    def deleteMiddle(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        if not head.next:
+            return None
+        mid, p = 0, head
+        while p:
+            mid, p = mid + 1, p.next
+        mid, p = mid // 2 - 1, head
+        while mid:
+            mid, p = mid - 1, p.next
+        p.next = p.next.next
+        return head
+
+# Approach 2:
+class Solution:
+    def deleteMiddle(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        if not head or not head.next:
+            return None
+        slow, fast = head, head
+        prev = None
+        while fast and fast.next:
+            prev = slow
+            slow = slow.next
+            fast = fast.next.next
+        prev.next = slow.next 
+        return head 
