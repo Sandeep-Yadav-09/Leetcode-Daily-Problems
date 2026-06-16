@@ -1,0 +1,33 @@
+** 3612. Process String with Special Operations I **
+
+# Approach 1:
+class Solution:
+    def processStr(self, s: str) -> str:
+        res = ""
+        for i in s:
+            if i not in {"*","#","%"}:
+                res += i
+            elif i == "#":
+                res += res
+            elif i == "%":
+                res = res[::-1]
+            else:
+                res = res[:-1]
+        return res
+
+# Approach 2:
+import re
+class Solution:
+    def processStr(self, s: str) -> str:
+        ans=""
+        if(bool(re.search(r'[a-zA-Z]', s))):
+            for i in s:
+                if(i=='#'):
+                    ans+=ans
+                if(i=='%'):
+                    ans=ans[::-1]
+                if(i=='*'):
+                    ans=ans[:-1]
+                if(i.isalpha()):
+                    ans+=i
+        return ans
