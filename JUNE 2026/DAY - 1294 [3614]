@@ -1,0 +1,56 @@
+** 3614. Process String with Special Operations II **
+
+# Approach 1:
+class Solution:
+    def processStr(self, s: str, k: int) -> str:
+        l = reduce(lambda q,c:(q and q-1,q*2,q,q+1)['*#%'.find(c)],s,0)
+        if k>=l: return '.'
+
+        for c in reversed(s):
+            if c=='*': l += 1
+            elif c=='#': l //= 2; k -= k>=l and l
+            elif c=='%': k = l-k-1
+            else: l -= 1
+            if k==l: return c
+
+# Approach 2:
+class Solution:
+    def processStr(self, s: str, k: int) -> str:
+        n = len(s)
+
+        lengths = [0] * (n + 1)
+
+        for i, ch in enumerate(s):
+            cur = lengths[i]
+
+            if 'a' <= ch <= 'z':
+                lengths[i + 1] = cur + 1
+            elif ch == '*':
+                lengths[i + 1] = max(0, cur - 1)
+            elif ch == '#':
+                lengths[i + 1] = cur * 2
+            else:  # '%'
+                lengths[i + 1] = cur
+
+        if k >= lengths[n]:
+            return '.'
+
+        for i in range(n - 1, -1, -1):
+            ch = s[i]
+            prev_len = lengths[i]
+
+            if 'a' <= ch <= 'z':
+                if k == prev_len:
+                    return ch
+
+            elif ch == '*':
+                pass
+
+            elif ch == '#':
+                if k >= prev_len:
+                    k -= prev_len
+
+            else:  # '%'
+                k = prev_len - 1 - k
+
+        return '.'
