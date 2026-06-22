@@ -1,0 +1,18 @@
+** 1189. Maximum Number of Balloons **
+
+# Approach 1:
+class Solution:
+    def maxNumberOfBalloons(self, text: str) -> int:
+        cnt = Counter(text)
+        return min(cnt[k]//v for k,v in {'b':1,'a':1,'l':2,'o':2,'n':1}.items())
+
+# Approach 2:
+class Solution:
+    def maxNumberOfBalloons(self, text: str) -> int:
+        d={'b':0,'a':0,'l':0,'o':0,'n':0}
+        for i in text:
+            if i in d:
+                d[i]+=1
+        d['l']=d['l']//2
+        d['o']=d['o']//2
+        return min(d.values()) 
