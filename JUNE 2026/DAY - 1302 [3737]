@@ -1,0 +1,28 @@
+** 3737. Count Subarrays With Majority Element I **
+
+# Approach 1:
+class Solution:
+    def countMajoritySubarrays(self, A: List[int], target: int) -> int:
+        n = len(A)
+        count = [1] + [0] * (n + n + 2)
+        acc = [1] + [0] * (n + n + 2)
+        res = pre = 0
+        for a in A:
+            pre += 1 if a == target else -1
+            count[pre] += 1
+            acc[pre] = acc[pre - 1] + count[pre]
+            res += acc[pre - 1]
+        return res
+
+# Approach 2:
+class Solution:
+    def countMajoritySubarrays(self, nums: List[int], target: int) -> int:
+        n = len(nums)
+        res = 0
+        for i in range(n):
+            freq = 0
+            for j in range(i, n):
+                if nums[j] == target:
+                    freq += 1
+                if (j - i + 1) / 2 < freq: res += 1
+        return res
