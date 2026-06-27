@@ -1,0 +1,68 @@
+** 3020. Find the Maximum Number of Elements in Subset **
+
+# Approach 1:
+class Solution:
+    def maximumLength(self, nums: List[int]) -> int:
+        cnt = Counter(nums)
+        ans = 1
+
+        if 1 in cnt:
+            ans = max(ans, cnt[1] if cnt[1] & 1 else cnt[1] - 1)
+
+        for x in cnt:
+            if x == 1:
+                continue
+
+            cur = x
+            length = 0
+
+            while True:
+                if cur not in cnt:
+                    length -= 1
+                    break
+
+                if cnt[cur] == 1:
+                    length += 1
+                    break
+
+                length += 2
+
+                if cur * cur > 10**9:
+                    length -= 1
+                    break
+
+                cur *= cur
+
+            ans = max(ans, length)
+
+        return ans
+
+# Approach 2:
+class Solution:
+    def maximumLength(self, nums: List[int]) -> int:
+        
+        dic = Counter(nums)
+
+        res = 1
+        visited = {1}
+        for key, val in dic.items():
+            if key in visited:
+                continue
+
+            cur = key
+            temp = 0
+            while cur in dic:
+                if dic[cur] > 1:
+                    visited.add(cur)
+                    temp += 2
+                else:
+                    temp += 1
+                    break
+                cur **= 2
+            else:
+                temp -= 1
+
+            res = max(res, temp)
+
+        oc = dic.get(1, 0)
+        return max(oc if oc % 2 else oc - 1, res)
