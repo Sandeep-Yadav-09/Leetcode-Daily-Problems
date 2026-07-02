@@ -1,0 +1,63 @@
+** 3286. Find a Safe Walk Through a Grid **
+
+# Approach 1:
+class Solution:
+    def findSafeWalk(self, grid: List[List[int]], health: int) -> bool:
+        m, n = len(grid), len(grid[0])
+
+        dist = [[float('inf')] * n for _ in range(m)]
+        dist[0][0] = grid[0][0]
+
+        dq = deque([(0, 0)])
+        directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+
+        while dq:
+            r, c = dq.popleft()
+
+            for dr, dc in directions:
+                nr, nc = r + dr, c + dc
+
+                if 0 <= nr < m and 0 <= nc < n:
+                    new_cost = dist[r][c] + grid[nr][nc]
+
+                    if new_cost < dist[nr][nc]:
+                        dist[nr][nc] = new_cost
+                        if grid[nr][nc] == 0:
+                            dq.appendleft((nr, nc))
+                        else:
+                            dq.append((nr, nc))
+
+        return dist[m - 1][n - 1] < health
+
+# Approach 2:
+class Solution:
+    def findSafeWalk(self, grid: List[List[int]], health: int) -> bool:
+        m, n = len(grid), len(grid[0])
+
+        dist = [[-3]*n for _ in range(m)]
+
+        if grid[0][0] == 1:
+            dist[0][0] = health - 1
+            if dist[0][0] <= 0:
+                return False
+        else:
+            dist[0][0] = health
+        
+        q = deque([(0, 0)])
+        while q:
+            r, c = q.popleft()
+            if r == m - 1 and c == n - 1:
+                return True
+            
+            for i, j in [(-1, 0), (1, 0), (0, 1), (0, -1)]:
+                nr, nc = r + i, c + j
+                if nr >= 0 and nr < m and nc >= 0 and nc < n and dist[nr][nc] == -3:
+                    new_health = dist[r][c] - grid[nr][nc]
+                    if new_health > 0 and new_health > dist[nr][nc]:
+                        dist[nr][nc] = new_health
+                        if grid[nr][nc] == 1:
+                            q.append((nr, nc)) 
+                        else:
+                            q.appendleft((nr, nc))
+        
+        return False
