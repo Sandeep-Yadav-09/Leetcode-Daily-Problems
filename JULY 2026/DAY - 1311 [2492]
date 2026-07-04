@@ -1,0 +1,48 @@
+** 2492. Minimum Score of a Path Between Two Cities **
+
+# Approach 1:
+class Solution:
+    def minScore(self, n: int, roads: List[List[int]]) -> int:
+        parent = list(range(n + 1))
+        rank = [0] * (n + 1)
+
+        def find(x):
+            if parent[x] != x:
+                parent[x] = find(parent[x])
+            return parent[x]
+
+        def union(a, b):
+            pa, pb = find(a), find(b)
+
+            if pa == pb:
+                return
+
+            if rank[pa] < rank[pb]:
+                parent[pa] = pb
+            elif rank[pa] > rank[pb]:
+                parent[pb] = pa
+            else:
+                parent[pb] = pa
+                rank[pa] += 1
+
+        for u, v, _ in roads:
+            union(u, v)
+
+        root = find(1)
+        ans = float("inf")
+
+        for u, v, d in roads:
+            if find(u) == root:
+                ans = min(ans, d)
+
+        return ans
+
+# Approach 2:
+class Solution:
+    def minScore(self, n: int, roads: List[List[int]]) -> int:
+        nodes,que,seen = defaultdict(set), {1}, set()
+        for a,b,d in roads: nodes[a].add(b); nodes[b].add(a)
+        while que:
+            seen.add(node:= que.pop())
+            que |= nodes[node] - seen
+        return  min(d  for a,b,d in roads  if a in seen)
