@@ -1,0 +1,76 @@
+** 1301. Number of Paths with Max Score **
+
+# Approach 1:
+class Solution:
+    def pathsWithMaxScore(self, board: List[str]) -> List[int]:
+        grid = []
+        self.dp = {}
+        for i in range(len(board)) :
+            row = list(board[i])
+            for k in range(len(row)) :
+                row[k] = -1 if row[k] == 'X' else int(row[k]) if row[k] >= '1' and row[k] <= '9' else 0
+            grid.append(row)
+        
+        def dfsUtil(i, j) :
+            if i >= len(grid) or j >= len(grid[0]) or grid[i][j] == -1 :
+                return (float(-inf), float(-inf))
+
+            if i == len(grid)-1 and j == len(grid)-1 :
+                return (0, 1)
+
+            if (i, j) in self.dp :
+                return self.dp[(i, j)]
+
+            down = dfsUtil(i+1, j)
+            right = dfsUtil(i, j+1)
+            diagonal = dfsUtil(i+1, j+1)
+
+            max_sum = max(down[0], max(right[0], diagonal[0]))
+            total_paths = 0
+
+            total_paths += down[-1] if down[0] == max_sum else 0
+            total_paths += right[-1] if right[0] == max_sum else 0
+            total_paths += diagonal[-1] if diagonal[0] == max_sum else 0
+
+            self.dp[(i, j)] = [max_sum+grid[i][j], total_paths]
+            return [max_sum+grid[i][j], total_paths] 
+
+        max_sum, paths = dfsUtil(0, 0)
+        return [max_sum % ((10 ** 9) + 7), paths % ((10 ** 9) + 7)] if max_sum != float(-inf) else (0, 0)
+
+# Approach 2:
+class Solution:
+    def pathsWithMaxScore(self, board: List[str]) -> List[int]:
+        mod = 10**9 + 7
+        n = len(board)
+        
+        @cache
+        def dfs(i: int, j: int) -> Tuple[int, int]:
+            if i < 0 or j < 0 or board[i][j] == 'X':
+                return [-1, 0]
+            
+            if i == 0 and j == 0:
+                return [0, 1]
+            
+            candidates = []
+            for ni, nj in [(i - 1, j), (i, j - 1), (i - 1, j - 1)]:
+                score, ways = dfs(ni, nj)
+                if score >= 0:
+                    candidates.append((score, ways))
+
+            if not candidates:
+                return (-1, 0)
+            
+            max_score = max(s for s, _ in candidates)
+            total_ways = sum(w for s, w in candidates if s == max_score) % mod
+
+            val = 0
+            if board[i][j].isdigit():
+                val = int(board[i][j])
+
+            return (max_score + val, total_ways)
+        
+        score, ways = dfs(n - 1, n - 1)
+        if score < 0:
+            return [0, 0]
+        return [score, ways]
