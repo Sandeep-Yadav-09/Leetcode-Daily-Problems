@@ -1,0 +1,26 @@
+** 3754. Concatenate Non-Zero Digits and Multiply by Sum I **
+
+# Approach 1:
+class Solution:
+    def sumAndMultiply(self, n: int) -> int:
+        n=str(n).replace("0","")
+        s=0
+        if n!="":
+            for i in n:
+                s+=int(i)
+            return int(n)*s
+        return 0
+
+# Approach 2:
+class Solution:
+    def sumAndMultiply(self, n: int) -> int:
+        s=str(n)
+        y=""
+        su=0
+        for i in s:
+            if i!='0':
+                y+=i
+                su+=(int(i))
+        if su==0:
+            return 0
+        return int(y)*su
