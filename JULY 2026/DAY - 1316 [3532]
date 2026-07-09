@@ -1,0 +1,28 @@
+** 3532. Path Existence Queries in a Graph I **
+
+# Approach 1:
+class Solution:
+    def pathExistenceQueries(self, n: int, nums: List[int], maxDiff: int, queries: List[List[int]]) -> List[bool]:
+        component = [0] * n
+
+        curr = 0
+        for i in range(1, n):
+            if nums[i] - nums[i - 1] > maxDiff:
+                curr += 1
+            component[i] = curr
+
+        return [
+            component[u] == component[v]
+            for u, v in queries
+        ]
+
+# Approach 2:
+class Solution:
+    def pathExistenceQueries(self, n: int, nums: List[int], maxDiff: int, queries: List[List[int]]) -> List[bool]:
+        qz, prev, cid=len(queries), -1, 0
+        comp=[-1]*n
+        for i, curr in enumerate(nums):
+            cid+=(prev+maxDiff<curr)
+            comp[i]=cid
+            prev=curr
+        return [ comp[x]==comp[y] for x, y in queries]
