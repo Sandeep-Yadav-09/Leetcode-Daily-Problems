@@ -1,0 +1,27 @@
+** 1331. Rank Transform of an Array **
+
+# Approach 1:
+class Solution:
+    def arrayRankTransform(self, arr: List[int]) -> List[int]:
+        unique_set = set(arr)
+        sorted_unique = sorted(unique_set)
+        rank_map = {}
+        for rank, num in enumerate(sorted_unique, start=1):
+            rank_map[num] = rank
+        for i in range(len(arr)):
+            arr[i] = rank_map[arr[i]]
+
+        return arr
+
+# Approach 2:
+class Solution:
+    def arrayRankTransform(self, arr: List[int]) -> List[int]:
+        hashmap: dict[int, int] = dict()
+        ptr: int = 1
+        for num in sorted(arr):
+            if num not in hashmap:
+                hashmap[num] = ptr
+                ptr += 1
+        for i in range(len(arr)):
+            arr[i] = hashmap[arr[i]]
+        return arr
