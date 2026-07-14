@@ -1,0 +1,59 @@
+** 3336. Find the Number of Subsequences With Equal GCD **
+
+# Approach 1:
+class Solution:
+    def subsequencePairCount(self, nums: List[int]) -> int:
+        MOD = 10**9 + 7
+        dp = {(0, 0): 1}
+        for num in nums:
+            ndp = dp.copy()
+            for (i, j), count in dp.items():
+                gi = gcd(i, num)
+                if i == j:
+                    ndp[(gi, j)] = (ndp.get((gi, j), 0) + 2 * count) % MOD
+                else:
+                    ndp[(gi, j)] = (ndp.get((gi, j), 0) + count) % MOD
+                    gj = gcd(j, num)
+                    key = (i, gj) if i <= gj else (gj, i)
+                    ndp[key] = (ndp.get(key, 0) + count) % MOD
+
+            dp = ndp
+
+        ans = 0
+        for i in range(1, max(nums) + 1):
+            ans = (ans + dp.get((i, i), 0)) % MOD
+
+        return ans
+
+# Approach 2:
+from math import gcd
+
+class Solution:
+    def subsequencePairCount(self, nums: List[int]) -> int:
+        MOD = 10**9 + 7
+        MAX = max(nums)
+
+        dp = [[0] * (MAX + 1) for _ in range(MAX + 1)]
+        dp[0][0] = 1
+
+        for x in nums:
+            ndp = [row[:] for row in dp]
+
+            for g1 in range(MAX + 1):
+                for g2 in range(MAX + 1):
+                    if dp[g1][g2] == 0:
+                        continue
+
+                    ng1 = x if g1 == 0 else gcd(g1, x)
+                    ng2 = x if g2 == 0 else gcd(g2, x)
+
+                    ndp[ng1][g2] = (ndp[ng1][g2] + dp[g1][g2]) % MOD
+                    ndp[g1][ng2] = (ndp[g1][ng2] + dp[g1][g2]) % MOD
+
+            dp = ndp
+
+        ans = 0
+        for g in range(1, MAX + 1):
+            ans = (ans + dp[g][g]) % MOD
+
+        return ans
