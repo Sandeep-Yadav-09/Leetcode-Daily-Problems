@@ -1,0 +1,15 @@
+** 3658. GCD of Odd and Even Sums **
+
+# Approach 1:
+class Solution:
+    def gcdOfOddEvenSums(self, n: int) -> int:
+        return n
+
+# Approach 2:
+import math
+
+class Solution:
+    def gcdOfOddEvenSums(self, n: int) -> int:
+        sumodd=(n)*(1+(n-1))
+        sumeven=(n)*(2+(n-1))
+        return math.gcd(sumodd,sumeven)
