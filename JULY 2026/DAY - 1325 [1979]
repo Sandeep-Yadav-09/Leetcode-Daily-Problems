@@ -1,0 +1,28 @@
+** 1979. Find Greatest Common Divisor of Array **
+
+# Approach 1:
+class Solution:
+    def findGCD(self, nums: List[int]) -> int:
+        a = min(nums)
+        b = max(nums)
+
+        while b:
+            a, b = b, a % b
+
+        return a
+
+# Approach 2:
+class Solution:
+    def findGCD(self, nums: List[int]) -> int:
+        mn=nums[0]
+        mx=nums[0]
+        for i in range(1,len(nums)):
+            if nums[i]>mx:
+                mx=nums[i]
+            if nums[i]<mn:
+                mn=nums[i]
+        while(mn!=0):
+            temp=mn
+            mn=mx%mn
+            mx=temp
+        return mx
