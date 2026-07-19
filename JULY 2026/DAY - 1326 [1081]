@@ -1,0 +1,37 @@
+** 1081. Smallest Subsequence of Distinct Characters **
+# Approach 1:
+class Solution:
+    def smallestSubsequence(self, s: str) -> str:
+        vis = [0] * 26
+        num = [0] * 26
+
+        for ch in s:
+            num[ord(ch) - ord("a")] += 1
+        stk = []
+
+        for ch in s:
+            idx = ord(ch) - ord("a")
+            if not vis[idx]:
+                while stk and stk[-1] > ch:
+                    top_idx = ord(stk[-1]) - ord("a")
+                    if num[top_idx] > 0:
+                        vis[top_idx] = 0
+                        stk.pop()
+                    else:
+                        break
+                vis[idx] = 1
+                stk.append(ch)
+            num[idx] -= 1
+
+        return "".join(stk)
+
+# Approach 2:
+class Solution:
+    def smallestSubsequence(self, s: str) -> str:
+        stk,seen,lft = [], set(), [0]*128
+        for i,c in enumerate(s):  lft[ord(c)] = i
+        for i,c in enumerate(s):
+            if  c in seen: continue
+            while stk and c < stk[-1] and i < lft[ord(stk[-1])]: seen -= {stk.pop()}
+            stk.append(c); seen.add(c)
+        return  ''.join(stk)
