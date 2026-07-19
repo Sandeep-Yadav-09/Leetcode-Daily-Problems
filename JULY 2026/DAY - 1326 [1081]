@@ -1,4 +1,5 @@
 ** 1081. Smallest Subsequence of Distinct Characters **
+
 # Approach 1:
 class Solution:
     def smallestSubsequence(self, s: str) -> str:
