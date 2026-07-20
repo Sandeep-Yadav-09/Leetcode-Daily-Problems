@@ -1,0 +1,39 @@
+** 1260. Shift 2D Grid **
+
+# Approach 1:
+class Solution:
+    def shiftGrid(self, grid: List[List[int]], k: int) -> List[List[int]]:
+        m, n = len(grid), len(grid[0])
+        total = m * n
+        k %= total
+
+        ans = [[0] * n for _ in range(m)]
+
+        for i in range(m):
+            for j in range(n):
+                idx = (i * n + j + k) % total
+                r, c = divmod(idx, n)
+                ans[r][c] = grid[i][j]
+
+        return ans
+
+# Approach 2:
+class Solution:
+    def shiftGrid(self, grid: List[List[int]], k: int) -> List[List[int]]:
+        vector=[]
+        m=len(grid)
+        n=len(grid[0])
+
+        for i in grid:
+            vector.extend(i)
+
+        for _ in range(k):
+            i=vector.pop(-1)
+            vector.insert(0,i)
+
+        ret=[]
+        i=0
+        while i<m*n:
+            ret.append(vector[i:i+n])
+            i+=n
+        return ret
