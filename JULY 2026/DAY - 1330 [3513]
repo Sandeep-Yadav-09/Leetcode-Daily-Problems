@@ -1,0 +1,21 @@
+** 3513. Number of Unique XOR Triplets I **
+
+# Approach 1:
+class Solution:
+    def uniqueXorTriplets(self, nums: List[int]) -> int:
+        n = len(nums)
+
+        if n <= 2:
+            return n
+
+        ans = 1
+        while ans <= n:
+            ans <<= 1
+
+        return ans
+
+# Approach 2:
+class Solution:
+    def uniqueXorTriplets(self, nums: List[int]) -> int:
+        n = len(nums)
+        return n if n < 3 else 1 << n.bit_length()        
