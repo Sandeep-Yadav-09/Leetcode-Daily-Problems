@@ -1,0 +1,40 @@
+** 3514. Number of Unique XOR Triplets II **
+
+# Approach 1:
+class Solution:
+    def uniqueXorTriplets(self, nums: List[int]) -> int:
+        m = max(nums)
+        u = 1
+        while u <= m:
+            u <<= 1
+        one = [False] * u
+        two = [False] * u
+        three = [False] * u
+        for v in nums:
+            one[v] = True
+            for x in range(u):
+                if one[x]:
+                    two[x ^ v] = True
+        for v in nums:
+            for x in range(u):
+                if two[x]:
+                    three[x ^ v] = True
+        return sum(1 for b in three if b)
+
+# Approach 2:
+class Solution:
+    def uniqueXorTriplets(self, nums: List[int]) -> int:
+        MAX = 2048
+
+        pair = [False] * MAX
+        for a in nums:
+            for b in nums:
+                pair[a ^ b] = True
+
+        ans = [False] * MAX
+        for x in range(MAX):
+            if pair[x]:
+                for a in nums:
+                    ans[x ^ a] = True
+
+        return sum(ans)
