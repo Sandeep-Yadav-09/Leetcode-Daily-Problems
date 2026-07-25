@@ -1,0 +1,24 @@
+** 3536. Maximum Product of Two Digits **
+
+# Approach 1:
+class Solution:
+    def maxProduct(self, n: int) -> int:
+        digits = []
+
+        while n:
+            digits.append(n % 10)
+            n //= 10
+
+        ans = 0
+
+        for i in range(len(digits)):
+            for j in range(i + 1, len(digits)):
+
+                ans = max(ans, digits[i] * digits[j])
+
+        return ans
+
+# Approach 2:
+class Solution:
+    def maxProduct(self, n: int) -> int:
+        return max(a*b  for a,b in combinations([(n//10**p)%10 for p in range(int(log10(n))+1)] ,2))
