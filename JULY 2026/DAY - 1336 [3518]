@@ -1,0 +1,131 @@
+** 3518. Smallest Palindromic Rearrangement II **
+
+# Approach 1:
+from typing import List, Optional
+
+class Solution:
+    def count_perms(self, freq, cap: int) -> int:
+        n = sum(freq)
+        if n == 0:
+            return 1
+
+        ways = 1
+        remaining = n
+        for f in freq:
+            if f == 0:
+                continue
+
+            choose = f if f <= remaining - f else remaining - f
+            for i in range(choose):
+                ways = ways * (remaining - i) // (i + 1)
+                if ways >= cap:         
+                    return cap
+
+            remaining -= f
+
+        return ways
+
+    def kth_permutation(self, freq: List[int], k: int) -> Optional[str]:
+        if self.count_perms(freq, k) < k:  
+            return None
+
+        result = []
+        remaining = sum(freq)
+
+        while remaining > 0:
+            for c in range(26):
+                if freq[c] == 0:
+                    continue
+
+                freq[c] -= 1
+                ways = self.count_perms(freq, k)  
+
+                if k > ways:
+                    k -= ways      
+                    freq[c] += 1
+                else:
+                    result.append(chr(ord('a') + c))
+                    remaining -= 1
+                    break
+            else:
+                return None
+
+        return ''.join(result)
+
+    def smallestPalindrome(self, s: str, k: int) -> str:
+        n = len(s)
+        if n == 1:
+            return s if k == 1 else ""
+
+        freq = [0] * 26
+        for ch in s:
+            freq[ord(ch) - ord('a')] += 1
+
+        half = [0] * 26
+        mid = ""
+        for c in range(26):
+            if freq[c] % 2 == 1:
+                mid = chr(ord('a') + c)
+            half[c] = freq[c] // 2
+
+        if sum(half) == 0:
+            return mid if k == 1 else ""
+
+        left = self.kth_permutation(half, k)
+        if left is None:
+            return ""
+
+        return left + mid + left[::-1]
+
+# Approach 2:
+class Solution:
+    def smallestPalindrome(self, s: str, k: int) -> str:
+        LIMIT = 10**6 + 1
+
+        freq = Counter(s)
+
+        mid = ""
+        half = {}
+        half_len = 0
+
+        for ch in sorted(freq):
+            if freq[ch] & 1:
+                mid = ch
+            half[ch] = freq[ch] // 2
+            half_len += half[ch]
+
+        def count_perms(cnt):
+            total = sum(cnt.values())
+            ways = 1
+            rem = total
+            for ch in sorted(cnt):
+                c = cnt[ch]
+                if c:
+                    ways *= comb(rem, c)
+                    if ways > LIMIT:
+                        return LIMIT
+                    rem -= c
+            return ways
+
+        if count_perms(half) < k:
+            return ""
+
+        first = []
+
+        for _ in range(half_len):
+            for ch in sorted(half):
+                if half[ch] == 0:
+                    continue
+
+                half[ch] -= 1
+                ways = count_perms(half)
+
+                if ways >= k:
+                    first.append(ch)
+                    break
+                else:
+                    k -= ways
+                    half[ch] += 1
+
+        left = "".join(first)
+        return left + mid + left[::-1]
