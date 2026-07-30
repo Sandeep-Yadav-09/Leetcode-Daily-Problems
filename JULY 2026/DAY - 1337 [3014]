@@ -1,0 +1,26 @@
+** 3014. Minimum Number of Pushes to Type Word I **
+
+# Approach 1:
+class Solution:
+    def minimumPushes(self, word: str) -> int:
+        ans = 0
+        for i in range(len(word)):
+            ans += i // 8 + 1
+        return ans
+
+# Approach 2:
+class Solution(object):
+    def minimumPushes(self, word):
+        n=len(word)
+        count=0
+        i=1
+        while n>0:
+            if n>=8:
+                count+=8*i
+                i+=1
+                n-=8
+            else:
+                count+=n*i
+                n=0
+                i+=1
+        return count
