@@ -1,0 +1,33 @@
+** 3016. Minimum Number of Pushes to Type Word II **
+
+# Approach 1:
+class Solution:
+    def minimumPushes(self, word: str) -> int:
+        res = i = 0
+        for n in sorted(Counter(word).values(), reverse=True):
+            res += n * (i // 8 + 1)
+            i += 1
+        return res
+
+# Approach 2:
+class Solution:
+    def minimumPushes(self, word: str) -> int:
+        k_chr_set_sz = 26
+        k_tot_keys = 8
+        k_chr_set_first = ord('a')
+        
+        freq_per_chr = [0] * k_chr_set_sz
+        for char in word:
+            freq_per_chr[ord(char) - k_chr_set_first] += 1
+            
+        freq_per_chr.sort(reverse=True)
+        
+        key_press_costs = 0
+        for idx, freq in enumerate(freq_per_chr):
+            if freq == 0:
+                break
+                
+            press_mult = (idx // k_tot_keys) + 1
+            key_press_costs += freq * press_mult
+            
+        return key_press_costs
