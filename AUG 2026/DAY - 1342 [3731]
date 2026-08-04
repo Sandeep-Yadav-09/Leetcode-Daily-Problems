@@ -1,0 +1,25 @@
+** 3731. Find Missing Elements **
+
+# Approach 1:
+class Solution:
+    def findMissingElements(self, nums: List[int]) -> List[int]:
+        s=set(nums)
+        a=min(nums)
+        b=max(nums)
+        c=[]
+        for i in range(a,b+1):
+            if i not in s:
+                c.append(i)
+        return c       
+
+# Approach 2:
+class Solution:
+    def findMissingElements(self, nums: List[int]) -> List[int]:
+        s = set(nums)
+        ans = []
+
+        for x in range(min(nums), max(nums) + 1):
+            if x not in s:
+                ans.append(x)
+
+        return ans
