@@ -1,0 +1,67 @@
+** 3310. Remove Methods From Project **
+
+# Approach 1:
+class Solution:
+    
+    def remainingMethods(self, n: int, k: int, invocations: list[list[int]]) -> list[int]:
+        edges = [[] for _ in range(n)]
+        in_degree = [0] * n
+
+        for u, v in invocations:
+            edges[u].append(v)
+            in_degree[v] += 1
+
+        queue = collections.deque([k])
+        sus = bytearray(n)
+        sus[k] = 1
+
+        while queue:
+            u = queue.popleft()
+            for v in edges[u]:
+                in_degree[v] -= 1
+
+                if sus[v] == 0:
+                    queue.append(v)
+                    sus[v] = 1
+
+        can_remove_all = True
+        for i in range(n):
+            if sus[i] == 1 and in_degree[i] > 0:
+                can_remove_all = False
+                break
+
+        if not can_remove_all:
+            return list(range(n))
+
+        return [i for i in range(n) if sus[i] == 0]
+
+# Approach 2:
+class Solution:
+    def remainingMethods(self, n: int, k: int, invocations: List[List[int]]) -> List[int]:
+        graph = [[] for _ in range(n)]
+
+        for u, v in invocations:
+            graph[u].append(v)
+
+        suspicious = [False] * n
+
+        def dfs(node):
+            suspicious[node] = True
+
+            for nxt in graph[node]:
+                if not suspicious[nxt]:
+                    dfs(nxt)
+
+        dfs(k)
+
+        for u, v in invocations:
+            if not suspicious[u] and suspicious[v]:
+                return list(range(n))
+
+        ans = []
+
+        for i in range(n):
+            if not suspicious[i]:
+                ans.append(i)
+
+        return ans
