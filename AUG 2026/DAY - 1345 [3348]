@@ -1,0 +1,189 @@
+** 3348. Smallest Divisible Digit Product II **
+
+# Approach 1:
+import math
+
+class Solution:
+    def smallestNumber(self, num: str, t: int) -> str:
+        temp = t
+        counts = [0, 0, 0, 0]
+        for i, p in enumerate([2, 3, 5, 7]):
+            while temp % p == 0:
+                counts[i] += 1
+                temp //= p
+                
+        if temp > 1:
+            return "-1"
+            
+        divs = []
+        for a in range(counts[0] + 1):
+            for b in range(counts[1] + 1):
+                for c in range(counts[2] + 1):
+                    for d in range(counts[3] + 1):
+                        divs.append((2**a) * (3**b) * (5**c) * (7**d))
+        divs.sort()
+        
+        trans = {v: [v] * 10 for v in divs}
+        for v in divs:
+            for d in range(1, 10):
+                trans[v][d] = v // math.gcd(v, d)
+                
+        dp = {v: float('inf') for v in divs}
+        dp[1] = 0
+        
+        for v in divs:
+            if v == 1:
+                continue
+            best = float('inf')
+            for d in range(2, 10):
+                nxt = trans[v][d]
+                if dp[nxt] + 1 < best:
+                    best = dp[nxt] + 1
+            dp[v] = best
+            
+        n = len(num)
+        first_zero = num.find('0')
+        
+        if first_zero == -1:
+            max_i_allowed = n - 1
+        else:
+            max_i_allowed = first_zero
+            
+        prefix_t = [t]
+        for i in range(max_i_allowed):
+            prefix_t.append(trans[prefix_t[-1]][int(num[i])])
+            
+        if first_zero == -1:
+            full_t = trans[prefix_t[-1]][int(num[-1])]
+            if full_t == 1:
+                return num
+                
+        for i in range(max_i_allowed, -1, -1):
+            p_t = prefix_t[i]
+            rem = n - 1 - i
+            
+            for d in range(int(num[i]) + 1, 10):
+                t_req = trans[p_t][d]
+                if dp[t_req] <= rem:
+                    ans = [num[:i], str(d)]
+                    curr_t = t_req
+                    for step in range(rem):
+                        for nxt_d in range(1, 10):
+                            next_t = trans[curr_t][nxt_d]
+                            if dp[next_t] <= rem - 1 - step:
+                                ans.append(str(nxt_d))
+                                curr_t = next_t
+                                break
+                    return "".join(ans)
+                    
+        length = max(n + 1, dp[t])
+        ans = []
+        curr_t = t
+        for step in range(length):
+            for nxt_d in range(1, 10):
+                next_t = trans[curr_t][nxt_d]
+                if dp[next_t] <= length - 1 - step:
+                    ans.append(str(nxt_d))
+                    curr_t = next_t
+                    break
+        return "".join(ans)
+
+# Approach 2:
+class Solution:
+    def smallestNumber(self, num: str, t: int) -> str:
+        target = [0, 0, 0, 0]
+        for k, p in enumerate((2, 3, 5, 7)):
+            while t % p == 0:
+                target[k] += 1
+                t //= p
+        if t != 1:
+            return "-1"
+
+        factors = (
+            (0, 0, 0, 0),
+            (0, 0, 0, 0),
+            (1, 0, 0, 0),
+            (0, 1, 0, 0),
+            (2, 0, 0, 0),
+            (0, 0, 1, 0),
+            (1, 1, 0, 0),
+            (0, 0, 0, 1),
+            (3, 0, 0, 0),
+            (0, 2, 0, 0),
+        )
+
+        def min_len(req):
+            a = max(req[0], 0)
+            b = max(req[1], 0)
+            c = max(req[2], 0)
+            d = max(req[3], 0)
+
+            x = min(a % 3, b % 2)
+            return (
+                a // 3
+                + b // 2
+                + c
+                + d
+                + x
+                + (a % 3 - x) // 2
+                + (b % 2 - x)
+                + (a % 3 - x) % 2
+            )
+
+        n = len(num)
+        first_zero = num.find("0")
+
+        prefix_counts = [0, 0, 0, 0]
+        limit = n if first_zero == -1 else first_zero
+        for ch in num[:limit]:
+            fs = factors[ord(ch) - 48]
+            for j in range(4):
+                prefix_counts[j] += fs[j]
+
+        if first_zero == -1 and min_len(
+            [target[j] - prefix_counts[j] for j in range(4)]
+        ) == 0:
+            return num
+
+        if first_zero == -1:
+            i = n - 1
+            fs = factors[ord(num[i]) - 48]
+            for j in range(4):
+                prefix_counts[j] -= fs[j]
+        else:
+            i = first_zero
+
+        def make_suffix(req, length):
+            result = []
+            for _ in range(length):
+                for d in range(1, 10):
+                    fs = factors[d]
+                    next_req = [
+                        req[j] - fs[j] for j in range(4)
+                    ]
+                    if min_len(next_req) <= length - len(result) - 1:
+                        result.append(str(d))
+                        req = next_req
+                        break
+            return "".join(result)
+
+        while i >= 0:
+            req = [target[j] - prefix_counts[j] for j in range(4)]
+            lower = ord(num[i]) - 47
+
+            for d in range(lower, 10):
+                fs = factors[d]
+                next_req = [req[j] - fs[j] for j in range(4)]
+                remaining = n - i - 1
+                if min_len(next_req) <= remaining:
+                    suffix = make_suffix(next_req, remaining)
+                    return num[:i] + str(d) + suffix
+
+            i -= 1
+            if i >= 0:
+                fs = factors[ord(num[i]) - 48]
+                for j in range(4):
+                    prefix_counts[j] -= fs[j]
+
+        length = max(n + 1, min_len(target))
+        return make_suffix(target[:], length)[-length:]
