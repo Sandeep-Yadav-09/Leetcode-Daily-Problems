@@ -1,0 +1,54 @@
+** 3302. Find the Lexicographically Smallest Valid Sequence **
+
+# Approach 1:
+class Solution:
+    def validSequence(self, word1: str, word2: str) -> List[int]:
+        n, m = len(word1), len(word2)
+        i, j = n - 1, m - 1
+        last = [-1] * m
+
+        while i >= 0 and j >= 0:
+            if word1[i] == word2[j]:
+                last[j] = i
+                j -= 1
+            i -= 1
+
+        ans = []
+        skip = True
+        j = 0
+
+        for i in range(n):
+            if j == m:
+                break
+
+            if word1[i] == word2[j]:
+                ans.append(i)
+                j += 1
+
+            elif skip and (j == m - 1 or i < last[j + 1]):
+                skip = False
+                ans.append(i)
+                j += 1
+
+        return ans if j == m else []
+
+# Approach 2:
+class Solution:
+    def validSequence(self, word1: str, word2: str) -> List[int]:
+        n, m = len(word1), len(word2)
+        last = [-1] * m
+        j = m - 1
+        for i in range(n - 1, -1, -1):
+            if j >= 0 and word1[i] == word2[j]:
+                last[j] = i
+                j -= 1
+        res = []
+        skip = j = 0
+        for i, c in enumerate(word1):
+            if j == m:
+                break
+            if c == word2[j] or skip == 0 and (j == m - 1 or i < last[j + 1]):
+                skip += c != word2[j]
+                res.append(i)
+                j += 1
+        return res if j == m else []
