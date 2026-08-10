@@ -1,0 +1,42 @@
+** 1510. Stone Game IV **
+
+# Approach 1:
+class Solution:
+    def winnerSquareGame(self, n: int) -> bool:
+        dp = [False] * (n + 1)
+
+        for i in range(1, n + 1):
+            j = 1
+
+            while j * j <= i:
+                if not dp[i - j * j]:
+                    dp[i] = True
+                    break
+                j += 1
+
+        return dp[n]
+
+# Approach 2:
+class Solution:
+    def winnerSquareGame(self, n : int) -> bool:
+        self.memo = [0] * (n + 1)
+        return self.canWin(n)
+
+    def canWin(self, n : int) -> bool:
+        if n == 0:
+            return False
+        if self.memo[n] != 0:
+            return self.memo[n] == 1
+
+        win = False
+        i = 1
+
+        while i * i <= n:
+            if not self.canWin(n - i * i):
+                win = True
+                break
+            i += 1
+
+        self.memo[n] = 1 if win else 2
+
+        return win
