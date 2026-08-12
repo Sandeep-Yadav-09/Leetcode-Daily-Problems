@@ -1,0 +1,38 @@
+** 2958. Length of Longest Subarray With at Most K Frequency **
+
+# Approach 1:
+class Solution:
+    def maxSubarrayLength(self, nums: List[int], k: int) -> int:
+        result = 0
+        start = 0
+
+        storage = {}
+
+        for end in range(len(nums)):
+            storage[nums[end]] = storage.get(nums[end], 0) + 1
+
+            while storage[nums[end]] > k:
+                storage[nums[start]] -= 1
+                start += 1
+
+            result = max(result, end - start + 1)
+
+        return result
+
+# Approach 2:
+class Solution:
+    def maxSubarrayLength(self, nums: List[int], k: int) -> int:
+        n = len(nums)
+        frequency = Counter()
+        start = 0
+        chars_with_freq_over_k = 0
+        for end in range(n):
+            frequency[nums[end]] += 1
+            if frequency[nums[end]] == k + 1:
+                chars_with_freq_over_k += 1
+            if chars_with_freq_over_k:
+                frequency[nums[start]] -= 1
+                if frequency[nums[start]] == k:
+                    chars_with_freq_over_k -= 1
+                start += 1
+        return n - start
