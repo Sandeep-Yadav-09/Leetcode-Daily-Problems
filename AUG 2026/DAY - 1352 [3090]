@@ -1,0 +1,26 @@
+** 3090. Maximum Length Substring With Two Occurrences **
+
+# Approach 1:
+class Solution:
+    def maximumLengthSubstring(self, s: str) -> int:
+        return max(j-i for i,j in combinations(range(len(s)+1),2)
+            if max(Counter(s[i:j]).values())<3)
+
+# Approach 2:
+class Solution:
+    def maximumLengthSubstring(self, s: str) -> int:
+        cnt = [0] * 26
+        left = 0
+        ans = 0
+
+        for right in range(len(s)):
+            idx = ord(s[right]) - ord('a')
+            cnt[idx] += 1
+
+            while cnt[idx] > 2:
+                cnt[ord(s[left]) - ord('a')] -= 1
+                left += 1
+
+            ans = max(ans, right - left + 1)
+
+        return ans
