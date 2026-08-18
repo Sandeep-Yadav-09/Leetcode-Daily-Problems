@@ -1,0 +1,34 @@
+** 3471. Find the Largest Almost Missing Integer **
+
+# Approach 1:
+class Solution:
+    def largestInteger(self, nums: List[int], k: int) -> int:
+        count = {}
+
+        for i in range(len(nums) - k + 1):
+            window = set(nums[i:i + k])
+
+            for x in window:
+                count[x] = count.get(x, 0) + 1
+
+        ans = -1
+
+        for x, freq in count.items():
+            if freq == 1:
+                ans = max(ans, x)
+
+        return ans
+
+# Approach 2:
+class Solution:
+    def largestInteger(self, nums: List[int], k: int) -> int:
+        n = len(nums)
+        cnt = Counter(nums)
+        for i in range(50, -1, -1):
+            if k == 1: 
+                if cnt[i] == 1: return i
+            elif k == n:
+                if cnt[i] >= 1: return i
+            elif cnt[i] == 1: 
+                if nums[0] == i or nums[-1] == i: return i
+        return -1
