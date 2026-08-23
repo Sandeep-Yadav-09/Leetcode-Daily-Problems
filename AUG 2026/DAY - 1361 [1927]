@@ -1,0 +1,35 @@
+** 1927. Sum Game **
+
+# Approach 1:
+class Solution:
+    def sumGame(self, num: str) -> bool:
+        s = len(num)
+        half = s // 2
+        num1, num2 = num[:half], num[half:]
+
+        sum1 = sum2 = q1 = q2 = 0
+        for i in range(half):
+            char1 = num1[i]
+            char2 = num2[i]
+
+            if char1 == '?':
+                q1 += 1
+            else:
+                sum1 += int(char1)
+
+            if char2 == '?':
+                q2 += 1
+            else:
+                sum2 += int(char2)
+
+        return (sum1 - sum2) != (q2 - q1) * 4.5
+
+# Approach 2:
+class Solution:
+    def sumGame(self, num: str) -> bool:
+
+        n = len(num)//2
+        num = [9 if ch=='?' else 2*int(ch) for ch in num]
+                                                          
+
+        return  sum(num[:n]) != sum(num[n:])
