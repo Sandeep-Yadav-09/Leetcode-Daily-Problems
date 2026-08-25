@@ -1,0 +1,31 @@
+** 3718. Smallest Missing Multiple of K **
+
+# Approach 1:
+class Solution:
+    def missingMultiple(self, nums: List[int], k: int) -> int:
+        smallest = 1
+        multiple_of_k = set()
+
+        for num in nums:
+            if num % k == 0:
+                multiple_of_k.add(num // k)
+
+            if num // k == smallest:
+                while smallest in multiple_of_k:
+                    smallest += 1
+
+        return smallest * k
+
+# Approach 2:
+class Solution:
+    def missingMultiple(self, nums: list[int], div: int) -> int:
+        max_num = 100
+        present_nums = [False] * (max_num + 1)
+        for num in nums:
+            present_nums[num] = True
+
+        current_multiple = div
+        while True:
+            if current_multiple > max_num or not present_nums[current_multiple]:
+                return current_multiple
+            current_multiple += div
