@@ -1,0 +1,61 @@
+** 3720. Lexicographically Smallest Permutation Greater Than Target **
+
+# Approach 1:
+class Solution:
+    def lexGreaterPermutation(self, s: str, t: str) -> str:
+        def f(i,z=Counter(s)):
+            if i==len(t): return None
+            
+            if z[t[i]]:
+                z[t[i]] -= 1
+                if res:=f(i+1): return res
+                z[t[i]] += 1
+
+            for q in range(ord(t[i])+1,ord('z')+1):
+                if z[c:=chr(q)]:
+                    z[c] -= 1
+                    return t[:i]+c+''.join(sorted(z.elements()))
+
+        return f(0) or ''
+
+# Approach 2:
+class Solution:
+    def lexGreaterPermutation(self, s: str, target: str) -> str:
+        cnt = [0] * 26
+
+        for c in s:
+            cnt[ord(c) - ord('a')] += 1
+
+        quinorath = s
+
+        n = len(s)
+        i = 0
+
+        while i < n and cnt[ord(target[i]) - ord('a')] > 0:
+            cnt[ord(target[i]) - ord('a')] -= 1
+            i += 1
+
+        while True:
+            if i < n:
+                start = ord(target[i]) - ord('a') + 1
+
+                for c in range(start, 26):
+                    if cnt[c] == 0:
+                        continue
+
+                    ans = target[:i] + chr(ord('a') + c)
+
+                    cnt[c] -= 1
+
+                    for j in range(26):
+                        ans += chr(ord('a') + j) * cnt[j]
+
+                    return ans
+
+            if i == 0:
+                break
+
+            i -= 1
+            cnt[ord(target[i]) - ord('a')] += 1
+
+        return ""
