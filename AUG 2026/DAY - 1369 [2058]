@@ -1,0 +1,69 @@
+** 2058. Find the Minimum and Maximum Number of Nodes Between Critical Points **
+
+# Approach 1:
+class Solution:
+    def nodesBetweenCriticalPoints(self, head: Optional[ListNode]) -> List[int]:
+        if head is None or head.next.next is None:
+            return [-1,-1]
+        temp=head
+        prev=temp
+        criticals=[]
+        i=1
+        while temp.next is not None:
+            if prev.val<temp.val and temp.next.val<temp.val:
+                criticals.append(i)
+            elif prev.val>temp.val and temp.next.val>temp.val:
+                criticals.append(i)
+            prev=temp
+            i+=1
+            temp=temp.next            
+        if len(criticals)<2:
+            return [-1,-1]
+        mini=float('inf')
+        for i in range(len(criticals)-1):
+            mini=min(mini,criticals[i+1]-criticals[i])
+        return [mini,max(criticals)-min(criticals)]
+
+# Approach 2:
+class Solution:
+    def nodesBetweenCriticalPoints(self, head: Optional[ListNode]) -> List[int]:
+        if not head or not head.next or not head.next.next:
+            return [-1, -1]
+
+        first_crit_idx = -1
+        last_crit_idx = -1
+
+        min_distance = math.inf
+
+        prev = head
+        curr = head.next
+        nxt = head.next.next
+
+        curr_idx = 1
+        
+        while nxt:
+
+            is_local_max = curr.val > prev.val and curr.val > nxt.val
+            is_local_min = curr.val < prev.val and curr.val < nxt.val
+            
+            if is_local_max or is_local_min:
+
+                if first_crit_idx == -1:
+                    first_crit_idx = curr_idx
+                else:
+
+                    min_distance = min(min_distance, curr_idx - last_crit_idx)
+
+                last_crit_idx = curr_idx
+
+            prev = curr
+            curr = nxt
+            nxt = nxt.next
+            curr_idx += 1
+
+        if first_crit_idx == last_crit_idx:
+            return [-1, -1]
+
+        max_distance = last_crit_idx - first_crit_idx
+        
+        return [min_distance, max_distance]
