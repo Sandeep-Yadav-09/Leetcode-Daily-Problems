@@ -1,0 +1,61 @@
+** 3875. Construct Uniform Parity Array I **
+
+# Approach 1:
+class Solution:
+    def uniformArray(self, nums1: list[int]) -> bool:
+        return True
+
+# Approach 2:
+class Solution:
+    def uniformArray(self, nums1: list[int]) -> bool:
+        n = len(nums1)
+
+        even = 0
+        odd= 0
+        even_odd = [0] * n
+        for i in range(n):
+            if nums1[i] % 2 == 0 :
+                even +=1
+
+        for i in range(n):
+            if nums1[i] % 2 == 1 :
+                odd +=1
+
+        if even == n or odd == n : 
+            return True
+
+        
+
+        for i in range(n):
+            even_odd[i] = nums1[i] % 2
+
+        total_odd = sum(even_odd)
+        total_even = n - total_odd
+
+        other_even_count = [total_even] * n
+        other_odd_count = [total_odd] * n
+
+        for i in range(n):
+            if even_odd[i] == 0 :
+                other_even_count[i] = total_even- 1
+           
+            if even_odd[i] == 1 :
+                other_odd_count[i] = total_odd- 1
+
+        can_make_even = True
+        can_make_odd = True
+
+        for i in range(n):
+            if even_odd[i] == 1 and other_odd_count[i] < 1:
+                can_make_even = False
+                break
+
+        for i in range(n):
+            if even_odd[i] == 0 and other_odd_count[i] < 1:
+                can_make_odd = False
+                break
+
+        if can_make_even == True or can_make_odd == True :
+            return True
+        else:
+            return False
