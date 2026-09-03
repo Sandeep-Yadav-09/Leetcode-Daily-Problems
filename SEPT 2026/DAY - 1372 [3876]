@@ -1,0 +1,25 @@
+** 3876. Construct Uniform Parity Array II **
+
+# Approach 1:
+class Solution:
+    def uniformArray(self, nums1: list[int]) -> bool:
+        all_odd = True
+        all_even = True
+
+        min_odd = float('inf')
+        min_even = float('inf')
+
+        for num in nums1:
+            if num % 2 == 0:
+                all_odd = False
+                min_even = min(min_even, num)
+            else:
+                all_even = False
+                min_odd = min(min_odd, num)
+
+        return all_odd or all_even or min_even > min_odd
+
+# Approach 2:
+class Solution:
+    def uniformArray(self, a: list[int]) -> bool:
+        return min(a)&1==1 or all(v&1==0 for v in a)
