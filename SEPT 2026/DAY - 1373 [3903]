@@ -1,0 +1,30 @@
+** 3903. Smallest Stable Index I **
+
+# Approach 1:
+class Solution:
+    def firstStableIndex(self, nums: list[int], k: int) -> int:
+        n = len(nums)
+        lows = [0] * (n - 1) + [nums[-1]]  
+        for i in range(n - 2, -1, -1):
+            lows[i] = min(nums[i], lows[i + 1])
+
+        high = nums[0]  
+        for i, x in enumerate(nums):
+            high = max(high, x)
+            if high - lows[i] <= k:
+                return i
+
+        return -1
+
+# Approach 2:
+class Solution:
+    def firstStableIndex(self, nums: list[int], k: int) -> int:
+        l=0
+        r=0
+        n=len(nums)
+        while r<n:
+            m=max(nums[l:r+1])-min(nums[r:n])
+            if m<=k:
+                return r
+            r+=1
+        return -1
