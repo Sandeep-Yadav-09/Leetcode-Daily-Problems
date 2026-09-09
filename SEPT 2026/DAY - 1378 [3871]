@@ -1,0 +1,29 @@
+** 3871. Count Commas in Range II **
+
+# Approach 1:
+class Solution:
+    def countCommas(self, n: int) -> int:
+        commas_count = 0
+        base_number = 999
+        threshold = 999
+
+        if n <= 999:
+            return 0
+
+        while threshold < n:
+            commas_count += n - threshold
+            threshold = threshold * 1000 + base_number
+
+        return commas_count
+
+# Approach 2:
+class Solution:
+    def countCommas(self, n: int) -> int:
+        ans = 0
+        threshold = 1000
+
+        while threshold <= n:
+            ans += n - threshold + 1
+            threshold *= 1000
+
+        return ans
