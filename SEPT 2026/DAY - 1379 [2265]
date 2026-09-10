@@ -1,0 +1,44 @@
+** 2265. Count Nodes Equal to Average of Subtree **
+
+# Approach 1:
+class Solution:
+    def averageOfSubtree(self, root: TreeNode) -> int:
+        answer = 0
+
+        def dfs(node):
+            nonlocal answer
+
+            if node is None:
+                return 0, 0
+
+            left_sum, left_count = dfs(node.left)
+            right_sum, right_count = dfs(node.right)
+
+            total_sum = left_sum + right_sum + node.val
+            total_count = left_count + right_count + 1
+
+            if node.val == total_sum // total_count:
+                answer += 1
+
+            return total_sum, total_count
+
+        dfs(root)
+        return answer
+
+# Approach 2:
+class Solution:
+    def avgOfNode(self, node: TreeNode):
+        if node == None:
+            return [0, 0]
+        leftNodes: list = self.avgOfNode(node.left)
+        rightNodes: list = self.avgOfNode(node.right)
+        sumOfNodes: int = leftNodes[0] + rightNodes[0] + node.val
+        cntOfNodes: int = leftNodes[1] + rightNodes[1] + 1
+        if sumOfNodes // cntOfNodes == node.val:
+            self.result+=1
+        return [sumOfNodes, cntOfNodes]
+    
+    def averageOfSubtree(self, root: TreeNode) -> int:
+        self.result: int = 0
+        self.avgOfNode(root)
+        return self.result
