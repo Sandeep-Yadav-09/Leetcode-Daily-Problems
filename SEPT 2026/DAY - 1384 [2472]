@@ -1,0 +1,41 @@
+** 2472. Maximum Number of Non-overlapping Palindrome Substrings **
+
+# Approach 1:
+class Solution:
+    def maxPalindromes(self, s: str, k: int) -> int:
+        n = len(s)
+        count, last_end = 0, -1
+
+        for center in range(2 * n - 1):
+            left = center // 2
+            right = left + center % 2
+
+            while left >= 0 and right < n and s[left] == s[right]:
+                if right - left + 1 >= k and left > last_end:
+                    count += 1
+                    last_end = right
+                    break
+                left -= 1
+                right += 1
+
+        return count
+
+# Approach 2:
+class Solution:
+    def maxPalindromes(self, s: str, k: int) -> int:
+        def pal_check(s,left,right):
+            while left<right:
+                if s[left]!=s[right]:
+                    return False
+                left+=1
+                right-=1
+            return True
+        
+        end=0
+        c=0
+        for right in range(k-1,len(s)):
+            left=right-k+1
+            if (left>=end and pal_check(s,left,right)) or (left>end and pal_check(s,left-1,right)):
+                c+=1
+                end=right+1
+        return c
