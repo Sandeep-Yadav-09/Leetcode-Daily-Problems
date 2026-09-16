@@ -1,0 +1,23 @@
+** 1621. Number of Sets of K Non-Overlapping Line Segments **
+
+# Approach 1:
+class Solution:
+    def numberOfSets(self, n: int, k: int) -> int:
+        MOD = 10**9 + 7
+        return math.comb(n + k - 1, 2 * k) % MOD
+
+# Approach 2:
+class Solution:
+    def numberOfSets(self, n: int, k: int) -> int:
+        MOD = 10**9 + 7
+
+        N = n + k - 1
+        R = 2 * k
+
+        ans = 1
+
+        for i in range(1, R + 1):
+            ans = ans * (N - R + i) % MOD
+            ans = ans * pow(i, MOD - 2, MOD) % MOD
+
+        return ans
