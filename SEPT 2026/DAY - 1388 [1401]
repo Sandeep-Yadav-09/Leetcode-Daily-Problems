@@ -1,0 +1,25 @@
+** 1401. Circle and Rectangle Overlapping **
+
+# Approach 1:
+class Solution:
+    def checkOverlap(self, radius: int, xCenter: int, yCenter: int, x1: int, y1: int, x2: int, y2: int) -> bool:
+        closestX = max(x1, min(xCenter, x2))
+        closestY = max(y1, min(yCenter, y2))
+        dx = closestX - xCenter
+        dy = closestY - yCenter
+        return dx * dx + dy * dy <= radius * radius
+
+# Approach 2:
+class Solution:
+    def checkOverlap(self, radius: int, xCenter: int, yCenter: int, x1: int, y1: int, x2: int, y2: int) -> bool:
+
+        close_x = max(x1, min(xCenter, x2))
+        close_y = max(y1, min(yCenter, y2))
+
+        #Euclidean Distance 
+        d = (xCenter - close_x)**2 + (yCenter - close_y)**2
+
+        if d <= radius**2:
+            return True
+        else:
+            return False
