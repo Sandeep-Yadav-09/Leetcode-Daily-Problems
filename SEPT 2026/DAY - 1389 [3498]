@@ -1,0 +1,22 @@
+** 3498. Reverse Degree of a String **
+
+# Approach 1:
+class Solution:
+    def reverseDegree(self, s: str) -> int:
+        res = 0
+
+        for i in range(len(s)):
+            prod = (26 - (ord(s[i]) - ord('a'))) * (i + 1)
+            res += prod
+
+        return res
+
+# Approach 2:
+class Solution:
+    def reverseDegree(self, s: str) -> int:
+        ans = 0
+
+        for i, ch in enumerate(s):
+            ans += (26 - (ord(ch) - ord('a'))) * (i + 1)
+
+        return ans
