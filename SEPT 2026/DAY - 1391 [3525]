@@ -1,0 +1,133 @@
+** 3525. Find X Value of Array II **
+
+# Approach 1:
+class Solution:
+    def resultArray(self, nums: List[int], k: int, queries: List[List[int]]) -> List[int]:
+        class Node:
+            __slots__ = ('prod', 'freq')
+            def __init__(self):
+                self.prod = 1
+                self.freq = [0] * k
+        
+        n = len(nums)
+        tree = [Node() for _ in range(4 * n)]
+        
+        def merge(L: Node, R: Node) -> Node:
+            res = Node()
+            res.prod = (L.prod * R.prod) % k
+            res.freq = L.freq[:]
+            for r in range(k):
+                if R.freq[r]:
+                    nr = (L.prod * r) % k
+                    res.freq[nr] += R.freq[r]
+            return res
+        
+        def build(v: int, tl: int, tr: int) -> None:
+            if tl == tr:
+                tree[v].prod = nums[tl] % k
+                tree[v].freq[tree[v].prod] = 1
+                return
+            tm = (tl + tr) // 2
+            build(v * 2, tl, tm)
+            build(v * 2 + 1, tm + 1, tr)
+            tree[v] = merge(tree[v * 2], tree[v * 2 + 1])
+        
+        def update(v: int, tl: int, tr: int, pos: int, val: int) -> None:
+            if tl == tr:
+                tree[v].prod = val % k
+                tree[v].freq = [0] * k
+                tree[v].freq[tree[v].prod] = 1
+                return
+            tm = (tl + tr) // 2
+            if pos <= tm:
+                update(v * 2, tl, tm, pos, val)
+            else:
+                update(v * 2 + 1, tm + 1, tr, pos, val)
+            tree[v] = merge(tree[v * 2], tree[v * 2 + 1])
+        
+        def query(v: int, tl: int, tr: int, l: int, r: int) -> Node:
+            if l > r:
+                return Node()
+            if l == tl and r == tr:
+                return tree[v]
+            tm = (tl + tr) // 2
+            return merge(query(v * 2, tl, tm, l, min(r, tm)),
+                         query(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r))
+        
+        build(1, 0, n - 1)
+        ans = []
+        for idx, val, start, x in queries:
+            update(1, 0, n - 1, idx, val)
+            res = query(1, 0, n - 1, start, n - 1)
+            ans.append(res.freq[x])
+        return ans
+
+# Approach 2:
+class SegTree:
+    def __init__(self, nums: List[int], k: int):
+        self.k = k
+        self.n = len(nums)
+        s = 1
+        while s < self.n:
+            s <<= 1
+        self.s = s
+        self.tree = [([0 for _ in range(k)], 1) for _ in range(2 * s)]
+        for i in range(self.n):
+            a_mod = nums[i] % k
+            cnt = [0 for _ in range(k)]
+            cnt[a_mod] = 1
+            prod = a_mod
+            self.tree[s + i] = (cnt, prod)
+        for p in range(s - 1, 0, -1):
+            self.tree[p] = self.merge(self.tree[2 * p], self.tree[2 * p + 1])
+
+    def merge(self, l, r):
+        cnt_a, prod_a = l
+        cnt_b, prod_b = r
+        k = self.k
+        cnt = cnt_a.copy()
+        for r_b, c in enumerate(cnt_b):
+            if c:
+                r = (prod_a * r_b) % k
+                cnt[r] += c
+        prod = (prod_a * prod_b) % k
+        return cnt, prod
+
+    def update(self, idx, val):
+        pos = self.s + idx
+        a_mod = val % self.k
+        cnt = [0] * self.k
+        cnt[a_mod] = 1
+        prod = a_mod
+        self.tree[pos] = (cnt, prod)
+        pos //= 2
+        while pos:
+            self.tree[pos] = self.merge(self.tree[2 * pos], self.tree[2 * pos + 1])
+            pos //= 2
+
+    def query(self, l, r):
+        l += self.s
+        r += self.s
+        cnt_l, prod_l = [0]*self.k, 1
+        cnt_r, prod_r = [0]*self.k, 1
+        while l < r:
+            if l & 1:
+                cnt_l, prod_l = self.merge((cnt_l, prod_l), self.tree[l])
+                l += 1
+            if r & 1:
+                r -= 1
+                cnt_r, prod_r = self.merge(self.tree[r], (cnt_r, prod_r))
+            l //= 2
+            r //= 2
+        return self.merge((cnt_l, prod_l), (cnt_r, prod_r))
+
+
+class Solution:
+    def resultArray(self, nums: List[int], k: int, queries: List[List[int]]) -> List[int]:
+        st = SegTree(nums, k)
+        res = []
+        for idx, val, start, x in queries:
+            st.update(idx, val)
+            cnt_seg, _ = st.query(start, len(nums))
+            res.append(cnt_seg[x])
+        return res
