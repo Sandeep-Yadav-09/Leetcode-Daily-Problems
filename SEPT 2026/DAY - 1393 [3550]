@@ -1,0 +1,20 @@
+** 3550. Smallest Index With Digit Sum Equal to Index **
+
+# Approach 1:
+from typing import List
+
+class Solution:
+    def smallestIndex(self, nums: List[int]) -> int:
+        for i, x in enumerate(nums):
+            s = 0
+            while x > 0:
+                s += x % 10
+                x //= 10
+            if s == i:
+                return i
+        return -1
+
+# Approach 2:
+class Solution:
+    def smallestIndex(self, a: List[int]) -> int:
+        return next((i for i,v in enumerate(a) if sum(map(int,str(v)))==i),-1)
