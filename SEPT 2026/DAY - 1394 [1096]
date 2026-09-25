@@ -1,0 +1,55 @@
+** 1096. Brace Expansion II **
+
+# Approach 1:
+class Solution:
+    def braceExpansionII(self, expression: str) -> list[str]:
+        def build(s):
+            parts = set()
+            curr = {""}
+            i = 0
+            while i < len(s):
+                if s[i] == '{':
+                    j = i
+                    depth = 0
+
+                    while True:
+                        if s[j] == '{': depth -= 1
+                        elif s[j] == '}': depth += 1
+                        if depth == 0: break
+                        j += 1
+                    
+                    options = build(s[i + 1: j])
+                    curr = {a + b for a in curr for b in options}
+                    i = j + 1
+                
+                elif s[i] == ',':
+                    parts |= curr
+                    curr = {""}
+                    i += 1
+                
+                else:
+                    curr = {x + s[i] for x in curr}
+                    i += 1
+            
+            parts |= curr
+            return parts
+        
+        return sorted(build(expression))
+
+# Approach 2:
+class Solution:
+    def braceExpansionII(self, expr: str) -> list[str]:
+        stk,rgt = [], [0]*len(expr)
+        for i,c in enumerate(expr):
+            if   c=='{': stk.append(i)
+            elif c=='}': rgt[stk.pop()] = i
+        def parse(l,r):
+            lft,ans = {""}, set()
+            while (l:= l+1) < r:
+                if  (c:= expr[l]) == ',': ans |= lft;  lft = {""}
+                elif c == '{':  
+                    lft = {e+s for e,s in product(lft, parse(l,rgt[l]))}
+                    l   = rgt[l]
+                else: lft = {e+c for e in lft}
+            return  ans | lft
+        return  sorted(parse(-1,len(expr)))
