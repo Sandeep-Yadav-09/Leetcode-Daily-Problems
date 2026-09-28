@@ -1,0 +1,32 @@
+** 1614. Maximum Nesting Depth of the Parentheses **
+
+# Approach 1:
+class Solution:
+    def maxDepth(self, s: str) -> int:
+        max_depth = 0
+        brackets = []
+
+        for c in s:
+            if c == '(':
+                brackets.append(c)
+                max_depth = max(max_depth, len(brackets))
+            elif c == ')':
+                brackets.pop()
+
+        return max_depth
+
+# Approach 2:
+class Solution:
+    def maxDepth(self, s):
+        depth = 0
+        r = 0
+        for c in s:
+            if c == ')':
+                depth -= 1
+                continue
+            if c != '(':
+                continue
+            depth += 1
+            if depth > r:
+                r = depth
+        return r
