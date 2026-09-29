@@ -1,0 +1,62 @@
+** 2267. Check if There Is a Valid Parentheses String Path **
+
+# Approach 1:
+class Solution:
+    def hasValidPath(self, grid: list[list[str]]) -> bool:
+        m, n = len(grid), len(grid[0])
+        if (m + n - 1) % 2 != 0:
+            return False
+        maxBal = m + n
+        dp = [[[False] * maxBal for _ in range(n)] for _ in range(m)]
+        start = 1 if grid[0][0] == '(' else -1
+        if start < 0:
+            return False
+        dp[0][0][start] = True
+        for i in range(m):
+            for j in range(n):
+                for bal in range(maxBal):
+                    if not dp[i][j][bal]:
+                        continue
+                    if i + 1 < m:
+                        nb = bal + (1 if grid[i + 1][j] == '(' else -1)
+                        if 0 <= nb < maxBal:
+                            dp[i + 1][j][nb] = True
+                    if j + 1 < n:
+                        nb = bal + (1 if grid[i][j + 1] == '(' else -1)
+                        if 0 <= nb < maxBal:
+                            dp[i][j + 1][nb] = True
+        return dp[m - 1][n - 1][0]
+
+# Approach 2:
+class Solution:
+    def hasValidPath(self, grid: list[list[str]]) -> bool:
+        if grid[0][0] != '(' or grid[-1][-1] != ')':
+            return False
+
+        rows, cols = len(grid), len(grid[0])
+
+        dp = [[set() for _ in range(cols)] for _ in range(rows)]
+        dp[0][0] = {1}
+
+        for i in range(rows):
+            for j in range(cols):
+                if i == 0 and j == 0:
+                    continue
+
+                parent_counts = set()
+
+                if i > 0:
+                    parent_counts.update(dp[i - 1][j])
+
+                if j > 0:
+                    parent_counts.update(dp[i][j - 1])
+
+                change = 1 if grid[i][j] == '(' else -1
+
+                for count in parent_counts:
+                    new_count = count + change
+
+                    if new_count >= 0:
+                        dp[i][j].add(new_count)
+
+        return 0 in dp[-1][-1]
