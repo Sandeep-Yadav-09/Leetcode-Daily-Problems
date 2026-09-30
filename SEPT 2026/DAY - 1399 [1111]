@@ -1,0 +1,49 @@
+** 1111. Maximum Nesting Depth of Two Valid Parentheses Strings **
+
+# Approach 1:
+class Solution:
+    def maxDepthAfterSplit(self, seq: str) -> list[int]:
+        depth = 0
+        ans = []
+
+        for ch in seq:
+            if ch == '(':
+                depth += 1
+                ans.append(depth % 2)
+            else:
+                ans.append(depth % 2)
+                depth -= 1
+
+        return ans
+
+# Approach 2:
+class Solution:
+    def maxDepthAfterSplit(self, seq):
+        n = len(seq)
+        maxDepth = 0
+        depth = 0
+        for c in seq:
+            if c == ')':
+                depth -= 1
+                continue
+            depth += 1
+            if depth > maxDepth:
+                maxDepth = depth
+
+        r = [0] * n
+        half = maxDepth >> 1
+
+        depth = 0
+        for i in range(n):
+            c = seq[i]
+            if c == ')':
+                if depth > 0:
+                    depth -= 1
+                    continue
+                r[i] = 1
+                continue
+            if depth >= half:
+                r[i] = 1
+                continue
+            depth += 1
+        return r
