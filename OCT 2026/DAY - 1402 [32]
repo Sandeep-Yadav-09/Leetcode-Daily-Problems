@@ -1,0 +1,65 @@
+** 32. Longest Valid Parentheses **
+
+# Approach 1:
+class Solution:
+    def longestValidParentheses(self, s: str) -> int:
+        dp = [0] * len(s)
+        max_len = 0
+
+        for i in range(len(s)):
+            if s[i] == ')':
+                prevIndex = i - 1
+
+                if i > 0 and dp[i - 1] > 0:
+                    prevIndex -= dp[i - 1]
+
+                if prevIndex >= 0 and s[prevIndex] == '(':
+                    dp[i] = i - prevIndex + 1
+
+                if prevIndex > 0 and dp[i] > 0 and dp[prevIndex - 1] > 0:
+                    dp[i] += dp[prevIndex - 1]
+
+                max_len = max(max_len, dp[i])
+
+        return max_len
+
+# Approach 2:
+class Solution:
+    def longestValidParentheses(self, s: str) -> int:
+        size: int = len(s)
+        maxi: int = 0
+        open_: int = 0
+        close: int = 0 
+
+        # left to right
+        for i in range(0, size):
+            if s[i] == '(':
+                open_ += 1
+            else:
+                close += 1
+
+            if open_ < close:
+                # imbalance 
+                open_ = 0
+                close = 0
+
+            if open_ == close:
+                maxi = max(open_ + close, maxi)
+
+        open_ = 0
+        close = 0
+        # right to left
+        for i in range(size-1, -1, -1):
+            if s[i] == '(':
+                open_ += 1
+            else:
+                close += 1
+
+            if open_ > close:
+                open_ = 0
+                close = 0
+
+            if open_ == close:
+                maxi = max(open_ + close, maxi)
+
+        return maxi
