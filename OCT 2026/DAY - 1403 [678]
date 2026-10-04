@@ -1,0 +1,39 @@
+** 678. Valid Parenthesis String **
+
+# Approach 1:
+class Solution:
+    def checkValidString(self, s: str) -> bool:
+        mask = 1
+
+        for ch in s:
+            if ch == '(':
+                mask = mask << 1
+            elif ch == ')':
+                mask = mask >> 1
+            else:
+                mask = (mask << 1) | mask | (mask >> 1)
+
+            if mask == 0:
+                return False
+
+        return (mask & 1) != 0
+
+# Approach 2:
+class Solution:
+    def checkValidString(self, s: str) -> bool:
+        return (
+            reduce(lambda a,c: [
+                op:=a[0]+(c=='('), 
+                cl:=a[1]+(c==')'), 
+                st:=a[2]+(c=='*'),
+                a[3] and cl <= op+st
+            ], s, initial=[0,0,0,True])[-1]
+            
+            and
+            reduce(lambda a,c: [
+                op:=a[0]+(c==')'), 
+                cl:=a[1]+(c=='('), 
+                st:=a[2]+(c=='*'),
+                a[3] and cl <= op+st
+            ], s[::-1], initial=[0,0,0,True])[-1]
+        )
