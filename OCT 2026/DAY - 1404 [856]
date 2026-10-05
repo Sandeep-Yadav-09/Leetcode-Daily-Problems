@@ -1,0 +1,22 @@
+** 856. Score of Parentheses **
+
+# Approach 1:
+class Solution:
+    def scoreOfParentheses(self, s: str) -> int:
+        score, b, p= 0, 0, 0
+        for c in s:
+            open=c=='('
+            b+=(open<<1)-1
+            score+=(-(not open) & (p<<b))
+            p=open
+        return score
+
+# Approach 2:
+class Solution:
+    def scoreOfParentheses(self, s: str) -> int:
+        s = s.replace('()','+1')
+        while '(' in s or '+' in s[1:]:
+            s = re.sub(r'\(\+(\d+)\)',lambda m:f'+{int(m[1])*2}',s)
+            s = re.sub(r'([^()]+)',lambda m:f'+{eval(m[1])}',s)
+
+        return int(s)
