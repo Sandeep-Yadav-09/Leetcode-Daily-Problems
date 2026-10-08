@@ -1,0 +1,25 @@
+** 1021. Remove Outermost Parentheses **
+
+# Approach 1:
+class Solution:
+    def removeOuterParentheses(self, s: str) -> str:
+        res = []
+        depth = 0
+        
+        for ch in s:
+            if ch == "(":
+                if depth > 0:
+                    res.append(ch)
+                depth += 1
+            else:
+                depth -= 1
+                if depth > 0:
+                    res.append(ch)
+        
+        return "".join(res)
+
+# Approach 2:
+class Solution:
+    def removeOuterParentheses(self, s: str) -> str:
+        d = 0
+        return ''.join(c for c in s if min(d, d := d + ' ('.find(c)))
