@@ -1,0 +1,50 @@
+** 2333. Minimum Sum of Squared Difference **
+
+# Approach 1:
+class Solution:
+    def minSumSquareDiff(self, nums1: list[int], nums2: list[int], k1: int, k2: int) -> int:
+        k = k1 + k2
+        d = [abs(a - b) for a, b in zip(nums1, nums2)]
+
+        if sum(d) <= k:
+            return 0
+
+        d.sort(reverse=True)
+        d.append(0)
+        n = len(nums1)
+
+        for i in range(1, n + 1):
+            cost = (d[i - 1] - d[i]) * i
+
+            if cost > k:
+                q, r = divmod(k, i)
+                hi = d[i - 1] - q
+
+                return (
+                    hi * hi * (i - r)
+                    + (hi - 1) * (hi - 1) * r
+                    + sum(x * x for x in d[i:n])
+                )
+
+            k -= cost
+
+        return 0
+
+# Approach 2:
+import heapq
+
+class Solution:
+    def minSumSquareDiff(self, nums1: list[int], nums2: list[int], k1: int, k2: int) -> int:
+        k = k1 + k2
+        pq = [-abs(n1 - n2) for n1, n2 in zip(nums1, nums2)]
+        heapq.heapify(pq)
+        
+        while pq and k > 0:
+            ele = -heapq.heappop(pq)
+            ele -= 1
+            if ele > 0:
+                heapq.heappush(pq, -ele)
+            k -= 1
+            
+        res = sum((-ele) ** 2 for ele in pq)
+        return res
