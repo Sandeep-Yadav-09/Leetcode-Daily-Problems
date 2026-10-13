@@ -1,0 +1,37 @@
+** 3727. Maximum Alternating Sum of Squares **
+
+# Approach 1:
+from typing import List
+
+class Solution:
+    def maxAlternatingSum(self, nums: List[int]) -> int:
+        values = sorted((x * x for x in nums), reverse=True)
+        half = (len(values) + 1) // 2
+
+        return sum(values[:half]) - sum(values[half:])
+
+# Approach 2:
+from typing import List
+
+class Solution:
+    def maxAlternatingSum(self, nums: List[int]) -> int:
+        n = len(nums)
+
+        for i in range(n):
+            nums[i] *= nums[i]
+
+        nums.sort()
+
+        res = 0
+        left, right = 0, n - 1
+
+        while left <= right:
+            if left == right:
+                res += nums[left]
+                break
+
+            res += nums[right] - nums[left]
+            left += 1
+            right -= 1
+
+        return res
