@@ -1,0 +1,23 @@
+** 3723. Maximize Sum of Squares of Digits **
+
+# Approach 1:
+class Solution:
+    def maxSumOfSquares(self, num: int, sum: int) -> str:
+        return  "" if  num*9 < sum  else  "9"*(n:=sum//9) + str(r:=sum%9)*(r>0) + "0"*(num -n -(r>0))
+
+# Approach 2:
+class Solution:
+    def maxSumOfSquares(self, num: int, sum: int) -> str:
+        ans = ""
+        cur = sum
+        while cur > 0:
+            digit = min(9, cur)
+            ans += str(digit)
+            cur -= digit
+        i = num - len(ans)
+        if i < 0:
+            return ""
+        while i > 0:
+            ans += '0'
+            i -= 1
+        return ans
