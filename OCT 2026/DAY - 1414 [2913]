@@ -1,0 +1,28 @@
+** 2913. Subarrays Distinct Element Sum of Squares I **
+
+# Approach 1:
+class Solution:
+    def sumCounts(self, nums: List[int]) -> int:
+        s = 0
+        for i in range(len(nums)):
+            seen = set()
+            for j in range(i, len(nums)):
+                seen.add(nums[j])
+                s += len(seen) ** 2
+        return s
+
+# Approach 2:
+class Solution:
+    def sumCounts(self, nums: List[int]) -> int:
+        result = 0
+        size = len(nums)
+        arrSize = 1
+        while arrSize <= size:
+            l, r = 0, arrSize
+            while r <= size:
+                uniq = len(set(nums[l: r]))
+                result+= uniq * uniq
+                l+=1
+                r+=1
+            arrSize+=1
+        return result
