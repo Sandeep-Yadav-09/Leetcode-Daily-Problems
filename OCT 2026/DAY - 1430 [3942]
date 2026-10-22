@@ -1,0 +1,20 @@
+** 3942. Minimum Operations to Sort a Permutation **
+
+# Approach 1:
+class Solution:
+    def minOperations(self, nums: List[int]) -> int:
+        n = len(nums)
+        want = list(range(n))
+        i = nums.index(0)
+        if nums[i:] + nums[:i] == want:
+            return min(i, n - i + 2)
+        if nums[i::-1] + nums[:i:-1] == want:
+            return min(i + 2, n - i)
+        return -1
+
+# Approach 2:
+class Solution:
+    def minOperations(self, a):
+        k,b = a.index(0),[*range(len(a))]
+        return min(a[k:]+a[:k]==b and (k,len(a)-k+2) or 
+            a[k::-1]+a[:k:-1]==b and (k+2,len(a)-k) or [-1])
