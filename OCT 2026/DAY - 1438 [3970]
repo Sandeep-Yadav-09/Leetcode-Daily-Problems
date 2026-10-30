@@ -1,0 +1,81 @@
+** 3970. Shortest Path With At Most K Consecutive Identical Characters **
+
+# Approach 1:
+class Solution:
+    def shortestPath(self, n: int, edges: List[List[int]], labels: str, k: int) -> int:
+        graph = [[] for _ in range(n)]
+        for u, v, w in edges:
+            graph[u].append((v, w, labels[u] == labels[v]))
+
+        done = [k + 1] * n  
+        heap = [(0, 0, 1)]
+        last = n - 1
+
+        while heap:
+            d, u, r = heappop(heap)
+            if r >= done[u]: 
+                continue
+            done[u] = r
+            if u == last:
+                return d
+            for v, w, same in graph[u]:
+                nr = r + 1 if same else 1
+                if nr < done[v]: 
+                    heappush(heap, (d + w, v, nr))
+
+        return -1
+
+# Approach 2:
+
+import heapq
+
+class Solution:
+    def shortestPath(self, n: int, edges: list[list[int]], labels: str, k: int) -> int:
+
+        graph = [[] for _ in range(n)]
+
+        for u, v, w in edges:
+            graph[u].append((v, w))
+
+        # State: (cost, node, last character, consecutive count)
+        start_char = ord(labels[0]) - ord('a')
+
+        pq = [(0, 0, start_char, 1)]
+
+        dist = {}
+
+        while pq:
+            cost, node, last, count = heapq.heappop(pq)
+
+            state = (node, last, count)
+
+            if state in dist and dist[state] <= cost:
+                continue
+
+            dist[state] = cost
+
+            if node == n - 1:
+                return cost
+
+            for nei, weight in graph[node]:
+
+                ch = ord(labels[nei]) - ord('a')
+
+                if ch == last:
+                    new_count = count + 1
+                else:
+                    new_count = 1
+
+                if new_count > k:
+                    continue
+
+                new_state = (nei, ch, new_count)
+                new_cost = cost + weight
+
+                if new_state not in dist or new_cost < dist[new_state]:
+                    heapq.heappush(
+                        pq,
+                        (new_cost, nei, ch, new_count)
+                    )
+
+        return -1
