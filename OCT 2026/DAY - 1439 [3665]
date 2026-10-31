@@ -1,0 +1,38 @@
+** 3665. Twisted Mirror Path Count **
+
+# Approach 1:
+class Solution:
+    def uniquePaths(self, grid: List[List[int]]) -> int:
+        rows, cols = len(grid), len(grid[0])
+        MOD = 10**9 + 7
+
+        @cache
+        def dfs(row, col, d):
+            if row < 0 or row >= rows or col < 0 or col >= cols:
+                return 0
+            if row == rows - 1 and col == cols - 1:
+                return 1
+            
+            if grid[row][col]:
+                if d == 0:  
+                    return dfs(row + 1, col, 1)
+                else:       
+                    return dfs(row, col + 1, 0)
+            else:
+                return (dfs(row, col + 1, 0) + dfs(row + 1, col, 1)) % MOD
+
+        return (dfs(0, 1, 0) + dfs(1, 0, 1)) % MOD
+                  
+# Approach 2:
+class Solution:
+    def uniquePaths(self, grid: List[List[int]]) -> int:
+        mod = 10**9 + 7
+        down = [1] + [0] * (len(grid[0]) - 1)  # d: paths coming into each cell from above
+        for row in grid:
+            right = 0  # r: paths coming in from the left
+            for j, mirror in enumerate(row):
+                if mirror:  # a mirror swaps the flows
+                    right, down[j] = down[j], right
+                else:  # an empty cell merges them
+                    right = down[j] = (right + down[j]) % mod
+        return down[-1]
