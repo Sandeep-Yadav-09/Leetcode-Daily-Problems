@@ -1,0 +1,17 @@
+** 3736. Minimum Moves to Equal Array Elements III **
+
+# Approach 1:
+class Solution:
+    def minMoves(self, nums: List[int]) -> int:
+        m = max(nums)
+        return sum([m-i for i in nums])
+
+# Approach 2:
+class Solution:
+    def minMoves(self, nums: List[int]) -> int:
+        mx = max(nums)
+        ans = 0
+        for num in nums:
+            ans += (mx - num)
+
+        return ans
