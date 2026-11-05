@@ -1,0 +1,39 @@
+** 1385. Find the Distance Value Between Two Arrays **
+
+# Approach 1:
+class Solution:
+    def findTheDistanceValue(self, arr1: list[int], arr2: list[int], d: int) -> int:
+        count = 0
+
+        for i in arr1:
+            valid = True
+
+            for j in arr2:
+                if abs(i - j) <= d:
+                    valid = False
+                    break
+
+            if valid:
+                count += 1
+
+        return count
+
+# Approach 2:
+class Solution:
+    def findTheDistanceValue(self, arr1: List[int], arr2: List[int], d: int) -> int:
+        OFF, R = 1000, 2001
+        pref = [0] * (R + 1)
+
+        for v in arr2:
+            pref[v + OFF + 1] += 1
+        for i in range(1, R + 1):
+            pref[i] += pref[i - 1]
+
+        count = 0
+        for x in arr1:
+            lo = max(x - d + OFF, 0)
+            hi = min(x + d + OFF, R - 1)
+            if pref[hi + 1] - pref[lo] == 0:  
+                count += 1
+                
+        return count
