@@ -1,0 +1,56 @@
+** 1882. Process Tasks Using Servers **
+
+# Approach 1:
+import heapq
+
+class Solution:
+    def assignTasks(self, servers: list[int], tasks: list[int]) -> list[int]:
+        busy = []
+        idle = [(w, i) for i, w in enumerate(servers)]
+        heapq.heapify(idle)
+        ans = []
+        ts = 0
+
+        def release(time):
+            while busy and busy[0][0] <= time:
+                _, idx = heapq.heappop(busy)
+                heapq.heappush(idle, (servers[idx], idx))
+
+        for i, d in enumerate(tasks):
+            ts = max(ts, i)
+            release(ts)
+            if not idle:
+                ts = busy[0][0]
+                release(ts)
+
+            _, idx = heapq.heappop(idle)
+            ans.append(idx)
+            heapq.heappush(busy, (ts + d, idx))
+
+        return ans
+
+# Approach 2:
+class Solution:
+    def assignTasks(self, servers: list[int], tasks: list[int]) -> list[int]:
+        free_servers = [(w, i) for i, w in enumerate(servers)]
+        heapq.heapify(free_servers)
+        
+        busy_servers = [] 
+        ans = []
+        current_time = 0
+        
+        for j, task_time in enumerate(tasks):
+            current_time = max(current_time, j)
+            
+            if not free_servers and busy_servers and busy_servers[0][0] > current_time:
+                current_time = busy_servers[0][0]
+                
+            while busy_servers and busy_servers[0][0] <= current_time:
+                free_time, w, i = heapq.heappop(busy_servers)
+                heapq.heappush(free_servers, (w, i))
+                
+            w, i = heapq.heappop(free_servers)
+            ans.append(i)
+            heapq.heappush(busy_servers, (current_time + task_time, w, i))
+            
+        return ans
