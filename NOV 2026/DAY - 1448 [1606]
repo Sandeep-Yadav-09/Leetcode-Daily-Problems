@@ -1,0 +1,35 @@
+** 1606. Find Servers That Handled Most Number of Requests **
+
+# Approach 1:
+class Solution:
+    def busiestServers(self, k: int, arrival: List[int], load: List[int]) -> List[int]:
+        busy = [] 
+        free = list(range(k))
+        freq = [0]*k
+        
+        for i, (ta, tl) in enumerate(zip(arrival, load)): 
+            while busy and busy[0][0] <= ta: 
+                _, ii = heappop(busy)
+                heappush(free, i + (ii - i) % k) 
+            if free: 
+                ii = heappop(free) % k 
+                freq[ii] += 1
+                heappush(busy, (ta+tl, ii))
+        
+        mx = max(freq)
+        return [i for i, x in enumerate(freq) if x == mx]
+
+# Approach 2:
+class Solution:
+    def busiestServers(self, k: int, arrival: list[int], load: list[int]) -> list[int]:
+        free = list(range(k))  
+        handled, busy = [], []  
+        for i, (t, d) in enumerate(zip(arrival, load)):
+            while busy and busy[0][0] <= t:  # done by time t
+                heappush(free, i + (heappop(busy)[1] - i) % k) 
+            if free:  
+                x = heappop(free) % k
+                heappush(busy, (t + d, x))
+                handled.append(x)
+
+        return multimode(handled)
