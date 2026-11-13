@@ -1,0 +1,48 @@
+** 3420. Count Non-Decreasing Subarrays After K Operations **
+
+# Approach 1:
+class Solution:
+    def countNonDecreasingSubarrays(self, nums: List[int], k: int) -> int:
+        ans = 0
+        cost = 0
+        dq = deque()
+        j = len(nums) - 1
+        
+        for i in range(len(nums) - 1, -1, -1):
+            num = nums[i]
+            while dq and nums[dq[-1]] < num:
+                l = dq.pop()
+                r = dq[-1] if dq else j + 1
+                cost += (r - l) * (num - nums[l])
+                
+            dq.append(i)
+            
+            while cost > k:
+                cost -= nums[dq[0]] - nums[j]
+                if dq[0] == j:
+                    dq.popleft()
+                j -= 1
+                
+            ans += j - i + 1
+        return ans
+
+# Approach 2:
+class Solution:
+    def countNonDecreasingSubarrays(self, A: List[int], k: int) -> int:
+        A = A[::-1]
+        res = 0
+        q = deque()
+        i = 0
+        for j in range(len(A)):
+            while q and A[q[-1]] < A[j]:
+                r = q.pop()
+                l = q[-1] if q else i - 1
+                k -= (r - l) * (A[j] - A[r])
+            q.append(j)
+            while k < 0:
+                k += A[q[0]] - A[i]
+                if q[0] == i:
+                    q.popleft()
+                i += 1
+            res += j - i + 1
+        return res
