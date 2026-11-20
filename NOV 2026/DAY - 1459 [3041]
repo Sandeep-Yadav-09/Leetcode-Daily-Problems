@@ -1,0 +1,43 @@
+** 3041. Maximize Consecutive Elements in an Array After Modification **
+
+# Approach 1:
+class Solution:
+    def maxSelectedElements(self, nums: List[int]) -> int:
+        nums.sort()
+        px = -5
+        d0 = d1 = best = 0
+        for x in nums:
+            if x == px:
+                d1 = d0 + 1
+                if d1 > best:
+                    best = d1
+            else:
+                g = x - px
+                if g == 1:
+                    d1, d0 = d1 + 1, d0 + 1
+                elif g == 2:
+                    d1, d0 = 1, d1 + 1
+                else:
+                    d1 = d0 = 1
+                px = x
+                if d0 > best:
+                    best = d0
+                if d1 > best:
+                    best = d1
+        return best
+
+# Approach 2:
+class Solution:
+    def maxSelectedElements(self, nums: list[int]) -> int:
+        nums.sort()
+        d0 = d1 = ans = 1
+
+        for a, b in pairwise(nums):
+            match b - a:
+                case 0: d1 = d0 + 1
+                case 1: d0, d1 = d0 + 1, d1 + 1
+                case 2: d0, d1 = d1 + 1, 1
+                case _: d0 = d1 = 1
+            ans = max(ans, d0, d1)
+
+        return ans
