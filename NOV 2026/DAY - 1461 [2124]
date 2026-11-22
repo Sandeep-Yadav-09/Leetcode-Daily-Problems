@@ -1,0 +1,21 @@
+** 2124. Check if All A's Appears Before All B's **
+
+# Approach 1:
+class Solution:
+    def checkString(self, s: str) -> bool:
+        return "ba" not in s
+
+# Approach 2:
+class Solution:
+    def checkString(self, s: str) -> bool:
+        lastA = -1
+        firstB = 101
+        check = 0
+        n = len(s)
+        for i in range(n):
+            if s[i] == "a":
+                lastA = i
+            if s[i] == "b" and check == 0:
+                check = 1
+                firstB = i
+        return lastA < firstB
