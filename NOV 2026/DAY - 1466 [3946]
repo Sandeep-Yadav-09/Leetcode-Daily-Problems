@@ -1,0 +1,33 @@
+** 3946. Maximum Number of Items From Sale I **
+
+# Approach 1:
+class Solution:
+    def maximumSaleItems(self, items: List[List[int]], budget: int) -> int:
+        cnt     = Counter(f for f,p in items)
+        mxf,mnp = max(cnt.keys())+1,   min(p for f,p in items)
+        wgt,dp  = [sum(cnt[w] for w in range(f, mxf+1, f)) for f,p in items], [0]*(budget+1)
+        for weight,price in zip(wgt, (p for f,p in items)):
+            for p in range(budget, price-1, -1):
+                dp[p] = max(dp[p], dp[p - price] + weight)
+        return  max((dp[p] + (budget-p)//mnp for p in range(mnp,budget+1)), default=0)
+
+# Approach 2:
+import numpy as np
+
+class Solution:
+    def maximumSaleItems(self, items: List[List[int]], budget: int) -> int:
+        freq = [0] * 1501
+        for f, _ in items:
+            freq[f] += 1
+        arr = [(p, sum(freq[f::f])) for f, p in items if p <= budget]
+        arr.sort(reverse=True)
+        dp = np.zeros(budget + 1, dtype=np.int64)
+        ar = np.arange(budget + 1, dtype=np.int64)
+        best = 0
+        for p, v in arr:
+            m = budget - p + 1
+            t = int((dp[:m] + (m - 1 - ar[:m]) // p).max()) + v
+            if t > best:
+                best = t
+            dp[p:] = np.maximum(dp[p:], dp[:m] + v)
+        return best
